@@ -1,0 +1,94 @@
+parser_header.o: E:\ProgramingFile\C++\Mage\Engine\parser_header.h \
+  E:/ProgramingFile/C++/Mage/Engine/core/meta/reflection_test.h \
+  E:\ProgramingFile\C++\Mage\Engine/core/meta/reflection/reflection.h \
+  E:\ProgramingFile\C++\Mage\Engine/core/meta/json.h json11.hpp \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\functional \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\yvals_core.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vcruntime.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\sal.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\concurrencysal.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vadefs.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xkeycheck.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\exception \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\yvals.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\crtdbg.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vcruntime_new_debug.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vcruntime_new.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\crtdefs.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\use_ansi.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\type_traits \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cstdint \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\stdint.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xstddef \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cstddef \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\stddef.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xtr1common \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cstdlib \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\math.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_math.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\stdlib.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_malloc.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_search.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wstdlib.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\limits.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\initializer_list \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\malloc.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vcruntime_exception.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\eh.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_terminate.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\tuple \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xutility \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\climits \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cstring \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\string.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_memory.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_memcpy_s.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\errno.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vcruntime_string.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wstring.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\utility \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\typeinfo \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vcruntime_typeinfo.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xmemory \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\limits \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cfloat \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\float.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cwchar \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cstdio \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\stdio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wstdio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_stdio_config.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\wchar.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wconio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wctype.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wdirect.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wio.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_share.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wprocess.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\corecrt_wtime.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\sys/stat.h \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\sys/types.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\intrin0.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\intrin0.inl.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\isa_availability.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\new \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xatomic.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\string \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xstring \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\iosfwd \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cctype \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\ctype.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\unordered_map \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xhash \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cmath \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\list \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\vector \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\xbit_ops.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\unordered_set \
+  E:/ProgramingFile/C++/Mage/Engine/core/meta/json.h \
+  E:/ProgramingFile/C++/Mage/Engine/core/meta/reflection/reflection.h \
+  E:/ProgramingFile/C++/Mage/Engine/core/meta/reflection/reflection_reister \
+  E:/ProgramingFile/C++/Mage/Engine/core/meta/serializer/serializer.h \
+  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.31.31103\include\cassert \
+  C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\assert.h

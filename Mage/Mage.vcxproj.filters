@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Mage">
+      <UniqueIdentifier>{ee86eeb8-a803-400e-a004-0792ecf5390e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine">
+      <UniqueIdentifier>{3bd24cba-1644-4fbe-9b14-8f8941571f5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\editor">
+      <UniqueIdentifier>{656ffcdd-056d-4408-b190-77561f71a182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\core">
+      <UniqueIdentifier>{0c7dfaca-ca9b-4287-a812-89a965fe6247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core">
+      <UniqueIdentifier>{d18413a5-bf8d-4839-bfd1-e6106f6d2093}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\core\math">
+      <UniqueIdentifier>{b3b63bae-35e2-42bf-adec-bfd1faf56fc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\core\meta">
+      <UniqueIdentifier>{6790fba1-b7da-48c4-aa67-f380ccba5baa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\core\meta\reflection">
+      <UniqueIdentifier>{4a35d0b5-72d8-4a23-8916-789e778f7250}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\core\meta\serializer">
+      <UniqueIdentifier>{609ac326-614b-43b3-a02f-2810bf814ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\render_engine">
+      <UniqueIdentifier>{eced36c4-ec64-4926-aba7-dfd8d6b6be0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\render_engine\renderer">
+      <UniqueIdentifier>{c0ce8f62-b85b-4594-b627-ce55ecee5162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\render_engine\render_passes">
+      <UniqueIdentifier>{93a0cec8-a085-4d32-a1f8-881074121288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\function">
+      <UniqueIdentifier>{70906218-08ed-4c87-84d6-998c9e4a30c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\function\global_context">
+      <UniqueIdentifier>{918de485-0354-442d-9ea2-12c044849a18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\platform">
+      <UniqueIdentifier>{a728fb96-1044-40a6-a8ec-9e2af02ade64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\asset">
+      <UniqueIdentifier>{42d88137-fc19-4749-b142-10f26710b554}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\asset\resource_manager">
+      <UniqueIdentifier>{c309bb14-dea4-4737-9318-6434af8d8efb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\engine\core\math\math.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\math\matrix4x4.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\math\quaternion.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\math\transform_base.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\math\vector2.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\math\vector3.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\math\vector4.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\meta\reflection_test.cpp">
+      <Filter>Mage\engine\core\meta</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\meta\reflection\reflection.cpp">
+      <Filter>Mage\engine\core\meta\reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\meta\reflection\reflection_register.cpp">
+      <Filter>Mage\engine\core\meta\reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\meta\serializer\serializer.cpp">
+      <Filter>Mage\engine\core\meta\serializer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\core\random.cpp">
+      <Filter>Mage\engine\core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.cpp">
+      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.cpp">
+      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_pass.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_subpass.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_system.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\window_system.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\engine.cpp">
+      <Filter>Mage\engine\engine_core</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Mage\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\DevRenderPass.cpp">
+      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\function\global_context\global_context.cpp">
+      <Filter>Mage\engine\engine_core\function\global_context</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\platform\file_system.cpp">
+      <Filter>Mage\engine\engine_core\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\engine\core\math\math.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\matrix4x4.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\quaternion.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\transform_base.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\vector2.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\vector3.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\vector4.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\meta\json.h">
+      <Filter>Mage\engine\core\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\meta\reflection_test.h">
+      <Filter>Mage\engine\core\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\meta\reflection\reflection.h">
+      <Filter>Mage\engine\core\meta\reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\meta\reflection\reflection_register.h">
+      <Filter>Mage\engine\core\meta\reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\meta\serializer\serializer.h">
+      <Filter>Mage\engine\core\meta\serializer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\macro.h">
+      <Filter>Mage\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\random.h">
+      <Filter>Mage\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.h">
+      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanInfo.h">
+      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.h">
+      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_mesh.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_pass.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_subpass.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_system.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\window_system.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\engine.h">
+      <Filter>Mage\engine\engine_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\DevRenderPass.h">
+      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\function\global_context\global_context.h">
+      <Filter>Mage\engine\engine_core\function\global_context</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\platform\file_system.h">
+      <Filter>Mage\engine\engine_core\platform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\resource_manager\asset_type.h">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,4 @@
+E:/ProgramingFile/C++/Mage/Engine/3rd/json11/build/CMakeFiles/json11.dir
+E:/ProgramingFile/C++/Mage/Engine/3rd/json11/build/CMakeFiles/RUN_TESTS.dir
+E:/ProgramingFile/C++/Mage/Engine/3rd/json11/build/CMakeFiles/ALL_BUILD.dir
+E:/ProgramingFile/C++/Mage/Engine/3rd/json11/build/CMakeFiles/ZERO_CHECK.dir

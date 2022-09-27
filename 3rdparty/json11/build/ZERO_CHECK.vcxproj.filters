@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="E:\ProgramingFile\C++\Mage\Engine\3rd\json11\build\CMakeFiles\70ec67d7e25a041a60856f2727f9795b\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6E2A7531-F3F5-3177-8D95-769D674A90E6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

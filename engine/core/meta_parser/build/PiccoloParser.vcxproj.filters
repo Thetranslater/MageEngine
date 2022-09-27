@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\build\CMakeFiles\3.21.4\CompilerIdCXX\CMakeCXXCompilerId.cpp">
+      <Filter>build\CMakeFiles\3.21.4\CompilerIdCXX</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\cursor\cursor.cpp">
+      <Filter>parser\cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\cursor\cursor_type.cpp">
+      <Filter>parser\cursor</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\generator\generator.cpp">
+      <Filter>parser\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\generator\reflection_generator.cpp">
+      <Filter>parser\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\generator\serializer_generator.cpp">
+      <Filter>parser\generator</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\language_types\class.cpp">
+      <Filter>parser\language_types</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\language_types\field.cpp">
+      <Filter>parser\language_types</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\language_types\type_info.cpp">
+      <Filter>parser\language_types</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\main.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\meta\meta_info.cpp">
+      <Filter>parser\meta</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\meta\meta_utils.cpp">
+      <Filter>parser\meta</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\parser\parser.cpp">
+      <Filter>parser\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\template_manager\template_manager.cpp">
+      <Filter>parser\template_manager</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\BuildSystem.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\CXCompilationDatabase.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\CXErrorCode.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\CXString.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\Documentation.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\Index.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\clang-c\Platform.h">
+      <Filter>3rd_party\LLVM\include\clang-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\3rd_party\LLVM\include\llvm-c\lto.h">
+      <Filter>3rd_party\LLVM\include\llvm-c</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\common\namespace.h">
+      <Filter>parser\common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\common\precompiled.h">
+      <Filter>parser\common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\common\schema_module.h">
+      <Filter>parser\common</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\cursor\cursor.h">
+      <Filter>parser\cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\cursor\cursor_type.h">
+      <Filter>parser\cursor</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\generator\generator.h">
+      <Filter>parser\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\generator\reflection_generator.h">
+      <Filter>parser\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\generator\serializer_generator.h">
+      <Filter>parser\generator</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\language_types\class.h">
+      <Filter>parser\language_types</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\language_types\field.h">
+      <Filter>parser\language_types</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\language_types\type_info.h">
+      <Filter>parser\language_types</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\meta\meta_data_config.h">
+      <Filter>parser\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\meta\meta_info.h">
+      <Filter>parser\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\meta\meta_utils.h">
+      <Filter>parser\meta</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\parser\parser.h">
+      <Filter>parser\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\parser\template_manager\template_manager.h">
+      <Filter>parser\template_manager</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="3rd_party">
+      <UniqueIdentifier>{CF5CFA22-4BA3-392E-ACE4-0986E4C5FAA4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\LLVM">
+      <UniqueIdentifier>{49311BF1-3659-3FFB-AB57-9D9492A046E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\LLVM\include">
+      <UniqueIdentifier>{8DB20BED-BA41-38A1-BD66-98AA5EF7DA18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\LLVM\include\clang-c">
+      <UniqueIdentifier>{53901E45-344D-3175-980F-D93CCDA932E1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rd_party\LLVM\include\llvm-c">
+      <UniqueIdentifier>{60FCF211-FC06-3914-959C-9ADD75151EAF}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build">
+      <UniqueIdentifier>{51E0B4ED-A109-3231-BF13-69A428EAB562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build\CMakeFiles">
+      <UniqueIdentifier>{7D343457-5A30-3AAE-A581-2AD026CA8F95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build\CMakeFiles\3.21.4">
+      <UniqueIdentifier>{8D6DEEF2-B5C4-3FBD-A919-03405A611E28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build\CMakeFiles\3.21.4\CompilerIdCXX">
+      <UniqueIdentifier>{ABFA45DC-D3D0-373D-8979-CE278DD51506}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser">
+      <UniqueIdentifier>{0B0B2B53-19B3-35BA-8AEE-D1CAA0F90E06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\common">
+      <UniqueIdentifier>{1359C711-A30B-3E87-A1BF-53E84A25D50E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\cursor">
+      <UniqueIdentifier>{14BE8EE6-F87B-3021-B74D-237D869FCA44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\generator">
+      <UniqueIdentifier>{2C47B337-318A-3897-B227-0EE138982615}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\language_types">
+      <UniqueIdentifier>{FB60F056-E94E-354F-8802-892167913D37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\meta">
+      <UniqueIdentifier>{DBD9F1B5-3162-3C5F-A297-387A490FC10D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\parser">
+      <UniqueIdentifier>{5900E112-FB3D-311B-BCF3-A5A44F0D077E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="parser\template_manager">
+      <UniqueIdentifier>{1A024C1C-D5DA-3A2E-97F3-9B070AF9FD62}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
