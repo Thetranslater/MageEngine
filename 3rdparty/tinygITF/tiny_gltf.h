@@ -3877,9 +3877,12 @@ static bool ParseImage(Image *image, const int image_idx, std::string *err,
     return true;
 #else
     std::string decoded_uri = dlib::urldecode(uri);
-    if (!LoadExternalFile(&img, err, warn, decoded_uri, basedir,
-                          /* required */ false, /* required bytes */ 0,
-                          /* checksize */ false, fs)) {
+    //TODO
+    //if (!LoadExternalFile(&img, err, warn, decoded_uri, basedir,
+    //                      /* required */ false, /* required bytes */ 0,
+    //                      /* checksize */ false, fs)) 
+    if(true)
+    {
       if (warn) {
         (*warn) += "Failed to load external 'uri' for image[" +
                    std::to_string(image_idx) + "] name = [" + image->name +
@@ -4102,12 +4105,13 @@ static bool ParseBuffer(Buffer *buffer, std::string *err, const json &o,
         }
       } else {
         // External .bin file.
-        std::string decoded_uri = dlib::urldecode(buffer->uri);
-        if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr,
-                              decoded_uri, basedir, /* required */ true,
-                              byteLength, /* checkSize */ true, fs)) {
-          return false;
-        }
+        // TODO:return
+        //std::string decoded_uri = dlib::urldecode(buffer->uri);
+        //if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr,
+        //                      decoded_uri, basedir, /* required */ true,
+        //                      byteLength, /* checkSize */ true, fs)) {
+        //  return false;
+        //}
       }
     } else {
       // load data from (embedded) binary data
@@ -4147,12 +4151,12 @@ static bool ParseBuffer(Buffer *buffer, std::string *err, const json &o,
       }
     } else {
       // Assume external .bin file.
-      std::string decoded_uri = dlib::urldecode(buffer->uri);
-      if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr, decoded_uri,
-                            basedir, /* required */ true, byteLength,
-                            /* checkSize */ true, fs)) {
-        return false;
-      }
+      //std::string decoded_uri = dlib::urldecode(buffer->uri);
+      //if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr, decoded_uri,
+      //                      basedir, /* required */ true, byteLength,
+      //                      /* checkSize */ true, fs)) {
+      //  return false;
+      //}
     }
   }
 

@@ -55,6 +55,7 @@ namespace Mage {
 		void createDevice();
 		void createSwapchain(VkSwapchainKHR oldswapchain = VK_NULL_HANDLE);
 		void createSwapchainImageViews();
+		void createDepthImage();
 		void createCommandPools();
 		void createCommandBuffers();
 		void createDescriptorPool();
@@ -102,6 +103,12 @@ namespace Mage {
 		std::vector<VkImage>		m_swapchain_images;
 		std::vector<VkImageView>	m_swapchain_image_views;
 
+		//depth buffer relatives
+		VkFormat m_depth_format;
+		VkImage m_depth_image;
+		VkImageView m_depth_image_view;
+		VkDeviceMemory m_depth_image_memory;
+
 		uint8_t m_current_frame_index{ 0 };
 		static uint32_t const m_max_frames{ 3 };
 
@@ -110,7 +117,7 @@ namespace Mage {
 		std::vector<VkCommandBuffer> m_command_buffers;
 
 		//descriptor pool
-		VkDescriptorPool m_market;
+		VkDescriptorPool m_descriptor_pool;
 
 		//synchronization relatives
 		std::vector<VkFence> m_fences;

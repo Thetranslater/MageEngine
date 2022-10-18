@@ -44,7 +44,7 @@ namespace Mage {
 		//TODO:global_resource
 		virtual void initialize(const RenderPassCreateInfo* createInfo);
 
-		virtual void draw() {};
+		virtual void draw() {}; //forward for now, mesh resources should passed from here
 
 		const VkRenderPass& getVkRenderPass() { return m_render_pass; }
 		//virtual VkFramebuffer getVkFrameBuffer();
@@ -55,11 +55,11 @@ namespace Mage {
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };	//vulkanRHI
 
 		Attachments m_attachments;
-		DescriptorSets m_descriptor_sets;	//read_only input
+		DescriptorSets m_descriptor_sets;	//read_only input, for global resources
 
 		std::vector<VkFramebuffer> m_framebuffers;		//create framebuffer for each swapchain image
 		std::vector<std::shared_ptr<Subpass>> m_p_subpasses;				//pipelines
 
-		static RenderPassResources* m_resources;
+		static RenderPassResources* m_resources; // include lights, sky, camera matrix.
 	};
 }

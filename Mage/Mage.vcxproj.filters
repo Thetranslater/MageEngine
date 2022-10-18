@@ -129,6 +129,12 @@
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.cpp">
+      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_scene.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -217,6 +223,27 @@
     </ClInclude>
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_resource.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.h">
+      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_guid_generator.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_scene.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_model.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_guid.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\hash.h">
+      <Filter>Mage\engine\core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

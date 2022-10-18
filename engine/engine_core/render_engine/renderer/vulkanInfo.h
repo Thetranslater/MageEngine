@@ -243,6 +243,20 @@ namespace Mage {
 		}
 
 		/// <summary>
+		/// SPECIFY:buffer, format, offset, range.
+		/// </summary>
+		/// <param name="buffer	"> : the buffer which the view bind to.</param>
+		/// <param name="format"> : decribing the format of data in the buffer.</param>
+		/// <param name="offset	"> : an offset in bytes, specifies the start address of the view.</param>
+		/// <param name="range	"> : a size in bytes of the buffer view.</param>
+		inline VkBufferViewCreateInfo aboutVkBufferViewCreateInfo() {
+			VkBufferViewCreateInfo create_info{};
+			create_info.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+			create_info.pNext = nullptr;
+			return create_info;
+		}
+
+		/// <summary>
 		/// SPECIFY:image, viewType, format, components, subresourceRange.////
 		/// The image cannot be used directly, we need more information.
 		/// </summary>

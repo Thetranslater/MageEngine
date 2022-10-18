@@ -2,10 +2,13 @@
 #include"engine_core/render_engine/window_system.h"
 #include"engine_core/render_engine/render_system.h"
 
+#include"asset/resource_manager/resource_manager.h"
+
 namespace Mage {
 	MageEngineGlobalContext engine_global_context;
 
 	void MageEngineGlobalContext::startEngine() {
+		m_resource_manager = std::make_shared<ResourceManager>();
 
 		m_window_system = std::make_shared<WindowSystem>();
 		m_window_system->initialize();

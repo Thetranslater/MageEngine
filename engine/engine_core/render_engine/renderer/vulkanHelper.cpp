@@ -101,6 +101,18 @@ namespace Mage {
 		MAGE_THROW(failed to find suitable memory type for buffer)
 	}
 
+	VkFormat VulkanHelper::findDepthFormat(VulkanRHI* rhi, const std::vector<VkFormat>& formats, VkImageTiling tiling, VkFormatFeatureFlags features) {
+		for (auto format : formats) {
+			VkFormatProperties props;
+			//the support of a format cann be queried using....
+			vkGetPhysicalDeviceFormatProperties(rhi->m_physical_device, format, &props);
+
+			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) return format;
+			else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) return format;
+		}
+		throw std::runtime_error("failed to find support format!");
+	}
+
 	bool VulkanHelper::checkDeviceExtensionSupport(VkPhysicalDevice& physical_device) {
 		uint32_t extensionCount{ 0 };
 		vkEnumerateDeviceExtensionProperties(physical_device, nullptr, &extensionCount, nullptr);

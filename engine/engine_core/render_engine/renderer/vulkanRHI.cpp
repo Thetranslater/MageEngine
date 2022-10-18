@@ -43,6 +43,8 @@ namespace Mage {
 
 		createSwapchainImageViews();
 
+		createDepthImage();
+
 		createCommandPools();
 
 		createCommandBuffers();
@@ -374,6 +376,35 @@ namespace Mage {
 		}
 	}
 
+	void VulkanRHI::createDepthImage() {
+		m_depth_format = VulkanHelper::findDepthFormat(this, { VK_FORMAT_D32_SFLOAT,VK_FORMAT_D32_SFLOAT_S8_UINT,VK_FORMAT_D24_UNORM_S8_UINT }, VK_IMAGE_TILING_OPTIMAL, VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+
+		VulkanHelper::imageCreationHelper(this, m_swapchain_extent.width, m_swapchain_extent.height,
+			m_depth_format,
+			1,
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+			m_depth_image, m_depth_image_memory);
+
+		VkImageViewCreateInfo depthViewInfo = VulkanInfo::aboutVkImageViewCeateInfo();
+
+		depthViewInfo.image = m_depth_image;
+		depthViewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		depthViewInfo.format = m_depth_format;
+		depthViewInfo.subresourceRange = VulkanInfo::aboutVkImageSubresourceRange();
+		depthViewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		depthViewInfo.subresourceRange.layerCount = 1;
+		depthViewInfo.subresourceRange.levelCount = 1;
+		depthViewInfo.subresourceRange.baseMipLevel = 0;
+		depthViewInfo.subresourceRange.baseArrayLayer = 0;
+
+
+		if (VK_SUCCESS != vkCreateImageView(m_device, &depthViewInfo, nullptr, &m_depth_image_view)) {
+			MAGE_THROW(failed to create depth image views)
+		}
+	}
+
 	void VulkanRHI::createCommandPools() {
 		VkCommandPoolCreateInfo poolInfo = VulkanInfo::aboutVkCommandPoolCreateInfo();
 		poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
@@ -418,8 +449,8 @@ namespace Mage {
 		createInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		createInfo.pPoolSizes = poolSizes.data();
 
-		if (VK_SUCCESS != vkCreateDescriptorPool(m_device, &createInfo, nullptr, &m_market)) {
-			MAGE_THROW(failed to create descriptor market)
+		if (VK_SUCCESS != vkCreateDescriptorPool(m_device, &createInfo, nullptr, &m_descriptor_pool)) {
+			MAGE_THROW(failed to create descriptor descriptor pool)
 		}
 	}
 

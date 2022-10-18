@@ -5,6 +5,7 @@
 
 #include<vector>
 #include<iostream>
+#include<type_traits>
 
 namespace Mage {
 
@@ -30,7 +31,8 @@ namespace Mage {
 		
 		//find a suitable memory type for buffer
 		static uint32_t findMemoryType(VulkanRHI* rhi, uint32_t typeFilter, VkMemoryPropertyFlags properties);
-
+		//find a suitable depth format
+		static VkFormat findDepthFormat(VulkanRHI* rhi, const std::vector<VkFormat>& formats, VkImageTiling tiling, VkFormatFeatureFlags features);
 		//TODO:include depth-stencil image layout transition
 		//transition image layout
 		static void transitionImageLayout(VulkanRHI* rhi, VkImage image, VkImageLayout old_layout, VkImageLayout new_layout, uint32_t miplevels);
@@ -51,10 +53,13 @@ namespace Mage {
 
 		//move helper
 		//库中的模板函数声明和定义需要放在一起
-		template<typename DataT>
-		static void moveDataFromVectorToBuffer(VulkanRHI* rhi, std::vector<DataT>& datas, VkBuffer& buffer) {
-
-			size_t size = sizeof(DataT) * datas.size();
+		template<typename Input>
+		static void moveDataFromVectorToBuffer(VulkanRHI* rhi, Input start, Input end, VkBuffer& buffer) {
+			size_t size{ 0 };
+			if constexpr (std::is_pointer<Input>::value) {
+				size = sizeof(std::remove_pointer<Input>::type) * (end - start);
+			}
+			else size = sizeof(Input::value_type) * (end - start);
 			VkBuffer staging_buffer;
 			VkDeviceMemory staging_memory;
 
@@ -63,7 +68,7 @@ namespace Mage {
 			void* ppdata{ nullptr };
 
 			vkMapMemory(rhi->m_device, staging_memory, 0, size, 0, &ppdata);
-			memcpy(ppdata, datas.data(), size);
+			memcpy(ppdata, (const void*)&(*start), size);
 			vkUnmapMemory(rhi->m_device, staging_memory);
 
 			fromBufferToBufferCopyHelper(rhi, staging_buffer, buffer, size);
@@ -71,7 +76,6 @@ namespace Mage {
 			vkDestroyBuffer(rhi->m_device, staging_buffer, nullptr);
 			vkFreeMemory(rhi->m_device, staging_memory, nullptr);
 		}
-
 		static void fromBufferToBufferCopyHelper(VulkanRHI* rhi, VkBuffer src, VkBuffer dst, VkDeviceSize size);
 		static void fromBufferToImageCopyHelper(VulkanRHI* rhi, VkBuffer src, VkImage dst, uint32_t width, uint32_t height);
 	};
