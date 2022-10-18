@@ -15,17 +15,26 @@ namespace Mage {
 		Reflection::TypeMetaRegister::Register();
 		engine_global_context.startEngine();
 		
-		tinygltf::Model markov;
+		Model markov;
 		std::string err;
 		std::string warn;
 		engine_global_context.m_resource_manager->loadModelFromFile("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn);
-		Model mage_model;
-		mage_model.loadFromgLTF_Model(markov);
-		auto vulkan_resource = mage_model.asVulkanRenderModel(engine_global_context.m_render_system->getVulkanRHI().get());
+		
+		//auto vulkan_resource = markov.asVulkanRenderModel(engine_global_context.m_render_system->getVulkanRHI().get());
+	}
+
+	void MageEngine::logicalTick(float delta_time) {
+
+	}
+
+	void MageEngine::renderTick(float delta_time) {
+		engine_global_context.m_render_system->tick();
 	}
 
 	void MageEngine::tick(float delta_time) {
-		engine_global_context.m_render_system->tick();
+		logicalTick(delta_time);
+
+		renderTick(delta_time);
 		//after render tick
 		engine_global_context.m_window_system->pollEvents();
 	}

@@ -76,7 +76,7 @@ namespace Mage {
 
 		void loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler);
 
-		bool loadTextureData(const std::string& base_dir);
+		bool load(const std::string& base_dir, std::string& err, std::string& warn);
 
 	public:
 		uint32_t m_height{0};
@@ -109,6 +109,39 @@ namespace Mage {
 		void loadFromgLTF_Mesh(tinygltf::Mesh& mesh);
 	public:
 		std::vector<Primitive> m_primitives;
+	};
+
+	struct TextureInfo {
+		int m_index{ -1 };
+		int m_texCoord{ 0 };
+	};
+	struct NormalTextureInfo {
+		int m_index{ -1 };
+		int m_texCoord{ 0 };
+		float m_scale{ 1.f };
+	};
+	struct PbrMetallicRoughness {
+		std::array<float, 4> m_base_color_factor{ 1.f,1.f,1.f,1.f };
+		float m_metallic_factor{ 1.f };
+		float m_roughness_factor{ 1.f };
+		TextureInfo m_base_color_texture;
+		TextureInfo m_metallic_roughness_texture;
+	};
+	struct OcclusionTextureInfo {
+		int m_index{ -1 };
+		int m_texCoord{ 0 };
+		float m_strength{ 1.f };
+	};
+
+	class Material {
+	public:
+		void loadFromgLTF_Material(tinygltf::Material& material);
+	public:
+		std::array<float, 3>	m_emissive_factor{ 0.f,0.f,0.f };
+		PbrMetallicRoughness	m_pbr_metallic_roughness;
+		NormalTextureInfo		m_normal_texture;
+		OcclusionTextureInfo	m_occlusion_texture;
+		TextureInfo				m_emissive_texture;
 	};
 
 	class Accessor {
@@ -154,8 +187,10 @@ namespace Mage {
 		void loadFromgLTF_Buffer(tinygltf::Buffer& buffer);
 		unsigned char* data() { return m_data.data(); }
 		uint32_t size() { return static_cast<uint32_t>(m_data.size()); }
+		bool load(const std::string& base_dir, std::string& err, std::string& warn);
 	private:
 		std::vector<unsigned char> m_data;
+		std::string m_uri;
 	};
 
 	class BufferView {
@@ -203,15 +238,16 @@ namespace Mage {
 		//TODO:render system interact the resources by this.And NONE FINISH!!!
 		VkRenderModel asVulkanRenderModel(VulkanRHI* rhi);
 
+		std::string m_model_filepath;
+
 		std::vector<Mesh> m_meshes;
 		std::vector<Accessor> m_accessors;
-		//std::vector<Buffer> m_buffers;
+		std::vector<Buffer> m_buffers;
 		std::vector<BufferView> m_buffer_views;
 		std::vector<Texture> m_textures;
 		std::vector<Node> m_nodes;
+		std::vector<Material> m_materials;
 		//std::vector<Sampler> m_samplers;
-		std::vector<std::string> m_buffer_relative_uris;
-		std::vector<std::string> m_texture_relative_uris;
 	};
 
 	//Animation asset types

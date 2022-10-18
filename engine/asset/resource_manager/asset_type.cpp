@@ -11,6 +11,8 @@
 namespace Mage {
 	//buffer
 	VkBuffer Buffer::asVulkanBuffer(VulkanRHI* rhi) {
+		assert(!m_data.empty());
+
 		VkBuffer buffer;
 		VkDeviceMemory buffer_memory;
 		VulkanHelper::bufferCreationHelper(
@@ -24,9 +26,13 @@ namespace Mage {
 		return buffer;
 	}
 	void Buffer::loadFromgLTF_Buffer(tinygltf::Buffer& buffer) {
-		m_data = std::move(buffer.data);
+		//m_data = std::move(buffer.data);
+		m_uri = std::move(buffer.uri);
 	}
-
+	bool Buffer::load(const std::string& base_dir,std::string& err,std::string& warn) {
+		tinygltf::FsCallbacks fs{ &tinygltf::FileExists, &tinygltf::ExpandFilePath, &tinygltf::ReadWholeFile, &tinygltf::WriteWholeFile, nullptr };
+		return tinygltf::LoadExternalFile(&m_data, &err, &warn, m_uri, base_dir, false, 0, 0, &fs);
+	}
 
 	//accessor
 	void Accessor::loadFromgLTF_Accessor(tinygltf::Accessor& accessor) {
@@ -40,7 +46,6 @@ namespace Mage {
 		m_min = std::move(accessor.minValues);
 	}
 
-
 	//buffer view
 	void BufferView::loadFromgLTF_BufferView(tinygltf::BufferView& buffer_view) {
 		m_buffer		= buffer_view.buffer;
@@ -50,7 +55,6 @@ namespace Mage {
 
 		m_target		= static_cast<Target>(buffer_view.target);
 	}
-
 
 	//sampler
 	VkSampler Sampler::asVulkanSampler(VulkanRHI* rhi, VkSamplerCreateInfo* optional_info) {
@@ -133,7 +137,6 @@ namespace Mage {
 
 		m_address_mode_w = MageSamplerAddressMode::MAGE_SAMPLER_ADDRESS_MODE_REPEAT;
 	}
-
 
 	//texture
 	VkRenderTexture Texture::asVulkanRenderTexture(VulkanRHI* rhi) {
@@ -282,8 +285,38 @@ namespace Mage {
 			//TODO: fetch texture data in buffer.
 		}
 	}
-	bool Texture::loadTextureData(const std::string& base_dir) {
+	bool Texture::load(const std::string& base_dir, std::string& err, std::string& warn) {
+		tinygltf::FsCallbacks fs{ &tinygltf::FileExists, &tinygltf::ExpandFilePath, &tinygltf::ReadWholeFile, &tinygltf::WriteWholeFile, nullptr };
+		return tinygltf::LoadExternalFile(&m_data, &err, &warn, m_uri, base_dir, false, 0, 0, &fs);
+	}
 
+	//Material
+	void Material::loadFromgLTF_Material(tinygltf::Material& material) {
+		m_emissive_factor[0] = (float)material.emissiveFactor[0];
+		m_emissive_factor[1] = (float)material.emissiveFactor[1];
+		m_emissive_factor[2] = (float)material.emissiveFactor[2];
+
+		m_pbr_metallic_roughness.m_base_color_factor[0]	= (float)material.pbrMetallicRoughness.baseColorFactor[0];
+		m_pbr_metallic_roughness.m_base_color_factor[1]	= (float)material.pbrMetallicRoughness.baseColorFactor[1];
+		m_pbr_metallic_roughness.m_base_color_factor[2]	= (float)material.pbrMetallicRoughness.baseColorFactor[2];
+		m_pbr_metallic_roughness.m_base_color_factor[3]	= (float)material.pbrMetallicRoughness.baseColorFactor[3];
+		m_pbr_metallic_roughness.m_metallic_factor		= (float)material.pbrMetallicRoughness.metallicFactor;
+		m_pbr_metallic_roughness.m_roughness_factor		= (float)material.pbrMetallicRoughness.roughnessFactor;
+		m_pbr_metallic_roughness.m_base_color_texture.m_index				= material.pbrMetallicRoughness.baseColorTexture.index;
+		m_pbr_metallic_roughness.m_base_color_texture.m_texCoord			= material.pbrMetallicRoughness.baseColorTexture.texCoord;
+		m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index		= material.pbrMetallicRoughness.metallicRoughnessTexture.index;
+		m_pbr_metallic_roughness.m_metallic_roughness_texture.m_texCoord	= material.pbrMetallicRoughness.metallicRoughnessTexture.texCoord;
+
+		m_normal_texture.m_index	= material.normalTexture.index;
+		m_normal_texture.m_texCoord = material.normalTexture.texCoord;
+		m_normal_texture.m_scale	= material.normalTexture.scale;
+
+		m_emissive_texture.m_index		= material.emissiveTexture.index;
+		m_emissive_texture.m_texCoord	= material.emissiveTexture.texCoord;
+
+		m_occlusion_texture.m_index		= material.occlusionTexture.index;
+		m_occlusion_texture.m_texCoord	= material.occlusionTexture.texCoord;
+		m_occlusion_texture.m_strength	= material.occlusionTexture.strength;
 	}
 
 	//primitive
@@ -294,7 +327,6 @@ namespace Mage {
 		m_mode = primitive.mode;
 	}
 
-
 	//mesh
 	void Mesh::loadFromgLTF_Mesh(tinygltf::Mesh& mesh) {
 		m_primitives.resize(mesh.primitives.size());
@@ -302,7 +334,6 @@ namespace Mage {
 			m_primitives[i].loadFromgLTF_Primitive(mesh.primitives[i]);
 		}
 	}
-
 
 	//node
 	void Node::loadFromgLTF_Node(tinygltf::Node& node) {
@@ -329,16 +360,18 @@ namespace Mage {
 	void Model::loadFromgLTF_Model(tinygltf::Model& model) {
 		m_meshes.resize(model.meshes.size());
 		m_accessors.resize(model.accessors.size());
-		m_buffer_relative_uris.resize(model.buffers.size());
+		m_buffers.resize(model.buffers.size());
 		m_buffer_views.resize(model.bufferViews.size());
 		m_textures.resize(model.textures.size());
 		m_nodes.resize(model.nodes.size());
+		m_materials.resize(model.materials.size());
 
 		for (int i = 0; i < m_meshes.size();				++i) m_meshes[i].loadFromgLTF_Mesh(model.meshes[i]);
 		for (int i = 0; i < m_accessors.size();				++i) m_accessors[i].loadFromgLTF_Accessor(model.accessors[i]);
-		for (int i = 0; i < m_buffer_relative_uris.size();	++i) m_buffer_relative_uris[i] = std::move(model.buffers[i].uri);
+		for (int i = 0; i < m_buffers.size();				++i) m_buffers[i].loadFromgLTF_Buffer(model.buffers[i]);
 		for (int i = 0; i < m_buffer_views.size();			++i) m_buffer_views[i].loadFromgLTF_BufferView(model.bufferViews[i]);
 		for (int i = 0; i < m_textures.size();				++i) m_textures[i].loadFromgLTF_Image(model.images[model.textures[i].source], model.samplers[model.textures[i].sampler]);
+		for (int i = 0; i < m_materials.size();				++i) m_materials[i].loadFromgLTF_Material(model.materials[i]);
 		for (int i = 0; i < m_nodes.size();					++i) m_nodes[i].loadFromgLTF_Node(model.nodes[i]);
 		for (int i = 0; i < m_nodes.size();					++i) {
 			for (int j = 0; j < m_nodes[i].m_children.size(); ++j) {

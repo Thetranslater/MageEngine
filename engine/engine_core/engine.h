@@ -11,5 +11,7 @@ namespace Mage {
 
 		void tick(float delta_time);
 	private:
+		void logicalTick(float delta_time);
+		void renderTick(float delta_time);
 	};
 }

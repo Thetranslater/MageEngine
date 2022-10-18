@@ -6,6 +6,7 @@
 #include"engine_core/render_engine/render_pass.h"
 #include"engine_core/render_engine/render_passes/DevRenderPass.h"
 #include"engine_core/render_engine/render_mesh.h"
+#include"engine_core/render_engine/render_scene.h"
 
 #include<vector>
 
@@ -27,6 +28,8 @@ namespace Mage {
 		//rhi setup
 		m_vulkan_rhi = std::make_shared<VulkanRHI>();
 		m_vulkan_rhi->initialize(window_system);
+
+		m_render_scene = std::make_shared<RenderScene>();
 		
 		//resouces setup
 		//尚未编写资源类代码，目前显式复制资源
@@ -47,6 +50,8 @@ namespace Mage {
 
 	//TODO
 	void RenderSystem::tick() {
+		updateRenderScene();
+
 		m_vulkan_rhi->prepareContext();
 
 		m_vulkan_rhi->waitForFences();
