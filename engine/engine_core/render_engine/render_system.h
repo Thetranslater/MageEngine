@@ -16,7 +16,7 @@ namespace Mage {
 		//TODO:initialize
 		void initialize(std::shared_ptr<WindowSystem> window_system);
 		void tick();
-		void updateRenderScene();
+		void preprocess();
 
 		std::shared_ptr<VulkanRHI> getVulkanRHI() { return m_vulkan_rhi; }
 	private:

@@ -50,7 +50,7 @@ namespace Mage {
 
 	//TODO
 	void RenderSystem::tick() {
-		updateRenderScene();
+		preprocess();
 
 		m_vulkan_rhi->prepareContext();
 
@@ -61,5 +61,9 @@ namespace Mage {
 		m_render_pass->draw();
 
 		m_vulkan_rhi->prepareVulkanRHIAfterRender();
+	}
+
+	void RenderSystem::preprocess() {
+
 	}
 }

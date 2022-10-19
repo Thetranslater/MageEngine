@@ -4,6 +4,8 @@
 #include<engine_core/render_engine/renderer/vulkanRHI.h>
 #include<engine_core/render_engine/renderer/vulkanHelper.h>
 
+#define TINYGLTF_NO_STB_IMAGE
+#define TINYGLTF_IMPLEMENTATION
 #include<asset/resource_manager/asset_type.h>
 #include<engine_core/platform/file_system.h>
 
@@ -379,102 +381,11 @@ namespace Mage {
 			}
 		}
 		
+		//TODO:process transform matrixs that attached to specific mesh 
 	}
-	//TODO:NONE FINISH!!!
-	VkRenderModel Model::asVulkanRenderModel(VulkanRHI* rhi) {
-		VkRenderModel render_model;
-		//假定buffer所有数据紧密排列，顶点数据按照顺序排列，索引数据组合成一个buffer view，所有属性数据挨在一起。
-		int index_view_map{ -1 };
-		std::array<int, 6> binding_view_map{ -1,-1,-1,-1,-1,-1 };
+	//TODO
+	VkRenderModelInfo Model::getVkRenderModelInfo() {
 
-		//TODO：因为有很多假定情况，所以泛用性不强，有待升级，比如更加混乱的情况，应该将数据首先聚合起来，在复制到vulkan中。
-		//在假定情况下，以第一个primitive为基础通过accessor及buffer view查询各数据对应的buffer
-		auto& guide_primitive = m_meshes[0].m_primitives[0];
-		index_view_map = m_accessors[guide_primitive.m_indices].m_buffer_view;
-
-		auto check_attribute = [&](const std::string& name, int binding/*与顶点属性的binding对应*/) {
-			if (guide_primitive.m_attributes.count(name)) {
-				binding_view_map[binding] = m_accessors[guide_primitive.m_attributes[name]].m_buffer_view;
-			}
-		};
-		check_attribute("POSITION", 0);
-		check_attribute("NORMAL", 1);
-		check_attribute("TANGENT", 2);
-		check_attribute("TEXCOORD_0", 3);
-		check_attribute("TEXCOORD_1", 4);
-		check_attribute("COLOR_0", 5);
-
-		//index buffer
-		auto& index_buffer_view = m_buffer_views[index_view_map];
-		VulkanHelper::bufferCreationHelper(rhi, index_buffer_view.m_byte_length, 
-			VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT, 
-			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-			render_model.m_index_buffer,render_model.m_index_memory);
-
-		auto index_data_move_start = m_buffers[index_buffer_view.m_buffer].data() + index_buffer_view.m_byte_offset;
-		VulkanHelper::moveDataFromVectorToBuffer<unsigned char*>(rhi, index_data_move_start, index_data_move_start + index_buffer_view.m_byte_length, render_model.m_index_buffer);
-
-		//vertex buffer
-		for (int i = 0; i < binding_view_map.size(); ++i) {
-			if (binding_view_map[i] != -1) {
-				//have attribute data
-				auto& attribute_buffer_view = m_buffer_views[binding_view_map[i]];
-				VulkanHelper::bufferCreationHelper(rhi, attribute_buffer_view.m_byte_length,
-					VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
-					VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-					render_model.m_vertex_buffers[i], render_model.m_vertex_memories[i]);
-
-				auto attribute_data_move_start = m_buffers[attribute_buffer_view.m_buffer].data() + attribute_buffer_view.m_byte_offset;
-				VulkanHelper::moveDataFromVectorToBuffer<unsigned char*>(rhi, attribute_data_move_start, attribute_data_move_start + attribute_buffer_view.m_byte_length, render_model.m_vertex_buffers[i]);
-			}
-			else {
-				render_model.m_vertex_buffers[i] = VK_NULL_HANDLE;
-				render_model.m_vertex_memories[i] = VK_NULL_HANDLE;
-			}
-		}
-
-		//render texture
-		render_model.m_p_textures.resize(m_textures.size());
-		for (int i = 0; i < render_model.m_p_textures.size(); ++i) {
-			render_model.m_p_textures[i] = std::make_shared<Mage::VkRenderTexture>(m_textures[i].asVulkanRenderTexture(rhi));
-		}
-		
-		//textures' descriptor sets
-		VkDescriptorSetLayoutCreateInfo textures_layout_create_info = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
-		//TODO:binding count may be increase
-		textures_layout_create_info.bindingCount = 3;
-		//TODO
-		std::array<VkDescriptorSetLayoutBinding, 3> bindings;
-		{
-			bindings[0] = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
-			bindings[0].binding = 0; //albedo
-			bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			bindings[0].descriptorCount = 1;
-			bindings[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-			bindings[0].pImmutableSamplers = nullptr;
-
-			bindings[1] = bindings[0];
-			bindings[1].binding = 1;
-
-			bindings[2] = bindings[0];
-			bindings[2].binding = 2;
-		}
-		textures_layout_create_info.pBindings = bindings.data();
-
-		VkDescriptorSetLayout textures_layout;
-		if (VK_SUCCESS != vkCreateDescriptorSetLayout(rhi->m_device, &textures_layout_create_info, nullptr, &textures_layout)) {
-			MAGE_THROW(failed to create textures layout)
-		}
-
-		VkDescriptorSetAllocateInfo textures_set_alloc_info = VulkanInfo::aboutVkDescriptorSetAllocateInfo();
-		textures_set_alloc_info.descriptorPool = rhi->m_descriptor_pool;
-		textures_set_alloc_info.descriptorSetCount = 1;
-		textures_set_alloc_info.pSetLayouts = &textures_layout;
-		if (VK_SUCCESS != vkAllocateDescriptorSets(rhi->m_device, &textures_set_alloc_info, &render_model.m_texture_descriptor_sets)) {
-			MAGE_THROW(failed to create model descriptor set)
-		}
-
-		return render_model;
 	}
 
 }

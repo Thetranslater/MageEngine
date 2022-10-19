@@ -18,6 +18,7 @@
 namespace Mage {
 
 	class VulkanRHI;
+	struct VkRenderModelInfo;
 
 	enum MageFormat {
 		MAGE_FORMAT_UNDEFINED = 0,
@@ -235,8 +236,8 @@ namespace Mage {
 
 		void loadFromgLTF_Model(tinygltf::Model&& gltf_model);
 
-		//TODO:render system interact the resources by this.And NONE FINISH!!!
-		VkRenderModel asVulkanRenderModel(VulkanRHI* rhi);
+		//从model中获得rendermodel的信息，主要处理node节点和primitive
+		VkRenderModelInfo getVkRenderModelInfo();
 
 		std::string m_model_filepath;
 

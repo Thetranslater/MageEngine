@@ -16,12 +16,6 @@ namespace Mage {
 		VkSampler m_sampler{ VK_NULL_HANDLE };
 	};
 
-	struct VkRenderSubMesh {
-		glm::mat4x4 m_transform;
-		int m_index_offset{0};
-		int m_index_count{0};
-	};
-
 	struct VkRenderMeshURI {
 		std::string m_uri;
 		bool operator==(const VkRenderMeshURI & rh) const {
@@ -36,8 +30,6 @@ namespace Mage {
 
 		std::array<VkBuffer, 6> m_vertex_attribute_buffers{VK_NULL_HANDLE};
 		std::array<VkBuffer, 6> m_vertex_attribute_memories{VK_NULL_HANDLE};
-
-		std::vector<VkRenderSubMesh> m_submeshes;
 	};
 
 	struct VkRenderMaterialURI {

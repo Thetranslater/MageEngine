@@ -1,5 +1,3 @@
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
 #include<asset/resource_manager/resource_manager.h>
 
 #include<asset/resource_manager/asset_type.h>
