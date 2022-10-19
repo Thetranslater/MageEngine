@@ -8,6 +8,7 @@
 namespace Mage {
 	struct VkRenderMeshDescription {
 		enum {
+			MESH_NO_USE = 0,
 			MESH_USE_BASECOLOR_TEXUTRE = 1,
 			MESH_USE_NORMAL_TEXTURE = 2,
 			MESH_USE_METALLICROUGHNESS_TEXTURE = 4
@@ -15,11 +16,11 @@ namespace Mage {
 
 		int m_index_offset;
 		int m_index_count;
-		float m_submesh_metallic_factor{ 1.f };
-		float m_submesh_roughness_factor{ 1.f };
+		float m_metallic_factor{ 1.f };
+		float m_roughness_factor{ 1.f };
 
-		glm::vec4 m_submesh_base_color_factor{ 1.f,1.f,1.f,1.f };
-		glm::mat4x4 m_submesh_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
+		glm::vec4 m_base_color_factor{ 1.f,1.f,1.f,1.f };
+		glm::mat4x4 m_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
 		unsigned char m_textures_use_info{ 0 }; //no use
 	};
 

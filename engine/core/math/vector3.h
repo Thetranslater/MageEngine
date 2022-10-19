@@ -3,7 +3,11 @@
 #include<cmath>
 #include<cassert>
 
+#include<glm-master/glm/vec3.hpp>
+
 #include<core/math/math.h>
+
+#include<vector>
 
 namespace Mage {
 	class Vector3 {
@@ -14,8 +18,9 @@ namespace Mage {
 	public:
 		//constructor
 		Vector3() = default;
-		Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {};
-		Vector3(const Vector3& _vec) :x(_vec.x), y(_vec.y), z(_vec.z) {};
+		Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
+		Vector3(const Vector3& _vec) :x(_vec.x), y(_vec.y), z(_vec.z) {}
+		Vector3(const std::vector<float>& data) :x(data[0]), y(data[1]), z(data[2]) {}
 
 		//destructor
 		~Vector3() = default;
@@ -207,6 +212,9 @@ namespace Mage {
 			return Vector3(lhs.x * reciprocal_scale, lhs.y * reciprocal_scale, lhs.z * reciprocal_scale);
 		}
 		friend Vector3 operator/(const Vector3& lhs, const Vector3& rhs) { return Vector3(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z); }
+
+		operator glm::vec3() { return glm::vec3(x, y, z); }
+		operator glm::vec3() const { return glm::vec3(x, y, z); }
 		//TODO:
 		friend Vector3 operator==(const Vector3& lhs, const Vector3& rhs);
 

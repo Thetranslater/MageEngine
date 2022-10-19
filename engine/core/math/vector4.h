@@ -2,6 +2,9 @@
 
 #include<cmath>
 #include<cassert>
+#include<vector>
+
+#include<glm-master/glm/vec4.hpp>
 
 namespace Mage {
 	class Vector4 {
@@ -16,6 +19,7 @@ namespace Mage {
 		Vector4() = default;
 		Vector4(float _x, float _y, float _z, float _w) :x(_x), y(_y), z(_z), w(_w) {}
 		Vector4(const Vector4& _vec) :x(_vec.x), y(_vec.y), z(_vec.z), w(_vec.w) {}
+		Vector4(const std::vector<float>& data) :x(data[0]), y(data[1]), z(data[2]), w(data[3]) {}
 
 		//destructor
 		~Vector4() = default;
@@ -131,5 +135,11 @@ namespace Mage {
 			return Vector4(lhs.x * reciprocal_scale, lhs.y * reciprocal_scale, lhs.z * reciprocal_scale, lhs.w * reciprocal_scale);
 		}
 		friend Vector4 operator/(const Vector4& lhs, const Vector4& rhs) { return Vector4(lhs.x / rhs.x, lhs.y / rhs.y, lhs.z / rhs.z, lhs.w / rhs.w); }
+		operator glm::vec4() {
+			return glm::vec4(x, y, z, w);
+		}
+		operator glm::vec4() const{
+			return glm::vec4(x, y, z, w);
+		}
 	};
 }

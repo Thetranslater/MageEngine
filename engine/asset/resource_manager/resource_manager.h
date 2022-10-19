@@ -1,6 +1,5 @@
 #pragma once
 #define TINYGLTF_NO_STB_IMAGE_WRITE
-#define TINYGLTF_NO_STB_IMAGE
 #include<tinygITF/tiny_gltf.h>
 
 namespace Mage {

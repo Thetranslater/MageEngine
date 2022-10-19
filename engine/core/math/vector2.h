@@ -3,6 +3,9 @@
 #include<cmath>
 #include<cassert>
 #include<string>
+#include<vector>
+
+#include<glm-master/glm/vec2.hpp>
 
 #include<core/math/math.h>
 
@@ -168,6 +171,8 @@ namespace Mage {
 			return Vector2(lhs.x * reciprocal_scale, lhs.y * reciprocal_scale);
 		}
 		friend Vector2 operator/(const Vector2& lhs, const Vector2& rhs) { return Vector2(lhs.x / rhs.x, lhs.y / rhs.y); }
+		operator glm::vec2() { return glm::vec2(x, y); }
+		operator glm::vec2() const { return glm::vec2(x, y); }
 
 		//static properties
 		static const Vector2 down;

@@ -7,6 +7,10 @@
 
 #include<vulkan/vulkan.h>
 
+#include<core/math/matrix4x4.h>
+#include<core/math/vector3.h>
+#include<core/math/vector4.h>
+
 #include<engine_core/render_engine/render_resource.h>
 #include<engine_core/render_engine/render_model.h>
 
@@ -100,9 +104,9 @@ namespace Mage {
 		void loadFromgLTF_Primitive(tinygltf::Primitive& primitive);
 	public:
 		std::map<std::string, int> m_attributes;
-		int m_material;
-		int m_indices;
-		int m_mode;
+		int m_material{ -1 };
+		int m_indices{ -1 };
+		int m_mode{ -1 };
 	};
 
 	class Mesh {
@@ -117,28 +121,28 @@ namespace Mage {
 		int m_texCoord{ 0 };
 	};
 	struct NormalTextureInfo {
-		int m_index{ -1 };
-		int m_texCoord{ 0 };
-		float m_scale{ 1.f };
+		int		m_index{ -1 };
+		int		m_texCoord{ 0 };
+		float	m_scale{ 1.f };
 	};
 	struct PbrMetallicRoughness {
-		std::array<float, 4> m_base_color_factor{ 1.f,1.f,1.f,1.f };
-		float m_metallic_factor{ 1.f };
-		float m_roughness_factor{ 1.f };
+		Vector4		m_base_color_factor{ 1.f,1.f,1.f,1.f };
+		float		m_metallic_factor{ 1.f };
+		float		m_roughness_factor{ 1.f };
 		TextureInfo m_base_color_texture;
 		TextureInfo m_metallic_roughness_texture;
 	};
 	struct OcclusionTextureInfo {
-		int m_index{ -1 };
-		int m_texCoord{ 0 };
-		float m_strength{ 1.f };
+		int		m_index{ -1 };
+		int		m_texCoord{ 0 };
+		float	m_strength{ 1.f };
 	};
 
 	class Material {
 	public:
 		void loadFromgLTF_Material(tinygltf::Material& material);
 	public:
-		std::array<float, 3>	m_emissive_factor{ 0.f,0.f,0.f };
+		Vector3					m_emissive_factor{ 0.f,0.f,0.f };
 		PbrMetallicRoughness	m_pbr_metallic_roughness;
 		NormalTextureInfo		m_normal_texture;
 		OcclusionTextureInfo	m_occlusion_texture;
@@ -189,7 +193,7 @@ namespace Mage {
 		unsigned char* data() { return m_data.data(); }
 		uint32_t size() { return static_cast<uint32_t>(m_data.size()); }
 		bool load(const std::string& base_dir, std::string& err, std::string& warn);
-	private:
+	public:
 		std::vector<unsigned char> m_data;
 		std::string m_uri;
 	};
@@ -224,12 +228,12 @@ namespace Mage {
 		std::vector<float> m_scale;
 		std::vector<float> m_translation;
 
-		std::vector<float> m_matrix;
+		std::vector<float> m_matrix; //column-major
 
 		int m_parent{ -1 };
 	};
 
-	//TODO:PBR,更改为于render resource层对接
+	//TODO:PBR,更改为于render resource层对接。未来需要全部抽象为gameobject，mesh作为component实现。
 	class Model {
 	public:
 		void loadFromgLTF_Model(tinygltf::Model& gltf_model);
@@ -249,6 +253,12 @@ namespace Mage {
 		std::vector<Node> m_nodes;
 		std::vector<Material> m_materials;
 		//std::vector<Sampler> m_samplers;
+
+		//TODO:等待删除
+		GUID32 m_go_id;
+	private:
+		//for mesh
+		void processNode(const std::vector<Node>& nodes, int curr_index, const Matrix4x4& parent_matrix, const std::function<void(const int&, const Matrix4x4&)>& process_func);
 	};
 
 	//Animation asset types

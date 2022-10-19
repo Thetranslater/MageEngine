@@ -1,5 +1,7 @@
 #pragma once
 
+#include<glm-master/glm/mat4x4.hpp>
+
 #include<core/math/math.h>
 #include<core/math/vector3.h>
 #include<core/math/vector4.h>
@@ -24,6 +26,17 @@ namespace Mage {
 			matrix[2][0] =m20, matrix[2][1] =m21, matrix[2][2] =m22, matrix[2][3] =m23 ;
 			matrix[3][0] =m30, matrix[3][1] =m31, matrix[3][2] =m32, matrix[3][3] =m33 ;
 		}
+		Matrix4x4(const Matrix4x4& r) {
+			matrix[0][0] = r[0][0], matrix[0][1] = r[0][1], matrix[0][2] = r[0][2], matrix[0][3] = r[0][3];
+			matrix[1][0] = r[1][0], matrix[1][1] = r[1][1], matrix[1][2] = r[1][2], matrix[1][3] = r[1][3];
+			matrix[2][0] = r[2][0], matrix[2][1] = r[2][1], matrix[2][2] = r[2][2], matrix[2][3] = r[2][3];
+			matrix[3][0] = r[3][0], matrix[3][1] = r[3][1], matrix[3][2] = r[3][2], matrix[3][3] = r[3][3];
+		}
+		Matrix4x4(const std::vector<float>& data) :
+			Matrix4x4(data[0], data[4], data[8], data[12],
+				data[1], data[5], data[9] , data[13],
+				data[2], data[6], data[10], data[14],
+				data[3], data[7], data[11], data[15]) {}
 
 		//destructor
 		~Matrix4x4() = default;
@@ -80,6 +93,30 @@ namespace Mage {
 			matrix[index][1] = column.y;
 			matrix[index][2] = column.z;
 			matrix[index][3] = column.w;
+		}
+		//column-major
+		void SetMatrix(const std::vector<float>& data) {
+			matrix[0][0] = data[0], matrix[0][1] = data[4], matrix[0][2] = data[8], matrix[0][3] = data[12];
+			matrix[1][0] = data[1], matrix[1][1] = data[5], matrix[1][2] = data[9], matrix[1][3] = data[13];
+			matrix[2][0] = data[2], matrix[2][1] = data[6], matrix[2][2] = data[10], matrix[2][3] = data[14];
+			matrix[3][0] = data[3], matrix[3][1] = data[7], matrix[3][2] = data[11], matrix[3][3] = data[15];
+		}
+
+		void SetMatrix(float m00, float m01, float m02, float m03,
+			float m10, float m11, float m12, float m13,
+			float m20, float m21, float m22, float m23,
+			float m30, float m31, float m32, float m33) {
+			matrix[0][0] = m00, matrix[0][1] = m01, matrix[0][2] = m02, matrix[0][3] = m03;
+			matrix[1][0] = m10, matrix[1][1] = m11, matrix[1][2] = m12, matrix[1][3] = m13;
+			matrix[2][0] = m20, matrix[2][1] = m21, matrix[2][2] = m22, matrix[2][3] = m23;
+			matrix[3][0] = m30, matrix[3][1] = m31, matrix[3][2] = m32, matrix[3][3] = m33;
+		}
+
+		void SetMatrix(const Matrix4x4& r) {
+			matrix[0][0] = r[0][0], matrix[0][1] = r[0][1], matrix[0][2] = r[0][2], matrix[0][3] = r[0][3];
+			matrix[1][0] = r[1][0], matrix[1][1] = r[1][1], matrix[1][2] = r[1][2], matrix[1][3] = r[1][3];
+			matrix[2][0] = r[2][0], matrix[2][1] = r[2][1], matrix[2][2] = r[2][2], matrix[2][3] = r[2][3];
+			matrix[3][0] = r[3][0], matrix[3][1] = r[3][1], matrix[3][2] = r[3][2], matrix[3][3] = r[3][3];
 		}
 
 		//make a transformation matrix through "postion rotation and the scale"
@@ -350,6 +387,21 @@ namespace Mage {
 				(rhs.x * matrix[0][0] + rhs.y * matrix[0][1] + rhs.z * matrix[0][2] + matrix[0][3]) * reciprocal_w,
 				(rhs.x * matrix[1][0] + rhs.y * matrix[1][1] + rhs.z * matrix[1][2] + matrix[1][3]) * reciprocal_w,
 				(rhs.x * matrix[2][0] + rhs.y * matrix[2][1] + rhs.z * matrix[2][2] + matrix[2][3]) * reciprocal_w);
+		}
+		
+		operator glm::mat4x4() const {
+			//our matrix keep data in row-major, but glm::mat in column-major
+			return glm::mat4x4(	matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0],
+								matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1],
+								matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2],
+								matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]);
+		}
+		operator glm::mat4x4() {
+			//our matrix keep data in row-major, but glm::mat in column-major
+			return glm::mat4x4(matrix[0][0], matrix[1][0], matrix[2][0], matrix[3][0],
+				matrix[0][1], matrix[1][1], matrix[2][1], matrix[3][1],
+				matrix[0][2], matrix[1][2], matrix[2][2], matrix[3][2],
+				matrix[0][3], matrix[1][3], matrix[2][3], matrix[3][3]);
 		}
 
 		//properties

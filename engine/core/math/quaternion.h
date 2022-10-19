@@ -1,5 +1,9 @@
 #pragma once
 
+#include<vector>
+
+#include<glm-master/glm/gtc/quaternion.hpp>
+
 #include<core/math/math.h>
 
 namespace Mage {
@@ -16,6 +20,7 @@ namespace Mage {
 		Quaternion() = default;
 		Quaternion(float _x, float _y, float _z, float _w):w(_w), x(_x), y(_y), z(_z) {}
 		Quaternion(const Quaternion& _q) :w(_q.w), x(_q.x), y(_q.y), z(_q.z) {}
+		Quaternion(const std::vector<float>& data) :w(data[3]), x(data[0]), y(data[1]), z(data[2]) {}
 
 		//destructor
 		~Quaternion() = default;
@@ -173,6 +178,8 @@ namespace Mage {
 			w -= rhs.w;
 			return *this;
 		}
+		operator glm::quat() { return glm::quat(w, x, y, z); }
+		operator glm::quat() const { return glm::quat(w, x, y, z); }
 		//friend Vector3 operator*(const Vector3& direction, const Quaternion& rotate);
 
 		//properties

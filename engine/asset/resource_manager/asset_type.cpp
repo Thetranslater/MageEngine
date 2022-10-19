@@ -1,12 +1,12 @@
 #include<assert.h>
 
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#include<asset/resource_manager/asset_type.h>
+
 #include<engine_core/render_engine/renderer/vulkanInfo.h>
 #include<engine_core/render_engine/renderer/vulkanRHI.h>
 #include<engine_core/render_engine/renderer/vulkanHelper.h>
-
-#define TINYGLTF_NO_STB_IMAGE
-#define TINYGLTF_IMPLEMENTATION
-#include<asset/resource_manager/asset_type.h>
 #include<engine_core/platform/file_system.h>
 
 
@@ -385,7 +385,84 @@ namespace Mage {
 	}
 	//TODO
 	VkRenderModelInfo Model::getVkRenderModelInfo() {
+		VkRenderModelInfo render_model_info;
+		render_model_info.m_go_id = m_go_id;
 
+		auto& mesh_info = render_model_info.m_mesh_info;
+		auto& material_info = render_model_info.m_material_info;
+
+		assert(m_buffers.size() == 1); //暂不支持多buffer
+		mesh_info.m_mesh_uri.m_uri = std::move(m_buffers.front().m_uri);
+
+		int sub_meshes_num{ 0 };
+		for (auto& mesh : m_meshes)
+			sub_meshes_num += mesh.m_primitives.size();
+		mesh_info.m_transfer_mesh_descriptions.resize(sub_meshes_num);
+		sub_meshes_num = 0;
+		auto mesh_process = [&](const int& mesh_index, const Matrix4x4& matrix)->void {
+			for (auto& primitive : m_meshes[mesh_index].m_primitives) {
+				; //TODO:目前是排除非index mesh情况，之后需要增加没有indices的情况
+				Accessor* index_accessor = nullptr;
+				Material* primitive_material = nullptr;
+
+				if (primitive.m_attributes.find("indices") != primitive.m_attributes.end()) {
+					index_accessor = &m_accessors[primitive.m_attributes["indices"]];
+					assert(index_accessor->m_buffer_view != -1);
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_offset	= index_accessor->m_byte_offset + m_buffer_views[index_accessor->m_buffer_view].m_byte_offset;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_count	= index_accessor->m_count;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_matrix			= matrix;
+				}
+				else {
+					//TODO:非索引mesh，仅有顶点数据
+				}
+
+				if (primitive.m_material != -1) {
+					primitive_material = &m_materials[primitive.m_material];
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_base_color_factor	= primitive_material->m_pbr_metallic_roughness.m_base_color_factor;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
+
+					material_info.m_material_uri.m_base_color_uri			= std::move(m_textures[primitive_material->m_pbr_metallic_roughness.m_base_color_texture.m_index].m_uri);
+					material_info.m_material_uri.m_metallic_roughness_uri	= std::move(m_textures[primitive_material->m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_uri);
+					material_info.m_material_uri.m_normal_uri				= std::move(m_textures[primitive_material->m_normal_texture.m_index].m_uri);
+
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_textures_use_info |= material_info.m_material_uri.m_base_color_uri.empty() ? VkRenderMeshDescription::MESH_NO_USE : VkRenderMeshDescription::MESH_USE_BASECOLOR_TEXUTRE;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_textures_use_info |= material_info.m_material_uri.m_metallic_roughness_uri.empty() ? VkRenderMeshDescription::MESH_NO_USE : VkRenderMeshDescription::MESH_USE_METALLICROUGHNESS_TEXTURE;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_textures_use_info |= material_info.m_material_uri.m_normal_uri.empty() ? VkRenderMeshDescription::MESH_NO_USE : VkRenderMeshDescription::MESH_USE_NORMAL_TEXTURE;
+				}
+				else {
+					//TODO:无material的primitive
+				}
+				++sub_meshes_num;
+			}
+		};
+		Matrix4x4 root_mat{ Matrix4x4::identity };
+		processNode(m_nodes, 0, root_mat, std::function<void(const int&, const Matrix4x4&)>(mesh_process));
+
+		return render_model_info;
+	}
+	void Model::processNode(const std::vector<Node>& nodes, int curr_index, const Matrix4x4& parent_matrix, const std::function<void(const int&, const Matrix4x4&)>& process_func) {
+		auto& node = nodes[curr_index];
+
+		//get local transform
+		Matrix4x4 curr_matrix{ Matrix4x4::identity };
+		if (node.m_matrix.size()) {
+			curr_matrix.SetMatrix(node.m_matrix);
+		}
+		else if (node.m_translation.size() && node.m_rotation.size() && node.m_scale.size()) {
+			curr_matrix.SetTRS(Vector3(node.m_translation), Quaternion(node.m_rotation), Vector3(node.m_scale));
+		}
+
+		//process node
+		if (node.m_mesh != -1) {
+			process_func(node.m_mesh, parent_matrix * curr_matrix);
+		}
+		//TODO:process other things
+
+		//process children
+		for (auto& child : node.m_children) {
+			processNode(nodes, child, curr_matrix, process_func);
+		}
 	}
 
 }
