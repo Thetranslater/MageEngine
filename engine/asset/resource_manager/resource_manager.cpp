@@ -1,5 +1,8 @@
-#include<asset/resource_manager/resource_manager.h>
 #include<asset/resource_manager/asset_type.h>
+#include<asset/resource_manager/resource_manager.h>
+
+
+#include<engine_core/platform/file_system.h>
 
 namespace Mage {
 
@@ -13,5 +16,9 @@ namespace Mage {
 		out_model_data->loadFromgLTF_Model(gltf_model, filename);
 		MAGE_CATCH
 		return true;
+	}
+
+	bool ResourceManager::loadBufferFromFile(const std::string& filename, Buffer* out_buffer_data, std::string* err, std::string* warn) {
+	
 	}
 }

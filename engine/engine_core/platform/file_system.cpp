@@ -19,4 +19,10 @@ namespace Mage {
 		filesystem::path des_path(des), src_path(src);
 		return des_path.lexically_relative(src_path).generic_string();
 	}
+
+	std::string FileSystem::getFileName(const std::string& path) {
+		using namespace std;
+		filesystem::path filepath(path);
+		return filepath.filename().generic_string();
+	}
 }

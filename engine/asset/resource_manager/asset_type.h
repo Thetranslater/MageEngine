@@ -1,12 +1,11 @@
 #pragma once
 #include<vector>
 
-#define TINYGLTF_NO_STB_IMAGE_WRITE
-#include<core/macro.h>
-#include<tinygITF/tiny_gltf.h>
-
 #include<vulkan/vulkan.h>
 
+#include<asset/resource_manager/resource_header.h>
+
+#include<core/macro.h>
 #include<core/math/matrix4x4.h>
 #include<core/math/vector3.h>
 #include<core/math/vector4.h>
@@ -252,7 +251,6 @@ namespace Mage {
 		std::vector<Texture> m_textures;
 		std::vector<Node> m_nodes;
 		std::vector<Material> m_materials;
-		//std::vector<Sampler> m_samplers;
 
 		//TODO:µÈ´ýÉ¾³ý
 		GUID32 m_go_id;

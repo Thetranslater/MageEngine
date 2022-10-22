@@ -151,6 +151,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
+    <ClCompile Include="..\engine\asset\resource_manager\resource_header.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
     <ClCompile Include="..\engine\core\math\matrix4x4.cpp" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h" />
+    <ClInclude Include="..\engine\asset\resource_manager\resource_header.h" />
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h" />
     <ClInclude Include="..\engine\core\hash.h" />
     <ClInclude Include="..\engine\core\macro.h" />

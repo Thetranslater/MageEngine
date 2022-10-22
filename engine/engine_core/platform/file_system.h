@@ -9,5 +9,6 @@ namespace Mage {
 		static std::string getFilenameExtension(const std::string& filename);
 		static std::string getParentPath(const std::string& path);
 		static std::string getRelativePath(const std::string& des, const std::string& src);
+		static std::string getFileName(const std::string& path);
 	};
 }

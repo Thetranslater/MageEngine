@@ -6,11 +6,11 @@
 #include<glm-master/glm/glm.hpp>
 
 namespace Mage {
+	//每一个description对应一个primitive
 	struct VkRenderMeshDescription {
-		int m_index_offset;
-		int m_index_count;
-		int m_vertex_offset{ 0 }; //因为每一个primitive的indices数据都是从0开始，所以为了在整个buffer中找到正确的vertex数据需要找到正确的vertexoffset加到indices数据上。
-		
+		//mesh
+		std::array<std::tuple<int, int, int, int>, 7> m_mesh_data_infos; //bufferindex, bufferstride, offset, count. 6和vertex属性顺序对应, 7是indices
+		//material
 		float m_metallic_factor{ 1.f };
 		float m_roughness_factor{ 1.f };
 
@@ -19,7 +19,13 @@ namespace Mage {
 		int m_normal_index{ -1 };
 
 		glm::vec4 m_base_color_factor{ 1.f,1.f,1.f,1.f };
+
+		//params
 		glm::mat4x4 m_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
+
+		VkRenderMeshDescription() {
+			m_mesh_data_infos.fill(std::make_tuple(-1, -1, -1, -1));
+		}
 		
 	};
 
@@ -37,8 +43,8 @@ namespace Mage {
 
 	struct VkRenderModelInfo {
 		GUID32 m_go_id;
-		VkRenderMeshInfo m_mesh_info;
-		VkRenderTextureInfo m_textures_info;
+		VkRenderMeshInfo m_mesh_info{};
+		VkRenderTextureInfo m_textures_info{};
 	};
 
 	//TODO:model 代表着一个渲染实体，用GUID索引其mesh和material数据

@@ -126,14 +126,17 @@
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.cpp">
       <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\render_engine\render_scene.cpp">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\asset\resource_manager\resource_header.cpp">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -218,9 +221,6 @@
     <ClInclude Include="..\engine\engine_core\platform\file_system.h">
       <Filter>Mage\engine\engine_core\platform</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
@@ -244,6 +244,12 @@
     </ClInclude>
     <ClInclude Include="..\engine\core\hash.h">
       <Filter>Mage\engine\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\resource_manager\resource_header.h">
+      <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

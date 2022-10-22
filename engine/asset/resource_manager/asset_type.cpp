@@ -1,7 +1,5 @@
 #include<assert.h>
 
-#define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
 #include<asset/resource_manager/asset_type.h>
 
 #include<engine_core/render_engine/renderer/vulkanInfo.h>
@@ -31,10 +29,7 @@ namespace Mage {
 		//m_data = std::move(buffer.data);
 		m_uri = std::move(buffer.uri);
 	}
-	bool Buffer::load(const std::string& base_dir,std::string& err,std::string& warn) {
-		tinygltf::FsCallbacks fs{ &tinygltf::FileExists, &tinygltf::ExpandFilePath, &tinygltf::ReadWholeFile, &tinygltf::WriteWholeFile, nullptr };
-		return tinygltf::LoadExternalFile(&m_data, &err, &warn, m_uri, base_dir, false, 0, 0, &fs);
-	}
+
 
 	//accessor
 	void Accessor::loadFromgLTF_Accessor(tinygltf::Accessor& accessor) {
@@ -330,10 +325,6 @@ namespace Mage {
 			//TODO: fetch texture data in buffer.
 		}
 	}
-	bool Texture::load(const std::string& base_dir, std::string& err, std::string& warn) {
-		tinygltf::FsCallbacks fs{ &tinygltf::FileExists, &tinygltf::ExpandFilePath, &tinygltf::ReadWholeFile, &tinygltf::WriteWholeFile, nullptr };
-		return tinygltf::LoadExternalFile(&m_data, &err, &warn, m_uri, base_dir, false, 0, 0, &fs);
-	}
 
 	//Material
 	void Material::loadFromgLTF_Material(tinygltf::Material& material) {
@@ -457,25 +448,10 @@ namespace Mage {
 		auto mesh_process = [&](const int& mesh_index, const Matrix4x4& matrix)->void {
 			for (auto& primitive : m_meshes[mesh_index].m_primitives) {
 				; //TODO:目前是排除非index mesh情况，之后需要增加没有indices的情况
-				Accessor* index_accessor = nullptr;
+				Accessor* attribute_accessor = nullptr;
 				Material* primitive_material = nullptr;
 
-				if (primitive.m_indices != -1) {
-					index_accessor = &m_accessors[primitive.m_indices];
-					assert(index_accessor->m_buffer_view != -1);
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_offset	= index_accessor->m_byte_offset;
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_count	= index_accessor->m_count;
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_matrix			= matrix;
-					//vertex offset
-					Accessor* position_accessor = &m_accessors[primitive.m_attributes["POSITION"]];
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_vertex_offset = vertex_off;
-					vertex_off += position_accessor->m_count;
-				}
-				else {
-					//TODO:非索引mesh，仅有顶点数据
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_count = -1;//外面通过该数值判断是否使用index draw
-				}
-
+				//material
 				if (primitive.m_material != -1) {
 					primitive_material = &m_materials[primitive.m_material];
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_base_color_factor	= primitive_material->m_pbr_metallic_roughness.m_base_color_factor;
@@ -496,6 +472,57 @@ namespace Mage {
 				else {
 					//TODO:无material的primitive
 				}
+
+				//mesh
+				int buffer_index{ -1 }, buffer_stride{ -1 }, buffer_offset{ -1 }, element_count{ -1 };
+				auto get_attribute_info = [&](const std::string& attribute, int index) {
+					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_infos[index];
+					attribute_accessor = &m_accessors[primitive.m_attributes[attribute]];
+					buffer_index = m_buffer_views[attribute_accessor->m_buffer_view].m_buffer;
+					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
+					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
+					element_count = attribute_accessor->m_count;
+					attribute_tuple = std::make_tuple(buffer_index, buffer_stride, buffer_offset, element_count);
+				};
+				//position
+				if (primitive.m_attributes.find("POSITION") != primitive.m_attributes.end()) {
+					get_attribute_info("POSITION", 0);
+				}
+				//normal
+				if (primitive.m_attributes.find("NORMAL") != primitive.m_attributes.end()) {
+					get_attribute_info("NORMAL", 1);
+				}
+				//tangent
+				if (primitive.m_attributes.find("TANGENT") != primitive.m_attributes.end()) {
+					get_attribute_info("TANGENT", 2);
+				}
+				//uv_0
+				if (primitive.m_attributes.find("TEXCOORD_0") != primitive.m_attributes.end()) {
+					get_attribute_info("TEXCOORD_0", 3);
+				}
+				//uv_1
+				if (primitive.m_attributes.find("TEXCOORD_1") != primitive.m_attributes.end()) {
+					get_attribute_info("TEXCOORD_1", 4);
+				}
+				//color_0
+				if (primitive.m_attributes.find("COLOR_0") != primitive.m_attributes.end()) {
+					get_attribute_info("COLOR_0", 5);
+				}
+				
+				//indices
+				if (primitive.m_indices != -1) {
+					auto& indices_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_infos[6];
+					attribute_accessor = &m_accessors[primitive.m_indices];
+					buffer_index = m_buffer_views[attribute_accessor->m_buffer_view].m_buffer;
+					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride == 0 ? attribute_accessor->getAccessBytes() : m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
+					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
+					element_count = attribute_accessor->m_count;
+					indices_tuple = std::make_tuple(buffer_index, buffer_stride, buffer_offset, element_count);
+				}
+
+				//params
+				mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_matrix = matrix;
+
 				++sub_meshes_num;
 			}
 		};
