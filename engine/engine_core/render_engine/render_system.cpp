@@ -1,25 +1,12 @@
-#include"engine_core/render_engine/render_system.h"
-
 #include"core/macro.h"
+
+#include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
 #include"engine_core/render_engine/renderer/vulkanHelper.h"
-#include"engine_core/render_engine/render_pass.h"
 #include"engine_core/render_engine/render_passes/DevRenderPass.h"
-#include"engine_core/render_engine/render_mesh.h"
 #include"engine_core/render_engine/render_scene.h"
 
 #include<vector>
-
-//std::vector<Mage::Vertex> vertices = {
-//	{{-0.5f, -0.5f, 0.0f},{1.0f, 0.0f, 0.0f},{1.0f, 0.0f}},
-//	{{0.5f, -0.5f, 0.0f},{0.0f, 1.0f, 0.0f},{0.0f, 0.0f}},
-//	{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f},{0.0f, 1.0f}},
-//	{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f},{1.0f, 1.0f}}
-//};
-
-std::vector<uint16_t> indices = {
-	0,1,2,2,3,0
-};
 
 static Mage::RenderPassResources global_resources;
 
@@ -30,6 +17,7 @@ namespace Mage {
 		m_vulkan_rhi->initialize(window_system);
 
 		m_render_scene = std::make_shared<RenderScene>();
+		m_render_scene->initialize();
 		
 		//resouces setup
 		//尚未编写资源类代码，目前显式复制资源
@@ -64,6 +52,10 @@ namespace Mage {
 	}
 
 	void RenderSystem::preprocess() {
-
+		auto gpu_load_que{ m_render_scene->m_p_scene_load_deque };
+		while (!gpu_load_que->empty()) {
+			auto& load_job = gpu_load_que->getNextProcess();
+			//do load job
+		}
 	}
 }

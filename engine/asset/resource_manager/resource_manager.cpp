@@ -1,5 +1,4 @@
 #include<asset/resource_manager/resource_manager.h>
-
 #include<asset/resource_manager/asset_type.h>
 
 namespace Mage {
@@ -10,7 +9,9 @@ namespace Mage {
 		if (!gltf_loader.LoadASCIIFromFile(&gltf_model, err, warn, filename)) {
 			return false;
 		}
-		out_model_data->loadFromgLTF_Model(gltf_model);
+		MAGE_TRY
+		out_model_data->loadFromgLTF_Model(gltf_model, filename);
+		MAGE_CATCH
 		return true;
 	}
 }

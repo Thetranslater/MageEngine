@@ -22,12 +22,13 @@ namespace Mage {
 	class RenderScene {
 	public:
 		//TODO:light
+		void initialize();
 
 		//render_model
 		std::vector<VkRenderModel> m_render_models;
 
 		auto& getMeshGUIDGenerator();
-		auto& getMaterialGUIDGenerator();
+		auto& getTextureGUIDGenerator();
 
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_load_deque;
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_delete_deque;
@@ -35,6 +36,6 @@ namespace Mage {
 	private:
 		//guid generator
 		GUIDGenerator<VkRenderMeshURI>		m_mesh_guid_generator;
-		GUIDGenerator<VkRenderMaterialURI>	m_material_guid_generator;
+		GUIDGenerator<VkRenderTextureURI>	m_texture_guid_generator;
 	};
 }

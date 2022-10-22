@@ -173,7 +173,7 @@ namespace Mage {
 		};
 
 		void loadFromgLTF_Accessor(tinygltf::Accessor& accessor);
-
+		constexpr int getAccessBytes() const;
 	public:
 		int m_buffer_view{ -1 };
 		size_t m_byte_offset{ 0 };
@@ -236,9 +236,9 @@ namespace Mage {
 	//TODO:PBR,更改为于render resource层对接。未来需要全部抽象为gameobject，mesh作为component实现。
 	class Model {
 	public:
-		void loadFromgLTF_Model(tinygltf::Model& gltf_model);
+		void loadFromgLTF_Model(tinygltf::Model& gltf_model, const std::string& file);
 
-		void loadFromgLTF_Model(tinygltf::Model&& gltf_model);
+		void loadFromgLTF_Model(tinygltf::Model&& gltf_model, const std::string& file);
 
 		//从model中获得rendermodel的信息，主要处理node节点和primitive
 		VkRenderModelInfo getVkRenderModelInfo();

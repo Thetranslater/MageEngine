@@ -47,6 +47,48 @@ namespace Mage {
 		m_max = std::move(accessor.maxValues);
 		m_min = std::move(accessor.minValues);
 	}
+	constexpr int Accessor::getAccessBytes() const {
+		int bytes{ 1 };
+		switch (m_type)
+		{
+			case Type::SCALAR:
+				bytes = 1;
+				break;
+			case Type::VEC2 || Type::VEC3 || Type::VEC4:
+				bytes = static_cast<int>(m_type);
+				break;
+			case Type::MAT2:
+				bytes = 4;
+				break;
+			case Type::MAT3:
+				bytes = 9;
+				break;
+			case Type::MAT4:
+				bytes = 16;
+				break;
+			case Type::NONE:
+				return 0;
+		}
+
+		switch (m_component_type)
+		{
+		case Mage::Accessor::COMPONENT_NONE:
+			return 0;
+		case Mage::Accessor::SBYTE:
+		case Mage::Accessor::UBYTE:
+			bytes *= 1;
+			break;
+		case Mage::Accessor::SSHORT:
+		case Mage::Accessor::USHORT:
+			bytes *= 2;
+			break;
+		case Mage::Accessor::UINT:
+		case Mage::Accessor::FLOAT:
+			bytes *= 4;
+			break;
+		}
+		return bytes;
+	}
 
 	//buffer view
 	void BufferView::loadFromgLTF_BufferView(tinygltf::BufferView& buffer_view) {
@@ -239,7 +281,7 @@ namespace Mage {
 					m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_SFLOAT;
 					break;
 				default:
-					MAGE_THROW(unsupport format texture)
+					m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 				}
 			}
 			else if (gltf_image.component == 3) {
@@ -261,7 +303,7 @@ namespace Mage {
 					m_format = MageFormat::MAGE_FORMAT_R32G32B32_SFLOAT;
 					break;
 				default:
-					MAGE_THROW(unsupport texture format)
+					m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 				}
 			}
 			else if (gltf_image.component == 2) {
@@ -274,11 +316,12 @@ namespace Mage {
 					m_format = MageFormat::MAGE_FORMAT_R32G32_UINT;
 					break;
 				default:
-					MAGE_THROW(unsupport texture format)
+					m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 				}
 			}
 			else {
-				MAGE_THROW(unsupport texture format)
+				//MAGE_THROW(unsupport texture format)
+				m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 			}
 
 			m_combined_sampler.loadFromgLTF_Sampler(gltf_sampler);
@@ -359,7 +402,9 @@ namespace Mage {
 	}
 
 	//model
-	void Model::loadFromgLTF_Model(tinygltf::Model& model) {
+	void Model::loadFromgLTF_Model(tinygltf::Model& model, const std::string& file) {
+		m_model_filepath = file;
+		
 		m_meshes.resize(model.meshes.size());
 		m_accessors.resize(model.accessors.size());
 		m_buffers.resize(model.buffers.size());
@@ -385,35 +430,50 @@ namespace Mage {
 	}
 	//TODO
 	VkRenderModelInfo Model::getVkRenderModelInfo() {
+		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
+
 		VkRenderModelInfo render_model_info;
 		render_model_info.m_go_id = m_go_id;
 
 		auto& mesh_info = render_model_info.m_mesh_info;
-		auto& material_info = render_model_info.m_material_info;
+		auto& textures_info = render_model_info.m_textures_info;
 
 		assert(m_buffers.size() == 1); //暂不支持多buffer
-		mesh_info.m_mesh_uri.m_uri = std::move(m_buffers.front().m_uri);
+		mesh_info.m_buffer_uri.m_uri = parent_directory + "/" + m_buffers[0].m_uri;
+		
+		//textures
+		textures_info.m_uris.resize(m_textures.size());
+		for (int i = 0; i < textures_info.m_uris.size(); ++i) {
+			textures_info.m_uris[i].m_uri = parent_directory + "/" + m_textures[i].m_uri;
+		}
 
+		//meshes
 		int sub_meshes_num{ 0 };
 		for (auto& mesh : m_meshes)
 			sub_meshes_num += mesh.m_primitives.size();
 		mesh_info.m_transfer_mesh_descriptions.resize(sub_meshes_num);
 		sub_meshes_num = 0;
+		int vertex_off{ 0 };
 		auto mesh_process = [&](const int& mesh_index, const Matrix4x4& matrix)->void {
 			for (auto& primitive : m_meshes[mesh_index].m_primitives) {
 				; //TODO:目前是排除非index mesh情况，之后需要增加没有indices的情况
 				Accessor* index_accessor = nullptr;
 				Material* primitive_material = nullptr;
 
-				if (primitive.m_attributes.find("indices") != primitive.m_attributes.end()) {
-					index_accessor = &m_accessors[primitive.m_attributes["indices"]];
+				if (primitive.m_indices != -1) {
+					index_accessor = &m_accessors[primitive.m_indices];
 					assert(index_accessor->m_buffer_view != -1);
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_offset	= index_accessor->m_byte_offset + m_buffer_views[index_accessor->m_buffer_view].m_byte_offset;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_offset	= index_accessor->m_byte_offset;
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_count	= index_accessor->m_count;
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_matrix			= matrix;
+					//vertex offset
+					Accessor* position_accessor = &m_accessors[primitive.m_attributes["POSITION"]];
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_vertex_offset = vertex_off;
+					vertex_off += position_accessor->m_count;
 				}
 				else {
 					//TODO:非索引mesh，仅有顶点数据
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_index_count = -1;//外面通过该数值判断是否使用index draw
 				}
 
 				if (primitive.m_material != -1) {
@@ -422,13 +482,16 @@ namespace Mage {
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
 
-					material_info.m_material_uri.m_base_color_uri			= std::move(m_textures[primitive_material->m_pbr_metallic_roughness.m_base_color_texture.m_index].m_uri);
-					material_info.m_material_uri.m_metallic_roughness_uri	= std::move(m_textures[primitive_material->m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_uri);
-					material_info.m_material_uri.m_normal_uri				= std::move(m_textures[primitive_material->m_normal_texture.m_index].m_uri);
-
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_textures_use_info |= material_info.m_material_uri.m_base_color_uri.empty() ? VkRenderMeshDescription::MESH_NO_USE : VkRenderMeshDescription::MESH_USE_BASECOLOR_TEXUTRE;
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_textures_use_info |= material_info.m_material_uri.m_metallic_roughness_uri.empty() ? VkRenderMeshDescription::MESH_NO_USE : VkRenderMeshDescription::MESH_USE_METALLICROUGHNESS_TEXTURE;
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_textures_use_info |= material_info.m_material_uri.m_normal_uri.empty() ? VkRenderMeshDescription::MESH_NO_USE : VkRenderMeshDescription::MESH_USE_NORMAL_TEXTURE;
+					//设置贴图索引值
+					if (primitive_material->m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
+						mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_base_color_index = primitive_material->m_pbr_metallic_roughness.m_base_color_texture.m_index;
+					}
+					if (primitive_material->m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index != -1) {
+						mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallicroughness_index = primitive_material->m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index;
+					}
+					if (primitive_material->m_normal_texture.m_index != -1) {
+						mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_normal_index = primitive_material->m_normal_texture.m_index;
+					}
 				}
 				else {
 					//TODO:无material的primitive
@@ -461,7 +524,7 @@ namespace Mage {
 
 		//process children
 		for (auto& child : node.m_children) {
-			processNode(nodes, child, curr_matrix, process_func);
+			processNode(nodes, child, parent_matrix * curr_matrix, process_func);
 		}
 	}
 

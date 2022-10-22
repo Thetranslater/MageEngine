@@ -19,6 +19,7 @@ namespace Mage {
 		void preprocess();
 
 		std::shared_ptr<VulkanRHI> getVulkanRHI() { return m_vulkan_rhi; }
+		std::shared_ptr<RenderScene> getRenderScene() { return m_render_scene; }
 	private:
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };
 		std::shared_ptr<RenderPassResources> m_render_resources{ nullptr }; //global?
