@@ -8,8 +8,8 @@ int main() {
 	engine->startEngine();
 	engine->tick(0.f);
 	engine->shutdownEngine();*/
+	Mage::Buffer markov;
 	Mage::ResourceManager loader;
-	Mage::Buffer buf;
-	auto res = loader.loadBufferFromFile("E:/Download/makarov_pistol/scene.bin", &buf, nullptr, nullptr);
+	loader.loadAsset("E:/Download/makarov_pistol/scene.bin", &markov, nullptr, nullptr, true);
 	return 0;
 }

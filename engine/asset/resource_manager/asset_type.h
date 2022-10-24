@@ -1,9 +1,9 @@
 #pragma once
 #include<vector>
 
+#define TINYGLTF_NO_STB_IMAGE_WRITE
+#include<tinygITF/tiny_gltf.h>
 #include<vulkan/vulkan.h>
-
-#include<asset/resource_manager/resource_header.h>
 
 #include<core/macro.h>
 #include<core/math/matrix4x4.h>

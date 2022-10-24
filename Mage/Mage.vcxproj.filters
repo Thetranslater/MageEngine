@@ -135,9 +135,6 @@
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\asset\resource_manager\resource_header.cpp">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -246,9 +243,6 @@
       <Filter>Mage\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\asset\resource_manager\resource_header.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,3 +1,4 @@
+#pragma once
 //
 // Header-only tiny glTF 2.0 loader and serializer.
 //
@@ -2252,7 +2253,7 @@ inline unsigned char from_hex(unsigned char ch) {
   return ch;
 }
 
-static const std::string urldecode(const std::string &str) {
+static const std::string    urldecode(const std::string &str) {
   using namespace std;
   string result;
   string::size_type i;
@@ -4106,12 +4107,12 @@ static bool ParseBuffer(Buffer *buffer, std::string *err, const json &o,
       } else {
         // External .bin file.
         // TODO:return
-        //std::string decoded_uri = dlib::urldecode(buffer->uri);
-        //if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr,
-        //                      decoded_uri, basedir, /* required */ true,
-        //                      byteLength, /* checkSize */ true, fs)) {
-        //  return false;
-        //}
+        std::string decoded_uri = dlib::urldecode(buffer->uri);
+        if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr,
+                              decoded_uri, basedir, /* required */ true,
+                              byteLength, /* checkSize */ true, fs)) {
+          return false;
+        }
       }
     } else {
       // load data from (embedded) binary data
@@ -4151,12 +4152,12 @@ static bool ParseBuffer(Buffer *buffer, std::string *err, const json &o,
       }
     } else {
       // Assume external .bin file.
-      //std::string decoded_uri = dlib::urldecode(buffer->uri);
-      //if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr, decoded_uri,
-      //                      basedir, /* required */ true, byteLength,
-      //                      /* checkSize */ true, fs)) {
-      //  return false;
-      //}
+      std::string decoded_uri = dlib::urldecode(buffer->uri);
+      if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr, decoded_uri,
+                            basedir, /* required */ true, byteLength,
+                            /* checkSize */ true, fs)) {
+        return false;
+      }
     }
   }
 

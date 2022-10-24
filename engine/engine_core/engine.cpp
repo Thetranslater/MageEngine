@@ -23,7 +23,7 @@ namespace Mage {
 		Model markov;
 		std::string err;
 		std::string warn;
-		if (!engine_global_context.m_resource_manager->loadModelFromFile("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn)) {
+		if (!engine_global_context.m_resource_manager->loadAsset("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn)) {
 			MAGE_THROW(failed to load gltf model)
 		}
 
