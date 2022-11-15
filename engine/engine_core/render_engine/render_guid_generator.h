@@ -15,6 +15,11 @@ namespace Mage {
 		using resource_type = R;
 	public:
 		guid_type generateGUID(const resource_type& res) {
+			//already exsit
+			if (m_res_guid_map.find(res) != m_res_guid_map.end()) {
+				return m_res_guid_map[res];
+			}
+
 			guid_type allocating_guid{ m_allocated_guid };
 			if (m_free_guid.empty()) {
 				if (!isValidGUID(allocating_guid) || m_guid_res_map.find(allocating_guid) != m_guid_res_map.end()) {

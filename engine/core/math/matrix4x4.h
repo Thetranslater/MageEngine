@@ -373,6 +373,14 @@ namespace Mage {
 				m03 * matrix[3][0] + m13 * matrix[3][1] + m23 * matrix[3][2] + m33 * matrix[3][3]
 				);
 		}
+		Matrix4x4& operator*=(const Matrix4x4& rhs) {
+			*this = *this * rhs;
+			return *this;
+		}
+		Matrix4x4& operator+=(const Matrix4x4& rhs) {
+			*this = *this + rhs;
+			return *this;
+		}
 		Vector4 operator*(const Vector4& rhs) const{
 			return Vector4(
 				rhs.x * matrix[0][0] + rhs.y * matrix[0][1] + rhs.z * matrix[0][2] + rhs.w * matrix[0][3],

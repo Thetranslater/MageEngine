@@ -2320,12 +2320,13 @@ static bool LoadExternalFile(std::vector<unsigned char> *out, std::string *err,
   }
 
   size_t sz = buf.size();
-  if (sz == 0) {
-    if (failMsgOut) {
-      (*failMsgOut) += "File is empty : " + filepath + "\n";
-    }
-    return false;
-  }
+  //MAGE REVISED
+  //if (sz == 0) {
+  //  if (failMsgOut) {
+  //    (*failMsgOut) += "File is empty : " + filepath + "\n";
+  //  }
+  //  return false;
+  //}
 
   if (checkSize) {
     if (reqBytes == sz) {
@@ -3879,9 +3880,9 @@ static bool ParseImage(Image *image, const int image_idx, std::string *err,
 #else
     std::string decoded_uri = dlib::urldecode(uri);
     //TODO
-    //if (!LoadExternalFile(&img, err, warn, decoded_uri, basedir,
-    //                      /* required */ false, /* required bytes */ 0,
-    //                      /* checksize */ false, fs)) 
+    if (!LoadExternalFile(&img, err, warn, decoded_uri, basedir,
+                          /* required */ false, /* required bytes */ 0,
+                          /* checksize */ false, fs)) 
     if(true)
     {
       if (warn) {
@@ -3899,7 +3900,7 @@ static bool ParseImage(Image *image, const int image_idx, std::string *err,
                    std::to_string(image_idx) + "] name = [" + image->name +
                    "] \n";
       }
-      return false;
+      return true;
     }
 #endif
   }
@@ -4155,7 +4156,7 @@ static bool ParseBuffer(Buffer *buffer, std::string *err, const json &o,
       std::string decoded_uri = dlib::urldecode(buffer->uri);
       if (!LoadExternalFile(&buffer->data, err, /* warn */ nullptr, decoded_uri,
                             basedir, /* required */ true, byteLength,
-                            /* checkSize */ true, fs)) {
+                            /* checkSize */ false, fs)) {
         return false;
       }
     }

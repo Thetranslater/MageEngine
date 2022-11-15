@@ -135,6 +135,9 @@
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">

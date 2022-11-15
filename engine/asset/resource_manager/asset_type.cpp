@@ -26,7 +26,7 @@ namespace Mage {
 		return buffer;
 	}
 	void Buffer::loadFromgLTF_Buffer(tinygltf::Buffer& buffer) {
-		//m_data = std::move(buffer.data);
+		m_data = std::move(buffer.data);
 		m_uri = std::move(buffer.uri);
 	}
 
@@ -246,10 +246,9 @@ namespace Mage {
 
 		return render_texture;
 	}
-	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler) {
+	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image) {
 		if (gltf_image.bufferView == -1) {
-			//TODO:因为我更改了tinygltf库的图片加载部分，现在image中没有图像数据，只有数据文件路径
-			//m_data = std::move(gltf_image.image);
+			m_data = std::move(gltf_image.image);
 			m_uri = std::move(gltf_image.uri);
 
 			m_width = (uint32_t)gltf_image.width;
@@ -318,12 +317,13 @@ namespace Mage {
 				//MAGE_THROW(unsupport texture format)
 				m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 			}
-
-			m_combined_sampler.loadFromgLTF_Sampler(gltf_sampler);
 		}
 		else {
-			//TODO: fetch texture data in buffer.
 		}
+	}
+	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler) {
+		loadFromgLTF_Image(gltf_image);
+		m_combined_sampler.loadFromgLTF_Sampler(gltf_sampler);
 	}
 
 	//Material
@@ -424,7 +424,7 @@ namespace Mage {
 		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
 
 		VkRenderModelInfo render_model_info;
-		render_model_info.m_go_id = m_go_id;
+		//render_model_info.m_go_id = m_go_id;
 
 		auto& mesh_info = render_model_info.m_mesh_info;
 		auto& textures_info = render_model_info.m_textures_info;
@@ -447,7 +447,7 @@ namespace Mage {
 		int vertex_off{ 0 };
 		auto mesh_process = [&](const int& mesh_index, const Matrix4x4& matrix)->void {
 			for (auto& primitive : m_meshes[mesh_index].m_primitives) {
-				; //TODO:目前是排除非index mesh情况，之后需要增加没有indices的情况
+				//TODO:目前是排除非index mesh情况，之后需要增加没有indices的情况
 				Accessor* attribute_accessor = nullptr;
 				Material* primitive_material = nullptr;
 
@@ -474,15 +474,14 @@ namespace Mage {
 				}
 
 				//mesh
-				int buffer_index{ -1 }, buffer_stride{ -1 }, buffer_offset{ -1 }, element_count{ -1 };
+				int buffer_stride{ -1 }, buffer_offset{ -1 }, element_count{ -1 };
 				auto get_attribute_info = [&](const std::string& attribute, int index) {
-					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_infos[index];
+					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_offset_infos[index];
 					attribute_accessor = &m_accessors[primitive.m_attributes[attribute]];
-					buffer_index = m_buffer_views[attribute_accessor->m_buffer_view].m_buffer;
 					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
 					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
 					element_count = attribute_accessor->m_count;
-					attribute_tuple = std::make_tuple(buffer_index, buffer_stride, buffer_offset, element_count);
+					attribute_tuple = std::make_tuple(buffer_stride, buffer_offset, element_count);
 				};
 				//position
 				if (primitive.m_attributes.find("POSITION") != primitive.m_attributes.end()) {
@@ -511,13 +510,12 @@ namespace Mage {
 				
 				//indices
 				if (primitive.m_indices != -1) {
-					auto& indices_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_infos[6];
+					auto& indices_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_offset_infos[6];
 					attribute_accessor = &m_accessors[primitive.m_indices];
-					buffer_index = m_buffer_views[attribute_accessor->m_buffer_view].m_buffer;
 					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride == 0 ? attribute_accessor->getAccessBytes() : m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
 					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
 					element_count = attribute_accessor->m_count;
-					indices_tuple = std::make_tuple(buffer_index, buffer_stride, buffer_offset, element_count);
+					indices_tuple = std::make_tuple(buffer_stride, buffer_offset, element_count);
 				}
 
 				//params
@@ -542,6 +540,8 @@ namespace Mage {
 		else if (node.m_translation.size() && node.m_rotation.size() && node.m_scale.size()) {
 			curr_matrix.SetTRS(Vector3(node.m_translation), Quaternion(node.m_rotation), Vector3(node.m_scale));
 		}
+
+		curr_matrix *= parent_matrix;
 
 		//process node
 		if (node.m_mesh != -1) {

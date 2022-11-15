@@ -61,7 +61,7 @@ namespace Mage {
 		VkSampler asVulkanSampler(VulkanRHI* rhi, VkSamplerCreateInfo* optional_info = nullptr);
 
 		void loadFromgLTF_Sampler(tinygltf::Sampler& gltf_sampler);
-	private:
+	public:
 		MageFilter m_magfilter{MageFilter::MAGE_FILTER_NEAREST};
 		MageFilter m_minfilter{ MageFilter::MAGE_FILTER_NEAREST };
 		MageFilter m_mipmapfilter{ MageFilter::MAGE_FILTER_NEAREST };
@@ -79,6 +79,7 @@ namespace Mage {
 		VkRenderTexture asVulkanRenderTexture(VulkanRHI* rhi);
 
 		void loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler);
+		void loadFromgLTF_Image(tinygltf::Image& gltf_image);
 
 		bool load(const std::string& base_dir, std::string& err, std::string& warn);
 

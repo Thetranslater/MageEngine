@@ -6,11 +6,11 @@ namespace Mage {
 		m_p_scene_delete_deque = std::make_shared<SceneProcessDeque<VkRenderModelInfo>>();
 	}
 
-	auto& RenderScene::getMeshGUIDGenerator() {
+	GUIDGenerator<VkRenderMeshURI>& RenderScene::getMeshGUIDGenerator() {
 		return m_mesh_guid_generator;
 	}
 
-	auto& RenderScene::getTextureGUIDGenerator() {
+	GUIDGenerator<VkRenderTextureURI>& RenderScene::getTextureGUIDGenerator() {
 		return m_texture_guid_generator;
 	}
 }

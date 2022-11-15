@@ -9,7 +9,7 @@ namespace Mage {
 	//每一个description对应一个primitive
 	struct VkRenderMeshDescription {
 		//mesh
-		std::array<std::tuple<int, int, int, int>, 7> m_mesh_data_infos; //bufferindex, bufferstride, offset, count. 6和vertex属性顺序对应, 7是indices
+		std::array<std::tuple<int, int, int>, 7> m_mesh_data_offset_infos; //bufferstride, offset, count. 6和vertex属性顺序对应, 7是indices
 		//material
 		float m_metallic_factor{ 1.f };
 		float m_roughness_factor{ 1.f };
@@ -24,7 +24,7 @@ namespace Mage {
 		glm::mat4x4 m_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
 
 		VkRenderMeshDescription() {
-			m_mesh_data_infos.fill(std::make_tuple(-1, -1, -1, -1));
+			m_mesh_data_offset_infos.fill(std::make_tuple(-1, -1, -1));
 		}
 		
 	};
@@ -32,17 +32,17 @@ namespace Mage {
 	//mesh info in process deque
 	struct VkRenderMeshInfo {
 
-		VkRenderMeshURI m_buffer_uri;//buffer的位置
+		VkRenderMeshURI m_buffer_uri;//buffer的位置，假设只有一个buffer
 
-		std::vector<VkRenderMeshDescription> m_transfer_mesh_descriptions; //可提前计算的信息，move给rendermodel
+		std::vector<VkRenderMeshDescription> m_transfer_mesh_descriptions; //一个model info理论上对应一个gltf scene，一个scene包含许多mesh，每个mesh通过accessor访问buffer数据和贴图数据
 	};
 
 	struct VkRenderTextureInfo {
 		std::vector<VkRenderTextureURI> m_uris;
 	};
-
+	//渲染数据信息，从CPU端传进，包含模型数据路径和贴图路径
 	struct VkRenderModelInfo {
-		GUID32 m_go_id;
+		GUID32 m_go_id;//TODO
 		VkRenderMeshInfo m_mesh_info{};
 		VkRenderTextureInfo m_textures_info{};
 	};
@@ -56,7 +56,7 @@ namespace Mage {
 
 		//glm::vec4 m_base_color_factor{ 1.f,1.f,1.f,1.f };//user更改的color参数，传递进GPU中。
 
-		std::vector<VkRenderMeshDescription> m_mesh_descriptions;
+		VkRenderMeshDescription m_mesh_description;
 
 		GUID32 m_mesh_guid32;
 		std::vector<GUID32> m_texture_guid32s;
