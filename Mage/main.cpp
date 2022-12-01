@@ -8,6 +8,5 @@ int main() {
 	engine->startEngine();
 	engine->tick(0.f);
 	engine->shutdownEngine();
-
 	return 0;
 }

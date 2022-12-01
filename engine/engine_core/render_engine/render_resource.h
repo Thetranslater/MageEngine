@@ -17,6 +17,8 @@ namespace Mage {
 		VkDeviceMemory m_texture_memory{VK_NULL_HANDLE};
 		VkImageView m_texture_view{VK_NULL_HANDLE};
 		VkSampler m_sampler{ VK_NULL_HANDLE };
+
+		unsigned int ref_count{ 0 };
 	};
 
 	struct VkRenderMeshURI {
@@ -39,28 +41,47 @@ namespace Mage {
 	struct VkRenderBuffer {
 		VkBuffer m_bi_data{ VK_NULL_HANDLE };
 		VkDeviceMemory m_bi_data_memory{ VK_NULL_HANDLE };
+
+		unsigned int ref_count{ 0 };
 	};
 
 	struct VkRenderTextureURI {
 		std::string m_uri;
+		bool is_srgb{ false };
 
 		bool operator==(const VkRenderTextureURI& rh) const{
 			return rh.m_uri == m_uri;
 		}
 	};
 
+	struct GlobalUpdatedBuffer {
+		VkBuffer m_buffer{VK_NULL_HANDLE};
+		VkDeviceMemory m_buffer_memory{VK_NULL_HANDLE};
+		void* m_followed_camera_updated_data_pointer{ nullptr };
+	};
+
 	class VulkanRHI;
+	class Buffer;
+	class Texture;
 	class RenderResource {
-		using GUID32 = uint32_t;
 	public:
+		using GUID32 = uint32_t;
+		using IO_Buffer = std::variant<VkRenderBuffer, Buffer>;
+		using IO_Texture = std::variant<VkRenderTexture, Texture>;
+	public:
+		void initialize(VulkanRHI*);
+
 		bool hasMesh(const GUID32& guid);
 		bool hasTexture(const GUID32& guid);
 
-		bool getOrCreateRenderResource(VulkanRHI* rhi, GUID32& guid, std::variant<VkRenderBuffer,std::vector<unsigned char>>& param);
-		bool getOrCreateRenderResource(VulkanRHI* rhi, GUID32& guid, std::variant<VkRenderTexture,std::vector<unsigned char>>& param);
+		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Buffer& param);
+		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Texture& param);
 	public:
 		std::map<GUID32, VkRenderBuffer>	m_guid_buffer_map;
 		std::map<GUID32, VkRenderTexture>	m_guid_texture_map;
+
+		//global resources
+		GlobalUpdatedBuffer m_global_updated_buffer;
 	};
 }
 

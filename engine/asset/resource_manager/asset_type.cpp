@@ -437,6 +437,11 @@ namespace Mage {
 		for (int i = 0; i < textures_info.m_uris.size(); ++i) {
 			textures_info.m_uris[i].m_uri = parent_directory + "/" + m_textures[i].m_uri;
 		}
+		for (auto& material : m_materials) {
+			if (material.m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
+				textures_info.m_uris[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
+			}
+		}
 
 		//meshes
 		int sub_meshes_num{ 0 };
