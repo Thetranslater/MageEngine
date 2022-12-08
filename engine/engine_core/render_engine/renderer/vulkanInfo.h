@@ -457,12 +457,12 @@ namespace Mage {
 		}
 
 		/// <summary>
-		/// SPECIFY: buffer, offset, size.
+		/// SPECIFY: buffer, offset, range.
 		/// </summary>
 		/// <param name="buffer"> : the buffer resource.</param>
 		/// <param name="offset"> : the offset of the binding.And has different alignment requirements depending on the type of the buffer.
 		///		Check VkPhysicalDeviceLimits.</param>
-		/// <param name="size"> : the size of the binding.Use VK_WHOLE_SIZE to bind the whole buffer.</param>
+		/// <param name="range"> : the size of the binding.Use VK_WHOLE_SIZE to bind the whole buffer.</param>
 		inline VkDescriptorBufferInfo aboutVkDescriptorBufferInfo() {
 			VkDescriptorBufferInfo buffer{};
 			return buffer;

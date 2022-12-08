@@ -124,8 +124,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\Mage\3rdparty\glfw-3.3.7.bin.WIN64\lib-vc2022;E:\Tools\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\Mage\3rdparty\json11\build\Debug;E:\Mage\3rdparty\glfw-3.3.7.bin.WIN64\lib-vc2022;E:\Tools\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;json11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,8 +144,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>E:\Tools\VS 2022\Libraries\glfw-3.3.7.bin.WIN64\lib-vc2022;E:\Tools\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\Mage\3rdparty\json11\build\Release;E:\Tools\VS 2022\Libraries\glfw-3.3.7.bin.WIN64\lib-vc2022;E:\Tools\Vulkan\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;vulkan-1.lib;json11.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
@@ -216,11 +216,6 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_system.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\3rdparty\json11\build\json11.vcxproj">
-      <Project>{49f3d0de-e634-3b14-aea9-2513c22f6ed5}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

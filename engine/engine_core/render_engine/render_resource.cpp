@@ -13,7 +13,7 @@ namespace Mage {
 			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			m_global_updated_buffer.m_buffer, m_global_updated_buffer.m_buffer_memory);
-		//unmap as program terminated.
+		//TODO:unmap as program terminated.
 		vkMapMemory(rhi->m_device, m_global_updated_buffer.m_buffer_memory, 0, VK_WHOLE_SIZE, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointer);
 	}
 
@@ -33,7 +33,7 @@ namespace Mage {
 
 		assert(not std::get<1>(buffer).m_data.empty());
 
-		VkRenderBuffer render_buffer{};
+		VkRenderMesh render_buffer{};
 		auto& data = std::get<1>(buffer).m_data;
 		//create buffer and bind memory before insert to map
 		VulkanHelper::bufferCreationHelper(rhi, data.size(),

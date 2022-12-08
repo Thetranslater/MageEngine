@@ -10,6 +10,8 @@
 
 #include<core/hash.h>
 
+#include<engine_core/render_engine/render_guid.h>
+
 namespace Mage {
 
 	struct VkRenderTexture {
@@ -17,8 +19,6 @@ namespace Mage {
 		VkDeviceMemory m_texture_memory{VK_NULL_HANDLE};
 		VkImageView m_texture_view{VK_NULL_HANDLE};
 		VkSampler m_sampler{ VK_NULL_HANDLE };
-
-		unsigned int ref_count{ 0 };
 	};
 
 	struct VkRenderMeshURI {
@@ -28,21 +28,10 @@ namespace Mage {
 		}
 	};
 
-	//TODO: submesh
-	struct VkRenderMesh {
-		VkBuffer m_index_buffer{VK_NULL_HANDLE};
-		VkDeviceMemory m_index_memory{VK_NULL_HANDLE};
-
-		VkBuffer m_vertex_buffer{ VK_NULL_HANDLE };
-		VkDeviceMemory m_vertex_memory{ VK_NULL_HANDLE };
-	};
-
 	//for gltf
-	struct VkRenderBuffer {
+	struct VkRenderMesh {
 		VkBuffer m_bi_data{ VK_NULL_HANDLE };
 		VkDeviceMemory m_bi_data_memory{ VK_NULL_HANDLE };
-
-		unsigned int ref_count{ 0 };
 	};
 
 	struct VkRenderTextureURI {
@@ -51,6 +40,15 @@ namespace Mage {
 
 		bool operator==(const VkRenderTextureURI& rh) const{
 			return rh.m_uri == m_uri;
+		}
+	};
+
+	struct VkRenderPartMesh {
+		GUID32 m_mesh_guid;
+		GUID32 m_part_index;
+
+		bool operator==(const VkRenderPartMesh& rh) const {
+			return m_mesh_guid == rh.m_mesh_guid && m_part_index == rh.m_part_index;
 		}
 	};
 
@@ -66,7 +64,7 @@ namespace Mage {
 	class RenderResource {
 	public:
 		using GUID32 = uint32_t;
-		using IO_Buffer = std::variant<VkRenderBuffer, Buffer>;
+		using IO_Buffer = std::variant<VkRenderMesh, Buffer>;
 		using IO_Texture = std::variant<VkRenderTexture, Texture>;
 	public:
 		void initialize(VulkanRHI*);
@@ -77,7 +75,7 @@ namespace Mage {
 		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Buffer& param);
 		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Texture& param);
 	public:
-		std::map<GUID32, VkRenderBuffer>	m_guid_buffer_map;
+		std::map<GUID32, VkRenderMesh>	m_guid_buffer_map;
 		std::map<GUID32, VkRenderTexture>	m_guid_texture_map;
 
 		//global resources
@@ -97,6 +95,15 @@ namespace std {
 	struct hash<Mage::VkRenderTextureURI> {
 		size_t operator()(const Mage::VkRenderTextureURI& uri) const {
 			return hash<std::string>{}(uri.m_uri);
+		}
+	};
+
+	template<>
+	struct hash<Mage::VkRenderPartMesh> {
+		size_t operator()(const Mage::VkRenderPartMesh& part) const {
+			size_t hash = part.m_mesh_guid;
+			Mage::hash_combine(hash, part.m_part_index);
+			return hash;
 		}
 	};
 }

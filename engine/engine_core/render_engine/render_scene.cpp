@@ -13,4 +13,8 @@ namespace Mage {
 	GUIDGenerator<VkRenderTextureURI>& RenderScene::getTextureGUIDGenerator() {
 		return m_texture_guid_generator;
 	}
+
+	GUIDGenerator<VkRenderPartMesh>& RenderScene::getPartMeshGUIDGenerator() {
+		return m_part_mesh_guid_generator;
+	}
 }

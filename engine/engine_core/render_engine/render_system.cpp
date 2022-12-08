@@ -13,8 +13,6 @@
 
 #include<vector>
 
-static Mage::RenderPassResources global_resources;
-
 namespace Mage {
 	void RenderSystem::initialize(std::shared_ptr<WindowSystem> window_system) {
 		//rhi setup
@@ -25,6 +23,7 @@ namespace Mage {
 		m_render_scene->initialize();
 
 		m_render_resource = std::make_shared<RenderResource>();
+		m_render_resource->initialize(m_vulkan_rhi.get());
 	}
 
 	//TODO
@@ -87,17 +86,15 @@ namespace Mage {
 			}
 
 			//create render models
-			for (auto& description : process_job.m_mesh_info.m_transfer_mesh_descriptions) {
+			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
+			for (uint32_t i{ 0 }; i < process_job.m_mesh_info.m_transfer_mesh_descriptions.size();++i) {
+				auto part_mesh_guid = part_mesh_generator.generateGUID({ mesh_guid,i });
+
 				VkRenderModel model;
-				model.m_mesh_description = std::move(description);
+				model.m_mesh_description = std::move(process_job.m_mesh_info.m_transfer_mesh_descriptions[i]);
+				model.m_model_guid32 = part_mesh_guid;
 				model.m_mesh_guid32 = mesh_guid;
 				model.m_texture_guid32s = texture_guids;
-
-				//count resource reference
-				++m_render_resource->m_guid_buffer_map[mesh_guid].ref_count;
-				for (auto guid : texture_guids) {
-					++m_render_resource->m_guid_texture_map[guid].ref_count;
-				}
 
 				m_render_scene->m_render_models.emplace_back(model);
 			}

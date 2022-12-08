@@ -7,8 +7,8 @@ namespace Mage {
 
 	struct DescriptorSets
 	{
-		std::vector<VkDescriptorSetLayout> m_descriptor_set_layouts;
-		std::vector<VkDescriptorSet> m_descriptor_sets;
+		std::vector<VkDescriptorSetLayout> layout_infos;
+		std::vector<VkDescriptorSet> sets;
 	};
 
 	struct Attachments

@@ -9,25 +9,10 @@
 namespace Mage {
 	class VulkanRHI;
 	class Subpass;
+	struct GlobalUpdatedBuffer;
 
-	//struct FrameBuffer
-	//{
-	//	int width;
-	//	int height;
-	//	int layer;
-
-	//	VkFramebuffer m_frame_buffer;
-	//	std::vector<Attachment> m_attachments;
-	//};
-
-	struct RenderPassCreateInfo{};
-
-	struct RenderPassResources {
-		VkBuffer m_vertex_buffer;
-		VkDeviceMemory m_vertex_buffer_memory;
-
-		VkBuffer m_index_buffer;
-		VkDeviceMemory m_index_buffer_memory;
+	struct RenderPassCreateInfo{
+		GlobalUpdatedBuffer* global_buffer;
 	};
 
 	//primary pipeline
@@ -49,7 +34,6 @@ namespace Mage {
 		const VkRenderPass& getVkRenderPass() { return m_render_pass; }
 		//virtual VkFramebuffer getVkFrameBuffer();
 		//virtual DescriptorSets getDescriptorSets();
-		void updateGlobalRenderResources(RenderPassResources* global_resources);
 	protected:
 		VkRenderPass m_render_pass;
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };	//vulkanRHI
@@ -59,7 +43,7 @@ namespace Mage {
 
 		std::vector<VkFramebuffer> m_framebuffers;		//create framebuffer for each swapchain image
 		std::vector<std::shared_ptr<Subpass>> m_p_subpasses;				//pipelines
-
-		static RenderPassResources* m_resources; // include lights, sky, camera matrix.
+		
+		GlobalUpdatedBuffer* m_global_buffer{ nullptr };
 	};
 }

@@ -30,6 +30,7 @@ namespace Mage {
 
 		GUIDGenerator<VkRenderMeshURI>& getMeshGUIDGenerator();
 		GUIDGenerator<VkRenderTextureURI>& getTextureGUIDGenerator();
+		GUIDGenerator<VkRenderPartMesh>& getPartMeshGUIDGenerator();
 
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_load_deque;
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_delete_deque;
@@ -38,5 +39,6 @@ namespace Mage {
 		//guid generator
 		GUIDGenerator<VkRenderMeshURI>		m_mesh_guid_generator;
 		GUIDGenerator<VkRenderTextureURI>	m_texture_guid_generator;
+		GUIDGenerator<VkRenderPartMesh>		m_part_mesh_guid_generator;
 	};
 }
