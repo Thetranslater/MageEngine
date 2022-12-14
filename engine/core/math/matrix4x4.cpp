@@ -113,9 +113,9 @@ namespace Mage {
 		Matrix4x4 matrix_perspective = Matrix4x4::zero;
 		matrix_perspective[0][0] = 1.f / (tan_half_fov * aspect);
 		matrix_perspective[1][1] = 1.f / tan_half_fov;
-		matrix_perspective[2][2] = (zNear + zFar) / (zNear - zFar);
+		matrix_perspective[2][2] = -(zNear + zFar) / (zNear - zFar);
 		matrix_perspective[2][3] = (2.f * zNear * zFar) / (zNear - zFar);
-		matrix_perspective[3][2] = -1.f;
+		matrix_perspective[3][2] = 1.f;
 		return matrix_perspective;
 	}
 

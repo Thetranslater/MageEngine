@@ -124,8 +124,6 @@ namespace Mage {
 	void DevRenderSubpass::initialize(const SubpassCreateInfo* createInfo) {
 		Subpass::initialize(createInfo);
 
-		setupDescriptorSetLayouts({});
-		setupDescriptorSets({});
 		setupPipeline();
 	}	
 
@@ -135,8 +133,6 @@ namespace Mage {
 		vkCmdDrawIndexed(m_vulkan_rhi->m_command_buffer, 6, 1, 0, 0, 0);
 	}
 
-	void DevRenderSubpass::setupDescriptorSetLayouts(const std::vector<int>& indices) {}
-	void DevRenderSubpass::setupDescriptorSets(const std::vector<int>& indices) {}
 	void DevRenderSubpass::setupPipeline() {
 		VkGraphicsPipelineCreateInfo createInfo = VulkanInfo::aboutVkGraphicsPipelineCreateInfo();
 

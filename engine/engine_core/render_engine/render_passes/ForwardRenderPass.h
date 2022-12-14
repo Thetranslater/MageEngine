@@ -23,17 +23,16 @@ namespace Mage {
 
 	struct ForwardRenderSubpassCreateInfo :public SubpassCreateInfo {
 		std::vector<int> m_layouts_indices;
-		std::vector<int> m_set_indices;
 	};
 
 	class ForwardRenderSubpass :public Subpass {
 	public:
-		void initialize(const SubpassCreateInfo* createInfo) override final;
+		void initialize(SubpassCreateInfo* createInfo) override final;
 
 		void draw() override final;
 	private:
-		void setupDescriptorSetLayouts(const std::vector<int>& indices) override final;
-		void setupDescriptorSets(const std::vector<int>& indices) override final;
-		void setupPipeline() override final;
+		//void setupDescriptorSetLayouts(const std::vector<int>& indices) override final;
+		//void setupDescriptorSets(const std::vector<int>& indices) override final;
+		void setupPipeline(const std::vector<int>& indices) override final;
 	};
 }

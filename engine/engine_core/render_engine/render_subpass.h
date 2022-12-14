@@ -23,18 +23,14 @@ namespace Mage {
 	*/
 	class Subpass {
 	public:
-		virtual void initialize(const SubpassCreateInfo* createInfo);
+		virtual void initialize(SubpassCreateInfo*);
 
 		virtual void draw() {};
-
-		virtual void setupDescriptorSetLayouts(const std::vector<int>& indices) {};
-		virtual void setupDescriptorSets(const std::vector<int>& indices) {};
-		virtual void setupPipeline() {};
+		virtual void setupPipeline(const std::vector<int>&) {};
 	protected:
 		RenderPass* p_m_render_pass;
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{nullptr};
 
 		VkPipeline m_pipeline;
-		DescriptorSets m_descriptor_sets;
 	};
 }

@@ -493,10 +493,11 @@ namespace Mage {
 		}
 
 		/// <summary>
-		/// SPECIFY:inputAttachmentCount, pInputAttachments, colorAttachmentCount, pColorAttachments, pResolveAttachments, pDepthStencilAttachment,
+		/// SPECIFY:pipelineBindPoint, inputAttachmentCount, pInputAttachments, colorAttachmentCount, pColorAttachments, pResolveAttachments, pDepthStencilAttachment,
 		/// preserveAttachmentCount, pPreserveAttachments.////
 		/// Every subpass references attachments as input or output.The difference between input attachments and color attachments is that the input attachments are used for input, the other used for output. 
 		/// </summary>
+		/// <param name="pipelineBindPoint		"> : this field specifies the pipeline type for this subpass.</param>
 		/// <param name="inputAttachmentCount	"> : the number of the input attachments.</param>
 		/// <param name="pInputAttachments		"> : a pointer to a VkAttachmentReference array.</param>;
 		/// <param name="colorAttachmentCount	"> : the number of the color attachments.</param>
@@ -516,7 +517,7 @@ namespace Mage {
 		/// <summary>
 		/// SPECIFY: attachment, layout.
 		/// </summary>
-		/// <param name="attachment	"> : a index of the attachment array in the renderpassCreateInfo.</param>
+		/// <param name="attachment	"> : a index of the attachment in the renderpassCreateInfo.</param>
 		/// <param name="layout		"> : the image layout expected by this subpass.</param>
 		inline VkAttachmentReference aboutVkAttachmentReference() {
 			VkAttachmentReference attachment_ref{};
