@@ -34,7 +34,7 @@ namespace Mage {
 		const VkRenderPass& getVkRenderPass() { return m_render_pass; }
 		//virtual VkFramebuffer getVkFrameBuffer();
 		//virtual DescriptorSets getDescriptorSets();
-	protected:
+
 		VkRenderPass m_render_pass;
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };	//vulkanRHI
 

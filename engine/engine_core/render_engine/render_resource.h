@@ -14,6 +14,8 @@
 
 namespace Mage {
 
+	constexpr static int per_drawcall_max_instances = 60;
+
 	struct VkRenderTexture {
 		VkImage m_texture{VK_NULL_HANDLE};
 		VkDeviceMemory m_texture_memory{VK_NULL_HANDLE};
@@ -56,6 +58,33 @@ namespace Mage {
 		VkBuffer m_buffer{VK_NULL_HANDLE};
 		VkDeviceMemory m_buffer_memory{VK_NULL_HANDLE};
 		void* m_followed_camera_updated_data_pointer{ nullptr };
+	};
+
+	struct GlobalBufferPerFrameData {
+		//camera data
+		glm::mat4 m_camera_view_matrix{};
+		glm::mat4 m_camera_perspective_matrix{};
+	};
+
+	struct PerMeshVertexShaderData {
+		//TODO:vectex blending
+		glm::mat4 m_matrix;
+	};
+
+	struct PerMeshFragmentShaderData {
+		float m_metallic_factor{ 1.f };
+		float m_roughness_factor{ 1.f };
+		float _unused_blank_1;
+		float _unused_blank_2;
+		glm::vec4 m_base_color_factor{ 1.f,1.f,1.f,1.f };
+	};
+
+	struct GlobalBufferPerDrawcallVertexShaderData {
+		PerMeshVertexShaderData m_mesh_datas[per_drawcall_max_instances];
+	};
+
+	struct GlobalBufferPerDrawcallFragmentShaderData {
+		PerMeshFragmentShaderData m_frag_datas[per_drawcall_max_instances];
 	};
 
 	class VulkanRHI;

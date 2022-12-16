@@ -19,21 +19,21 @@ namespace Mage {
 	}
 
 	void ForwardRenderPass::setupDescriptorLayouts() {
-		m_descriptor_sets.layout_infos.resize(2);
+		m_descriptor_sets.layout_infos.resize(3);
 		//set 1:global resources, lights, camera, sky
 		{
 			//TODO
-			VkDescriptorSetLayoutBinding global_perframe_layout_binding = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
-			global_perframe_layout_binding.binding				= 0;
-			global_perframe_layout_binding.descriptorType		= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-			global_perframe_layout_binding.stageFlags			= VK_SHADER_STAGE_VERTEX_BIT;
+			VkDescriptorSetLayoutBinding global_perframe_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
+			global_perframe_layout_binding_Vertex.binding				= 0;
+			global_perframe_layout_binding_Vertex.descriptorType		= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+			global_perframe_layout_binding_Vertex.stageFlags			= VK_SHADER_STAGE_VERTEX_BIT;
 
-			VkDescriptorSetLayoutBinding global_perdrawcall_layout_binding = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
-			global_perdrawcall_layout_binding.binding			= 1;
-			global_perdrawcall_layout_binding.descriptorType	= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-			global_perdrawcall_layout_binding.stageFlags		= VK_SHADER_STAGE_VERTEX_BIT;
+			VkDescriptorSetLayoutBinding global_perdrawcall_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
+			global_perdrawcall_layout_binding_Vertex.binding			= 1;
+			global_perdrawcall_layout_binding_Vertex.descriptorType	= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+			global_perdrawcall_layout_binding_Vertex.stageFlags		= VK_SHADER_STAGE_VERTEX_BIT;
 
-			std::array<VkDescriptorSetLayoutBinding, 2> global_setlayout = { global_perframe_layout_binding,global_perdrawcall_layout_binding };
+			std::array<VkDescriptorSetLayoutBinding, 2> global_setlayout = { global_perframe_layout_binding_Vertex,global_perdrawcall_layout_binding_Vertex };
 
 			VkDescriptorSetLayoutCreateInfo set_1 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
 			set_1.bindingCount = 2;
@@ -42,52 +42,66 @@ namespace Mage {
 				MAGE_THROW(failed to create forward renderpass descriptor set layout)
 			}
 		}
-		//set 2: custom textures
+		//set 2:global factors
 		{
+			VkDescriptorSetLayoutBinding global_perdrawcall_layout_binding_Frag = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
+			global_perdrawcall_layout_binding_Frag.binding = 0;
+			global_perdrawcall_layout_binding_Frag.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+			global_perdrawcall_layout_binding_Frag.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+
 			VkDescriptorSetLayoutCreateInfo set_2 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
-			set_2.bindingCount = 3;
+			set_2.bindingCount = 1;
+			set_2.pBindings = &global_perdrawcall_layout_binding_Frag;
+			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->m_device, &set_2, nullptr, &m_descriptor_sets.layout_infos[1])) {
+				MAGE_THROW(failed to create forward renderpas descriptor set_2 layout)
+			}
+		}
+
+		//set 3: custom textures
+		{
+			VkDescriptorSetLayoutCreateInfo set_3 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
+			set_3.bindingCount = 3;
 			//bindings
-			std::array<VkDescriptorSetLayoutBinding, 3> set_2_bindings;
+			std::array<VkDescriptorSetLayoutBinding, 3> set_3_bindings;
 			{
 				//albedo
-				set_2_bindings[0]						= VulkanInfo::aboutVkDescriptorSetLayoutBinding();
-				set_2_bindings[0].binding				= 0;
-				set_2_bindings[0].descriptorType		= VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-				set_2_bindings[0].descriptorCount		= 1;
-				set_2_bindings[0].stageFlags			= VK_SHADER_STAGE_FRAGMENT_BIT;
-				set_2_bindings[0].pImmutableSamplers	= nullptr;
+				set_3_bindings[0]						= VulkanInfo::aboutVkDescriptorSetLayoutBinding();
+				set_3_bindings[0].binding				= 0;
+				set_3_bindings[0].descriptorType		= VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				set_3_bindings[0].descriptorCount		= 1;
+				set_3_bindings[0].stageFlags			= VK_SHADER_STAGE_FRAGMENT_BIT;
+				set_3_bindings[0].pImmutableSamplers	= nullptr;
 				//metallic
-				set_2_bindings[1]			= set_2_bindings[0];
-				set_2_bindings[1].binding	= 1;
+				set_3_bindings[1]			= set_3_bindings[0];
+				set_3_bindings[1].binding	= 1;
 				//roughness
-				set_2_bindings[2]			= set_2_bindings[0];
-				set_2_bindings[2].binding	= 2;
+				set_3_bindings[2]			= set_3_bindings[0];
+				set_3_bindings[2].binding	= 2;
 			}
-			set_2.pBindings = set_2_bindings.data();
-			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->m_device, &set_2, nullptr, &m_descriptor_sets.layout_infos[1])) {
+			set_3.pBindings = set_3_bindings.data();
+			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->m_device, &set_3, nullptr, &m_descriptor_sets.layout_infos[2])) {
 				MAGE_THROW(failed to create forward renderpass descriptor set layout)
 			}
 		}
 	}
 
 	void ForwardRenderPass::setupDescriptorSets() {
-		m_descriptor_sets.sets.resize(2);
+		m_descriptor_sets.sets.resize(3);
 		//set_1 create
 		{
-			VkDescriptorSetAllocateInfo global_descriptors_allocate_info	= VulkanInfo::aboutVkDescriptorSetAllocateInfo();
-			global_descriptors_allocate_info.descriptorPool		= m_vulkan_rhi->m_descriptor_pool;
-			global_descriptors_allocate_info.descriptorSetCount	= 1;
-			global_descriptors_allocate_info.pSetLayouts		= &m_descriptor_sets.layout_infos[0];
+			VkDescriptorSetAllocateInfo global_descriptors_allocate_info_Vertex	= VulkanInfo::aboutVkDescriptorSetAllocateInfo();
+			global_descriptors_allocate_info_Vertex.descriptorPool		= m_vulkan_rhi->m_descriptor_pool;
+			global_descriptors_allocate_info_Vertex.descriptorSetCount	= 1;
+			global_descriptors_allocate_info_Vertex.pSetLayouts		= &m_descriptor_sets.layout_infos[0];
 
-			if (VK_SUCCESS != vkAllocateDescriptorSets(m_vulkan_rhi->m_device,&global_descriptors_allocate_info,&m_descriptor_sets.sets[0])) {
+			if (VK_SUCCESS != vkAllocateDescriptorSets(m_vulkan_rhi->m_device,&global_descriptors_allocate_info_Vertex,&m_descriptor_sets.sets[0])) {
 				MAGE_THROW(failde to allocate descriptor sets of forward renderpass)
 			}
 
 			VkDescriptorBufferInfo global_buffer_perframe_update_info	= VulkanInfo::aboutVkDescriptorBufferInfo();
 			global_buffer_perframe_update_info.buffer			= m_global_buffer->m_buffer;
 			global_buffer_perframe_update_info.offset			= 0;
-			//TODO:需要定义binding buffer的大小
-			global_buffer_perframe_update_info.range			= -1;//TODO
+			global_buffer_perframe_update_info.range			= sizeof(GlobalBufferPerFrameData);
 
 			VkWriteDescriptorSet global_perframe_descriptor_write	= VulkanInfo::aboutVkWriteDescriptorSet();
 			global_perframe_descriptor_write.dstSet				= m_descriptor_sets.sets[0];
@@ -98,8 +112,7 @@ namespace Mage {
 			VkDescriptorBufferInfo global_buffer_perdrawcall_update_info	= VulkanInfo::aboutVkDescriptorBufferInfo();
 			global_buffer_perdrawcall_update_info.buffer		= m_global_buffer->m_buffer;
 			global_buffer_perdrawcall_update_info.offset		= 0;
-			//TODO:需要定义binding buffer的大小
-			global_buffer_perdrawcall_update_info.range			= -1;//TODO
+			global_buffer_perdrawcall_update_info.range			= sizeof(GlobalBufferPerDrawcallVertexShaderData);
 
 			VkWriteDescriptorSet global_perdrawcall_descriptor_write	= VulkanInfo::aboutVkWriteDescriptorSet();
 			global_perdrawcall_descriptor_write.dstSet			= m_descriptor_sets.sets[0];
@@ -111,9 +124,29 @@ namespace Mage {
 
 			vkUpdateDescriptorSets(m_vulkan_rhi->m_device, 2, writes.data(), 0, nullptr);
 		}
-		//TODO:set_2 create
+		//set_2 create
 		{
+			VkDescriptorSetAllocateInfo global_descriptors_allocate_info_Frag = VulkanInfo::aboutVkDescriptorSetAllocateInfo();
+			global_descriptors_allocate_info_Frag.descriptorPool = m_vulkan_rhi->m_descriptor_pool;
+			global_descriptors_allocate_info_Frag.descriptorSetCount = 1;
+			global_descriptors_allocate_info_Frag.pSetLayouts = &m_descriptor_sets.layout_infos[1];
 
+			if (VK_SUCCESS != vkAllocateDescriptorSets(m_vulkan_rhi->m_device, &global_descriptors_allocate_info_Frag, &m_descriptor_sets.sets[1])) {
+				MAGE_THROW(failed to allocate forward renderpass descritor set_2)
+			}
+
+			VkDescriptorBufferInfo global_buffer_perdrawcall_update_info_Frag = VulkanInfo::aboutVkDescriptorBufferInfo();
+			global_buffer_perdrawcall_update_info_Frag.buffer = m_global_buffer->m_buffer;
+			global_buffer_perdrawcall_update_info_Frag.offset = 0;
+			global_buffer_perdrawcall_update_info_Frag.range = sizeof(GlobalBufferPerDrawcallFragmentShaderData);
+
+			VkWriteDescriptorSet writes = VulkanInfo::aboutVkWriteDescriptorSet();
+			writes.dstSet = m_descriptor_sets.sets[1];
+			writes.dstBinding = 0;
+			writes.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+			writes.pBufferInfo = &global_buffer_perdrawcall_update_info_Frag;
+
+			vkUpdateDescriptorSets(m_vulkan_rhi->m_device, 1, &writes, 0, nullptr);
 		}
 	}
 
@@ -308,5 +341,64 @@ namespace Mage {
 		rasterization_info.frontFace = VK_FRONT_FACE_CLOCKWISE;
 
 		create_info.pRasterizationState = &rasterization_info;
+
+		//multisampler
+		VkPipelineMultisampleStateCreateInfo multisample_info = VulkanInfo::aboutVkPipelineMultisampleStateCreateInfo();
+		multisample_info.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+		create_info.pMultisampleState = &multisample_info;
+
+		//depth_stencil
+		VkPipelineDepthStencilStateCreateInfo depth_stencil_info = VulkanInfo::aboutVkPipelineDepthStencilStateCreateInfo();
+		depth_stencil_info.depthTestEnable = VK_TRUE;
+		depth_stencil_info.depthWriteEnable = VK_TRUE;
+		depth_stencil_info.depthCompareOp = VK_COMPARE_OP_LESS;
+		
+		create_info.pDepthStencilState = &depth_stencil_info;
+
+		//color blend
+		VkPipelineColorBlendAttachmentState blend_in_color_attachments = VulkanInfo::aboutVkPipelineColorBlendAttachmentState();
+		blend_in_color_attachments.blendEnable = VK_FALSE;
+		blend_in_color_attachments.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	
+		VkPipelineColorBlendStateCreateInfo color_blend_info = VulkanInfo::aboutVkPipelineColorBlendStateCreateInfo();
+		color_blend_info.logicOpEnable = VK_FALSE;
+		color_blend_info.attachmentCount = 1;
+		color_blend_info.pAttachments = &blend_in_color_attachments;
+
+		create_info.pColorBlendState = &color_blend_info;
+
+		//dynamic state
+		VkPipelineDynamicStateCreateInfo dynamic_info = VulkanInfo::aboutVkPipelineDynamicStateCreateInfo();
+		dynamic_info.dynamicStateCount = 2;
+		VkDynamicState dynamics[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+		dynamic_info.pDynamicStates = dynamics;
+
+		create_info.pDynamicState = &dynamic_info;
+
+		//pipelinelayout
+		VkPipelineLayout layout{ VK_NULL_HANDLE };
+
+		VkPipelineLayoutCreateInfo pipeline_layout_info = VulkanInfo::aboutVkPipelineLayoutCreateInfo();
+		pipeline_layout_info.setLayoutCount = static_cast<uint32_t>(indices.size());
+		std::vector<VkDescriptorSetLayout> layouts(indices.size());
+		for (int i{ 0 }; i < indices.size(); ++i) layouts[i] = p_m_render_pass->m_descriptor_sets.layout_infos[indices[i]];
+		pipeline_layout_info.pSetLayouts = layouts.data();
+
+		if (VK_SUCCESS != vkCreatePipelineLayout(m_vulkan_rhi->m_device, &pipeline_layout_info, nullptr, &layout)) {
+			MAGE_THROW(failed to create pipeline layout which in forward renderpass)
+		}
+
+		create_info.layout = layout;
+
+		create_info.renderPass = p_m_render_pass->m_render_pass;
+		create_info.subpass = 0;
+
+		if (VK_SUCCESS != vkCreateGraphicsPipelines(m_vulkan_rhi->m_device, VK_NULL_HANDLE, 1, &create_info, nullptr, &m_pipeline)) {
+			MAGE_THROW(failed to create forward render pipeline)
+		}
 	}
+
+	//TODO:拿全部资源
+	void ForwardRenderSubpass::draw()
 }
