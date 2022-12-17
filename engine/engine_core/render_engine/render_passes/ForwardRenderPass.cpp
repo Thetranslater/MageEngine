@@ -6,6 +6,7 @@
 
 #include"engine_core/render_engine/render_mesh.h"
 #include"engine_core/render_engine/render_resource.h"
+#include"engine_core/render_engine/render_scene.h"
 
 namespace Mage {
 	void ForwardRenderPass::initialize(const RenderPassCreateInfo* createInfo) {
@@ -30,8 +31,8 @@ namespace Mage {
 
 			VkDescriptorSetLayoutBinding global_perdrawcall_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
 			global_perdrawcall_layout_binding_Vertex.binding			= 1;
-			global_perdrawcall_layout_binding_Vertex.descriptorType	= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-			global_perdrawcall_layout_binding_Vertex.stageFlags		= VK_SHADER_STAGE_VERTEX_BIT;
+			global_perdrawcall_layout_binding_Vertex.descriptorType		= VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+			global_perdrawcall_layout_binding_Vertex.stageFlags			= VK_SHADER_STAGE_VERTEX_BIT;
 
 			std::array<VkDescriptorSetLayoutBinding, 2> global_setlayout = { global_perframe_layout_binding_Vertex,global_perdrawcall_layout_binding_Vertex };
 
@@ -99,7 +100,7 @@ namespace Mage {
 			}
 
 			VkDescriptorBufferInfo global_buffer_perframe_update_info	= VulkanInfo::aboutVkDescriptorBufferInfo();
-			global_buffer_perframe_update_info.buffer			= m_global_buffer->m_buffer;
+			global_buffer_perframe_update_info.buffer			= m_render_resource->m_global_updated_buffer.m_buffer;
 			global_buffer_perframe_update_info.offset			= 0;
 			global_buffer_perframe_update_info.range			= sizeof(GlobalBufferPerFrameData);
 
@@ -110,7 +111,7 @@ namespace Mage {
 			global_perframe_descriptor_write.pBufferInfo		= &global_buffer_perframe_update_info;
 
 			VkDescriptorBufferInfo global_buffer_perdrawcall_update_info	= VulkanInfo::aboutVkDescriptorBufferInfo();
-			global_buffer_perdrawcall_update_info.buffer		= m_global_buffer->m_buffer;
+			global_buffer_perdrawcall_update_info.buffer		= m_render_resource->m_global_updated_buffer.m_buffer;
 			global_buffer_perdrawcall_update_info.offset		= 0;
 			global_buffer_perdrawcall_update_info.range			= sizeof(GlobalBufferPerDrawcallVertexShaderData);
 
@@ -136,7 +137,7 @@ namespace Mage {
 			}
 
 			VkDescriptorBufferInfo global_buffer_perdrawcall_update_info_Frag = VulkanInfo::aboutVkDescriptorBufferInfo();
-			global_buffer_perdrawcall_update_info_Frag.buffer = m_global_buffer->m_buffer;
+			global_buffer_perdrawcall_update_info_Frag.buffer = m_render_resource->m_global_updated_buffer.m_buffer;
 			global_buffer_perdrawcall_update_info_Frag.offset = 0;
 			global_buffer_perdrawcall_update_info_Frag.range = sizeof(GlobalBufferPerDrawcallFragmentShaderData);
 
@@ -252,9 +253,14 @@ namespace Mage {
 			ForwardRenderSubpassCreateInfo subpass_create_info{};
 			subpass_create_info.m_render_pass = this;
 			subpass_create_info.m_vulkan_rhi = m_vulkan_rhi;
-			subpass_create_info.m_layouts_indices = { 0, 1 };
+			subpass_create_info.m_layouts_indices = { 0, 1, 2 };
 			m_p_subpasses[i]->initialize(&subpass_create_info);
 		}
+	}
+
+	//TODO::现在我们只有一个subpass，所以直接调用subpass的draw即可,资源都在scene和resource类中拿。
+	void ForwardRenderPass::draw() {
+		m_p_subpasses[0]->draw();
 	}
 
 	//subpass
@@ -273,8 +279,8 @@ namespace Mage {
 		//TODO:shader stages
 		std::array<VkPipelineShaderStageCreateInfo, 2> stages;
 		
-		VkShaderModule vertex_module = nullptr;
-		VkShaderModule frag_module = nullptr;
+		VkShaderModule vertex_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->m_device, "E:/Mage/engine/shaders/forwardVERT.spv");
+		VkShaderModule frag_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->m_device, "E:/Mage/engine/shaders/forwardFRAG.spv");
 
 		stages[0]			= VulkanInfo::aboutVkPipelineShaderStageCreateInfo();
 		stages[0].stage		= VK_SHADER_STAGE_VERTEX_BIT;
@@ -316,29 +322,29 @@ namespace Mage {
 		VkPipelineViewportStateCreateInfo viewport_info = VulkanInfo::aboutVkPipelineViewportStateCreateInfo();
 
 		VkViewport viewport = VulkanInfo::aboutVkViewport();
-		viewport.x = 0.f;
-		viewport.y = 0.f;
-		viewport.width = m_vulkan_rhi->m_swapchain_extent.width;
-		viewport.height = m_vulkan_rhi->m_swapchain_extent.height;
-		viewport.minDepth = 0.f;
-		viewport.maxDepth = 1.f;
+		viewport.x			= 0.f;
+		viewport.y			= 0.f;
+		viewport.width		= m_vulkan_rhi->m_swapchain_extent.width;
+		viewport.height		= m_vulkan_rhi->m_swapchain_extent.height;
+		viewport.minDepth	= 0.f;
+		viewport.maxDepth	= 1.f;
 
 		VkRect2D scissor = VulkanInfo::aboutVkRect2D();
 		scissor.offset = { 0,0 };
 		scissor.extent = m_vulkan_rhi->m_swapchain_extent;
 
 		viewport_info.viewportCount = 1;
-		viewport_info.scissorCount = 1;
-		viewport_info.pViewports = &viewport;
-		viewport_info.pScissors = &scissor;
+		viewport_info.scissorCount	= 1;
+		viewport_info.pViewports	= &viewport;
+		viewport_info.pScissors		= &scissor;
 
 		create_info.pViewportState = &viewport_info;
 
 		//rasterization
 		VkPipelineRasterizationStateCreateInfo rasterization_info = VulkanInfo::aboutVkPipelineRasterizationStateCreateInfo();
-		rasterization_info.polygonMode = VK_POLYGON_MODE_FILL;
-		rasterization_info.cullMode = VK_CULL_MODE_BACK_BIT;
-		rasterization_info.frontFace = VK_FRONT_FACE_CLOCKWISE;
+		rasterization_info.polygonMode	= VK_POLYGON_MODE_FILL;
+		rasterization_info.cullMode		= VK_CULL_MODE_BACK_BIT;
+		rasterization_info.frontFace	= VK_FRONT_FACE_CLOCKWISE;
 
 		create_info.pRasterizationState = &rasterization_info;
 
@@ -350,16 +356,16 @@ namespace Mage {
 
 		//depth_stencil
 		VkPipelineDepthStencilStateCreateInfo depth_stencil_info = VulkanInfo::aboutVkPipelineDepthStencilStateCreateInfo();
-		depth_stencil_info.depthTestEnable = VK_TRUE;
-		depth_stencil_info.depthWriteEnable = VK_TRUE;
-		depth_stencil_info.depthCompareOp = VK_COMPARE_OP_LESS;
+		depth_stencil_info.depthTestEnable	= VK_TRUE;
+		depth_stencil_info.depthWriteEnable	= VK_TRUE;
+		depth_stencil_info.depthCompareOp	= VK_COMPARE_OP_LESS;
 		
 		create_info.pDepthStencilState = &depth_stencil_info;
 
 		//color blend
 		VkPipelineColorBlendAttachmentState blend_in_color_attachments = VulkanInfo::aboutVkPipelineColorBlendAttachmentState();
-		blend_in_color_attachments.blendEnable = VK_FALSE;
-		blend_in_color_attachments.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+		blend_in_color_attachments.blendEnable		= VK_FALSE;
+		blend_in_color_attachments.colorWriteMask	= VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
 	
 		VkPipelineColorBlendStateCreateInfo color_blend_info = VulkanInfo::aboutVkPipelineColorBlendStateCreateInfo();
 		color_blend_info.logicOpEnable = VK_FALSE;
@@ -400,5 +406,16 @@ namespace Mage {
 	}
 
 	//TODO:拿全部资源
-	void ForwardRenderSubpass::draw()
+	void ForwardRenderSubpass::draw() {
+		std::map<GUID32, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;
+		//batch recognizing
+		for (VkRenderModel& model : p_m_render_pass->m_render_scene->m_render_models) {
+			auto& buffer_batch = model_batch[model.m_mesh_guid32];
+			size_t material_hash{ 0 };
+			for (auto& texture_guid : model.m_texture_guid32s) hash_combine(material_hash, texture_guid);
+			auto& material_batch = buffer_batch[material_hash];
+			auto& mesh_batch = material_batch[model.m_model_guid32];
+			mesh_batch.emplace_back(&model);
+		}
+	}
 }

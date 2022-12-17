@@ -1,3 +1,3 @@
-E:/Tools/Vulkan/Bin/glslc.exe DevVertexShader.vert -o devvert.spv
-E:/Tools/Vulkan/Bin/glslc.exe DevFragShader.frag -o devfrag.spv
+E:/Tools/Vulkan/Bin/glslc.exe ForwardRender.vert -o forwardVERT.spv
+E:/Tools/Vulkan/Bin/glslc.exe ForwardRender.frag -o forwardFRAG.spv
 pause

@@ -9,10 +9,13 @@
 namespace Mage {
 	class VulkanRHI;
 	class Subpass;
+	class RenderScene;
+	class RenderResource;
 	struct GlobalUpdatedBuffer;
 
 	struct RenderPassCreateInfo{
-		GlobalUpdatedBuffer* global_buffer;
+		RenderResource* render_global_resource;
+		RenderScene* render_scene;
 	};
 
 	//primary pipeline
@@ -44,6 +47,7 @@ namespace Mage {
 		std::vector<VkFramebuffer> m_framebuffers;		//create framebuffer for each swapchain image
 		std::vector<std::shared_ptr<Subpass>> m_p_subpasses;				//pipelines
 		
-		GlobalUpdatedBuffer* m_global_buffer{ nullptr };
+		RenderResource* m_render_resource{ nullptr };
+		RenderScene* m_render_scene{ nullptr };
 	};
 }

@@ -170,7 +170,6 @@
     <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_pass.cpp" />
-    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\DevRenderPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_scene.cpp" />
@@ -208,7 +207,6 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_mesh.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_model.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_pass.h" />
-    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\DevRenderPass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_resource.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_scene.h" />

@@ -3,7 +3,7 @@
 #include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
 #include"engine_core/render_engine/renderer/vulkanHelper.h"
-#include"engine_core/render_engine/render_passes/DevRenderPass.h"
+#include"engine_core/render_engine/render_passes/ForwardRenderPass.h"
 #include"engine_core/render_engine/render_scene.h"
 #include"engine_core/render_engine/render_resource.h"
 #include"engine_core/function/global_context/global_context.h"
@@ -24,6 +24,12 @@ namespace Mage {
 
 		m_render_resource = std::make_shared<RenderResource>();
 		m_render_resource->initialize(m_vulkan_rhi.get());
+
+		m_render_pass = std::make_shared<ForwardRenderPass>();
+		RenderPassCreateInfo create_info{};
+		create_info.render_global_resource = m_render_resource.get();
+		create_info.render_scene = m_render_scene.get();
+		m_render_pass->initialize(&create_info);
 	}
 
 	//TODO

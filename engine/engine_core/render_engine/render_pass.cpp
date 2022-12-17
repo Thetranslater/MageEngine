@@ -6,6 +6,7 @@
 namespace Mage {
 	void RenderPass::initialize(const RenderPassCreateInfo* createInfo) {
 		m_vulkan_rhi = engine_global_context.m_render_system->getVulkanRHI();
-		m_global_buffer = createInfo->global_buffer;
+		m_render_resource = createInfo->render_global_resource;
+		m_render_scene = createInfo->render_scene;
 	}
 }

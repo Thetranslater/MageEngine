@@ -15,8 +15,8 @@ namespace Mage {
 		void setupRenderPass();
 		void setupDescriptorLayouts();
 		void setupDescriptorSets();
-		void setupSubPasses(){};
-		void setupFramebuffers(){};
+		void setupSubPasses();
+		void setupFramebuffers();
 
 		uint32_t m_subupass_count{ 1 };
 	};
