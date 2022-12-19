@@ -432,7 +432,7 @@ namespace Mage {
 		assert(m_buffers.size() == 1); //暂不支持多buffer
 		mesh_info.m_buffer_uri.m_uri = parent_directory + "/" + m_buffers[0].m_uri;
 		
-		//textures
+		//TODO:re-arrange textures: albedo, normal, metallic-roughness
 		textures_info.m_uris.resize(m_textures.size());
 		for (int i = 0; i < textures_info.m_uris.size(); ++i) {
 			textures_info.m_uris[i].m_uri = parent_directory + "/" + m_textures[i].m_uri;

@@ -100,7 +100,10 @@ namespace Mage {
 				model.m_mesh_description = std::move(process_job.m_mesh_info.m_transfer_mesh_descriptions[i]);
 				model.m_model_guid32 = part_mesh_guid;
 				model.m_mesh_guid32 = mesh_guid;
-				model.m_texture_guid32s = texture_guids;
+				model.m_texture_guid32s = {
+					texture_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_base_color_index],
+					texture_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_normal_index],
+					texture_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_metallicroughness_index] };
 
 				m_render_scene->m_render_models.emplace_back(model);
 			}
