@@ -8,13 +8,22 @@
 namespace Mage {
 	void RenderResource::initialize(VulkanRHI* rhi) {
 		//create global buffer;
-		VkDeviceSize global_buffer_size = 1024 * 1024 * 128;
-		VulkanHelper::bufferCreationHelper(rhi, global_buffer_size,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
-			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-			m_global_updated_buffer.m_buffer, m_global_updated_buffer.m_buffer_memory);
-		//TODO:unmap as program terminated.
-		vkMapMemory(rhi->m_device, m_global_updated_buffer.m_buffer_memory, 0, VK_WHOLE_SIZE, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointer);
+		VkDeviceSize global_buffer_size = 1024 * 1024 * 42;
+
+		//resize
+		int size = rhi->m_swapchain_size;
+		m_global_updated_buffer.m_buffers.resize(size);
+		m_global_updated_buffer.m_buffer_memories.resize(size);
+		m_global_updated_buffer.m_followed_camera_updated_data_pointers.resize(size);
+
+		for (int i{ 0 }; i < size; ++i) {
+			VulkanHelper::bufferCreationHelper(rhi, global_buffer_size,
+				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+				m_global_updated_buffer.m_buffers[i], m_global_updated_buffer.m_buffer_memories[i]);
+			//TODO:unmap as program terminated.
+			vkMapMemory(rhi->m_device, m_global_updated_buffer.m_buffer_memories[i], 0, VK_WHOLE_SIZE, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointers[i]);
+		}
 	}
 
 	bool RenderResource::hasMesh(const GUID32& guid) {

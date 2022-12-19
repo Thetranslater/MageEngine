@@ -32,5 +32,6 @@ namespace Mage {
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{nullptr};
 
 		VkPipeline m_pipeline;
+		VkPipelineLayout m_pipeline_layout;
 	};
 }

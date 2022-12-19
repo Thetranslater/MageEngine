@@ -55,9 +55,9 @@ namespace Mage {
 	};
 
 	struct GlobalUpdatedBuffer {
-		VkBuffer m_buffer{VK_NULL_HANDLE};
-		VkDeviceMemory m_buffer_memory{VK_NULL_HANDLE};
-		void* m_followed_camera_updated_data_pointer{ nullptr };
+		std::vector<VkBuffer> m_buffers;
+		std::vector<VkDeviceMemory> m_buffer_memories;
+		std::vector<void*> m_followed_camera_updated_data_pointers;
 	};
 
 	struct GlobalBufferPerFrameData {

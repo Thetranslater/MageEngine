@@ -19,6 +19,10 @@ namespace Mage {
 		static inline int   CeilToInt(float value) { return int(std::ceilf(value)); }
 		static inline float Clamp(float value, float min, float max) { return std::clamp(value, min, max); }
 		static inline float Clamp01(float value) { return std::clamp(value, 0.f, 1.f); }
+		static inline int   RoundUp(int value, int alighment) {
+			int temp = value + alighment - 1;
+			return temp - temp % alighment - (temp < 0 ? alighment : 0);
+		}
 		//find the closest power of two of the given value, if value is greater than 2^30,the result will always shrink to 2^30
 		static int   ClosestPowerOfTwo(int value) {
 			if (value <= 0) return 0;
