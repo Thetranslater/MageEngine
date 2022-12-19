@@ -41,6 +41,7 @@ namespace Mage {
 			
 			for (int i = 0; i < 6; ++i) {
 				attributes[i] = VulkanInfo::aboutVkVertexInputAttributeDescription();
+				attributes[i].location = i;
 				attributes[i].binding = i;
 				attributes[i].offset = 0;
 			}

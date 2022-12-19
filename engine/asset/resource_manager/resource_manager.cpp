@@ -67,10 +67,11 @@ namespace Mage {
 			image.pixel_type = TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE;
 			image.uri = filename;
 			auto data = stbi_load(filename.data(), &image.width, &image.height, &image.component, 4);
-			int size = image.width * image.height * image.component * (image.bits / 8);
+			int size = image.width * image.height * 4 * (image.bits / 8);
 			image.image.resize(size);
-			std::copy(data, data + size, image.image.begin());
-			stbi_image_free(data);
+			image.image = std::vector<unsigned char>(data, data + size);
+			//std::copy(data, data + size, image.image.begin());
+			//stbi_image_free(data);
 
 			out_texture_data->loadFromgLTF_Image(image);
 			out_texture_data->m_combined_sampler = remain_sampler;

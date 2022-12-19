@@ -414,7 +414,7 @@ namespace Mage {
 		global_perframe_write.pBufferInfo		= &descriptor_buffer_info;
 
 		vkUpdateDescriptorSets(m_vulkan_rhi->m_device, 1, &global_perframe_write, 0, nullptr);
-		vkCmdBindDescriptorSets(m_vulkan_rhi->m_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline_layout, 0, 1, &p_m_render_pass->m_descriptor_sets.sets[0], 1, &offset);
+		//vkCmdBindDescriptorSets(m_vulkan_rhi->m_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline_layout, 0, 1, &p_m_render_pass->m_descriptor_sets.sets[0], 1, &offset);
 		//DONE
 
 		begin_offset += sizeof(GlobalBufferPerFrameData);
