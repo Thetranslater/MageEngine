@@ -34,6 +34,10 @@ namespace Mage {
 		return m_guid_texture_map.find(guid) != m_guid_texture_map.end();
 	}
 
+	bool RenderResource::hasMaterial(const GUID64& guid) {
+		return m_guid_material_map.find(guid) != m_guid_material_map.end();
+	}
+
 	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, GUID32& guid, IO_Buffer& buffer) {
 		if (hasMesh(guid)) {
 			buffer = m_guid_buffer_map[guid];
@@ -125,7 +129,54 @@ namespace Mage {
 		vkDestroyBuffer(rhi->m_device, staging_buffer, nullptr);
 		vkFreeMemory(rhi->m_device, staging_memory, nullptr);
 
-		//descriptor?
+		m_guid_texture_map.emplace(std::make_pair(guid, render_texture));
+
+		return true;
+	}
+
+	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, GUID64& guid, IO_Material& material) {
+		if (hasMaterial(guid)) {
+			material = m_guid_material_map[guid];
+			return true;
+		}
+
+		VkRenderMaterial render_material;
+		render_material.m_double_side = std::get<1>(material).m_double_side;
+
+		//TODO:Ôö¼Óocculusion texture
+		VkDescriptorSetLayoutBinding bindings[3];
+		bindings[0] = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
+		bindings[0].binding = 0;
+		bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		bindings[0].pImmutableSamplers = std::get<1>(material).m_base_color_texture_index != 0xffffffff ?
+			&m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_sampler : nullptr;
+		bindings[1] = bindings[0];
+		bindings[1].binding = 1;
+		bindings[1].pImmutableSamplers = std::get<1>(material).m_normal_texture_index != 0xfffffff ?
+			&m_guid_texture_map[std::get<1>(material).m_normal_texture_index].m_sampler : nullptr;
+		bindings[2] = bindings[0];
+		bindings[2].binding = 2;
+		bindings[2].pImmutableSamplers = std::get<1>(material).m_metallic_roughness_texture_index != 0xffffffff ?
+			&m_guid_texture_map[std::get<1>(material).m_metallic_roughness_texture_index].m_sampler : nullptr;
+
+		VkDescriptorSetLayoutCreateInfo layout_info = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
+		layout_info.bindingCount = 3;
+		layout_info.pBindings = bindings;
+		VkDescriptorSetLayout layout;
+		if (VK_SUCCESS != vkCreateDescriptorSetLayout(rhi->m_device, &layout_info, nullptr, &layout)) {
+			MAGE_THROW(failed to create descriptor set layout in material)
+		}
+
+		VkDescriptorSetAllocateInfo alloc_info = VulkanInfo::aboutVkDescriptorSetAllocateInfo();
+		alloc_info.descriptorPool = rhi->m_descriptor_pool;
+		alloc_info.descriptorSetCount = 1;
+		alloc_info.pSetLayouts = &layout;
+
+		if (VK_SUCCESS != vkAllocateDescriptorSets(rhi->m_device, &alloc_info, &render_material.m_descriptor_set)) {
+			MAGE_THROW(failed to allocate descritor set when create material resource)
+		}
+
+		m_guid_material_map.insert(std::make_pair(guid, render_material));
 
 		return true;
 	}

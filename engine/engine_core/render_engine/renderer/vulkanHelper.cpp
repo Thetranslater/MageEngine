@@ -1,3 +1,4 @@
+#define VULKAN_INFO 1
 #include"engine_core/render_engine/renderer/vulkanHelper.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
 #include"engine_core/render_engine/renderer/vulkanInfo.h"
@@ -148,8 +149,11 @@ namespace Mage {
 	}
 
 	bool VulkanHelper::checkDeviceFeaturesSupport(VkPhysicalDevice& physical_device, VkPhysicalDeviceFeatures required_features) {
-		VkPhysicalDeviceFeatures device_features;
-		vkGetPhysicalDeviceFeatures(physical_device, &device_features);
+		VkPhysicalDeviceFeatures2 device_features = VulkanInfo::aboutVkPhisicalDeviceFeatures2();
+		VkPhysicalDeviceRobustness2FeaturesEXT extension_features = VulkanInfo::abouotVkPhysicalDeviceRobustness2FeaturesEXT();
+		extension_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
+		device_features.pNext = &extension_features;
+		vkGetPhysicalDeviceFeatures2(physical_device, &device_features);
 
 		//可能包含对齐BUG？
 		VkBool32* p_device_features = reinterpret_cast<VkBool32*>(&device_features);
@@ -159,7 +163,7 @@ namespace Mage {
 			if (*(p_device_features + i) != *(p_required_features + i))
 				return false;
 		}
-		return true;
+		return true && extension_features.nullDescriptor;
 	}
 
 	bool VulkanHelper::isDeviceSuitable(VkPhysicalDevice& physical_device, VkPhysicalDeviceFeatures required_features, VkSurfaceKHR surface) {

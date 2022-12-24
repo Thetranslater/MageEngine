@@ -4,6 +4,7 @@
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
 #include"engine_core/render_engine/renderer/vulkanHelper.h"
 
+#include"engine_core/render_engine/render_macro.h"
 #include"engine_core/render_engine/render_mesh.h"
 #include"engine_core/render_engine/render_resource.h"
 #include"engine_core/render_engine/render_scene.h"
@@ -71,7 +72,7 @@ namespace Mage {
 				//albedo
 				set_3_bindings[0]						= VulkanInfo::aboutVkDescriptorSetLayoutBinding();
 				set_3_bindings[0].binding				= 0;
-				set_3_bindings[0].descriptorType		= VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+				set_3_bindings[0].descriptorType		= VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 				set_3_bindings[0].descriptorCount		= 1;
 				set_3_bindings[0].stageFlags			= VK_SHADER_STAGE_FRAGMENT_BIT;
 				set_3_bindings[0].pImmutableSamplers	= nullptr;
@@ -111,6 +112,17 @@ namespace Mage {
 
 			if (VK_SUCCESS != vkAllocateDescriptorSets(m_vulkan_rhi->m_device, &global_descriptors_allocate_info_Frag, &m_descriptor_sets.sets[1])) {
 				MAGE_THROW(failed to allocate forward renderpass descritor set_2)
+			}
+		}
+		//set 3 create
+		{
+			VkDescriptorSetAllocateInfo texture_descriptors_allocate_info = VulkanInfo::aboutVkDescriptorSetAllocateInfo();
+			texture_descriptors_allocate_info.descriptorPool = m_vulkan_rhi->m_descriptor_pool;
+			texture_descriptors_allocate_info.descriptorSetCount = 1;
+			texture_descriptors_allocate_info.pSetLayouts = &m_descriptor_sets.layout_infos[2];
+
+			if (VK_SUCCESS != vkAllocateDescriptorSets(m_vulkan_rhi->m_device, &texture_descriptors_allocate_info, &m_descriptor_sets.sets[2])) {
+				MAGE_THROW(failed to allocate forward renderpass descritor set_3)
 			}
 		}
 	}
@@ -224,6 +236,16 @@ namespace Mage {
 
 	//TODO::现在我们只有一个subpass，所以直接调用subpass的draw即可,资源都在scene和resource类中拿。
 	void ForwardRenderPass::draw() {
+		VkRenderPassBeginInfo pass_begin_info = VulkanInfo::aboutVkRenderPassBeginInfo();
+		pass_begin_info.renderPass = m_render_pass;
+		pass_begin_info.framebuffer = m_framebuffers[m_vulkan_rhi->m_current_frame_index];
+		pass_begin_info.renderArea.offset = { 0,0 };
+		pass_begin_info.renderArea.extent = m_vulkan_rhi->m_swapchain_extent;
+		pass_begin_info.clearValueCount = 2;
+		VkClearValue clears[2] = { {{0.f,0.f,0.f,0.f}},{{0.f,0.f,0.f,0.f}} };
+		pass_begin_info.pClearValues = clears;
+		vkCmdBeginRenderPass(m_vulkan_rhi->m_command_buffer, &pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+
 		m_p_subpasses[0]->draw();
 	}
 
@@ -341,7 +363,7 @@ namespace Mage {
 		//dynamic state
 		VkPipelineDynamicStateCreateInfo dynamic_info = VulkanInfo::aboutVkPipelineDynamicStateCreateInfo();
 		dynamic_info.dynamicStateCount = 2;
-		VkDynamicState dynamics[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
+		VkDynamicState dynamics[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, /*VK_DYNAMIC_STATE_VERTEX_INPUT_EXT*/};
 		dynamic_info.pDynamicStates = dynamics;
 
 		create_info.pDynamicState = &dynamic_info;
@@ -367,10 +389,12 @@ namespace Mage {
 		}
 	}
 
-	//TODO:拿全部资源
+	//TODO:vertex input state 应该是dynamic的
 	void ForwardRenderSubpass::draw() {
 		VkBuffer current_global_buffer_wait_for_update = p_m_render_pass->m_render_resource->m_global_updated_buffer.m_buffers[m_vulkan_rhi->m_current_frame_index];
 		void* map_pointer = p_m_render_pass->m_render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->m_current_frame_index];
+		//update descriptor sets
+		
 		//buffer,materials, submeshes
 		std::map<GUID32, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;
 		//batch recognizing
@@ -395,11 +419,11 @@ namespace Mage {
 		binding_scissor.extent = m_vulkan_rhi->m_swapchain_extent;
 		vkCmdSetScissor(m_vulkan_rhi->m_command_buffer, 0, 1, &binding_scissor);
 
-		//global perframe data and descriptor set update
+		//TODO:camera global perframe data and descriptor set update
 		int begin_offset{ 0 };
 		GlobalBufferPerFrameData perframe_data{};
 		perframe_data.m_camera_view_matrix = glm::mat4(Matrix4x4::TRS({ 0,0,0 }, { 0,0,0,1 }, { 1,1,1 }));
-		perframe_data.m_camera_perspective_matrix = glm::mat4(Matrix4x4::Perspective(100, 1920.f / 1080.f, 1, 50));
+		perframe_data.m_camera_perspective_matrix = glm::mat4(Matrix4x4::Perspective(100, float(m_vulkan_rhi->m_swapchain_extent.width) / m_vulkan_rhi->m_swapchain_extent.height, 1, 50));
 		*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 
 		uint32_t offset = begin_offset;
@@ -423,47 +447,142 @@ namespace Mage {
 		for (auto& [buffer_guid, material_batch] : model_batch) {
 			auto& buffer = p_m_render_pass->m_render_resource->m_guid_buffer_map[buffer_guid];
 			for (auto& [material_combine_hash, mesh_batch] : material_batch) {
+				VkRenderModel* template_model = mesh_batch.begin()->second.front();
+				//bind materials
+				std::array<VkWriteDescriptorSet, 3> material_write;
+
+				material_write[0] = VulkanInfo::aboutVkWriteDescriptorSet();
+				material_write[0].dstSet = p_m_render_pass->m_descriptor_sets.sets[2];
+				material_write[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+
+				material_write[0].dstBinding = 0;
+				VkDescriptorImageInfo albedo_info = VulkanInfo::aboutVkDescriptorImageInfo();
+				albedo_info.imageView = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[0]].m_texture_view;
+				albedo_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				albedo_info.sampler = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[0]].m_sampler;
+				material_write[0].pImageInfo = &albedo_info;
+
+				material_write[1] = material_write[0];
+				material_write[1].dstBinding = 1;
+				VkDescriptorImageInfo normal_info = VulkanInfo::aboutVkDescriptorImageInfo();
+				normal_info.imageView = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[1]].m_texture_view;
+				normal_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				normal_info.sampler = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[1]].m_sampler;
+				material_write[1].pImageInfo = &normal_info;
+
+				material_write[2] = material_write[0];
+				material_write[2].dstBinding = 2;
+				VkDescriptorImageInfo metallic_roughness_info = VulkanInfo::aboutVkDescriptorImageInfo();
+				metallic_roughness_info.imageView = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[2]].m_texture_view;
+				metallic_roughness_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				metallic_roughness_info.sampler = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[2]].m_sampler;
+				material_write[2].pImageInfo = &metallic_roughness_info;
+
+				vkUpdateDescriptorSets(m_vulkan_rhi->m_device, 3, material_write.data(), 0, nullptr);
+
+				vkCmdBindDescriptorSets(m_vulkan_rhi->m_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline_layout, 2, 1, &p_m_render_pass->m_descriptor_sets.sets[2], 0, nullptr);
+				//DONE
+
 				for (auto& [mesh_guid, same_meshes] : mesh_batch) {
-					uint32_t total_drawcall_permesh = same_meshes.size();
-					//bind material
-					VkRenderModel* template_model = same_meshes.front();
+					uint32_t total_drawcall_instances = same_meshes.size();
 					
-					std::array<VkWriteDescriptorSet, 3> material_write;
-					
-					material_write[0] = VulkanInfo::aboutVkWriteDescriptorSet();
-					material_write[0].dstSet = p_m_render_pass->m_descriptor_sets.sets[2];
-					material_write[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					//bind vertex and index buffer
+					//vkCmdSetVertexInputEXT(m_vulkan_rhi->m_command_buffer,)
 
-					material_write[0].dstBinding = 0;
-					VkDescriptorImageInfo albedo_info = VulkanInfo::aboutVkDescriptorImageInfo();
-					albedo_info.imageView = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[0]].m_texture_view;
-					albedo_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					albedo_info.sampler = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[0]].m_sampler;
-					material_write[0].pImageInfo = &albedo_info;
+					auto get_offset_from = [](VkRenderModel* tmodel, int index)->uint32_t {
+						return std::get<1>(tmodel->m_mesh_description.m_mesh_data_offset_infos[index]);
+					};
+					VkBuffer super_block = buffer.m_bi_data;
+					VkBuffer buffers[MAGE_VERTEX_ATTRIBUTES_COUNT] = { VK_NULL_HANDLE };
+					std::array<VkDeviceSize, MAGE_VERTEX_ATTRIBUTES_COUNT> offsets = {0};
+					int index{ 0 };
+					while (index < MAGE_VERTEX_ATTRIBUTES_COUNT) {
+						if (get_offset_from(template_model, index) != 0xffffffff) {
+							while (index < MAGE_VERTEX_ATTRIBUTES_COUNT) {
+								auto offset = get_offset_from(template_model, index);
+								if (offset == 0xffffffff) break;
+								offsets[index] = offset;
+								buffers[index++] = super_block;
+							}
+						}
+						++index;
+					}
+					vkCmdBindVertexBuffers(m_vulkan_rhi->m_command_buffer, 0, MAGE_VERTEX_ATTRIBUTES_COUNT, buffers, offsets.data());
 
-					material_write[1] = material_write[0];
-					material_write[1].dstBinding = 1;
-					VkDescriptorImageInfo normal_info = VulkanInfo::aboutVkDescriptorImageInfo();
-					normal_info.imageView = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[1]].m_texture_view;
-					normal_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					normal_info.sampler = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[1]].m_sampler;
-					material_write[1].pImageInfo = &normal_info;
-
-					material_write[2] = material_write[0];
-					material_write[2].dstBinding = 2;
-					VkDescriptorImageInfo metallic_roughness_info = VulkanInfo::aboutVkDescriptorImageInfo();
-					metallic_roughness_info.imageView = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[2]].m_texture_view;
-					metallic_roughness_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					metallic_roughness_info.sampler = p_m_render_pass->m_render_resource->m_guid_texture_map[template_model->m_texture_guid32s[2]].m_sampler;
-					material_write[2].pImageInfo = &metallic_roughness_info;
-					
-					vkUpdateDescriptorSets(m_vulkan_rhi->m_device, 3, material_write.data(), 0, nullptr);
-
-					vkCmdBindDescriptorSets(m_vulkan_rhi->m_command_buffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline_layout, 2, 1, &p_m_render_pass->m_descriptor_sets.sets[2], 0, nullptr);
+					auto& index_offset_info = template_model->m_mesh_description.m_mesh_data_offset_infos[6];
+					//TODO:VK_INDEX_TYPE_UINT8_EXT
+					VkIndexType index_type = std::get<2>(index_offset_info) * 8 == 32 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
+					vkCmdBindIndexBuffer(m_vulkan_rhi->m_command_buffer, super_block, std::get<1>(index_offset_info), index_type);
 					//DONE
-					
+
+					//drawcalls
+					int total_drawcall_counts = (total_drawcall_instances + MAGE_PERDRAWCALL_MAX_LIMIT - 1) / MAGE_PERDRAWCALL_MAX_LIMIT;
+					for (int i{ 0 }; i < total_drawcall_counts; ++i) {
+						int perdrawcall_begin = begin_offset;
+						int perdrawcall_frag_begin = begin_offset + sizeof(GlobalBufferPerDrawcallVertexShaderData);
+						perdrawcall_frag_begin = Mathf::RoundUp(perdrawcall_frag_begin, 64);
+
+						//populate the instance data
+						GlobalBufferPerDrawcallVertexShaderData* transforms =
+							reinterpret_cast<GlobalBufferPerDrawcallVertexShaderData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_begin);
+						GlobalBufferPerDrawcallFragmentShaderData* factors =
+							reinterpret_cast<GlobalBufferPerDrawcallFragmentShaderData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_frag_begin);
+						int current_instance_counts =
+							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) < MAGE_PERDRAWCALL_MAX_LIMIT ?
+							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
+						for (int j{ 0 }; j < current_instance_counts; ++j) {
+							transforms->m_mesh_datas[j].m_matrix = 
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_matrix;
+							factors->m_frag_datas[j].m_base_color_factor =
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_base_color_factor;
+							factors->m_frag_datas[j].m_metallic_factor =
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_metallic_factor;
+							factors->m_frag_datas[j].m_roughness_factor =
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_roughness_factor;
+						}
+						begin_offset = perdrawcall_frag_begin + sizeof(GlobalBufferPerDrawcallFragmentShaderData);
+						begin_offset = Mathf::RoundUp(begin_offset, 64);
+						//DONE
+
+						//update descriptor set
+						VkDescriptorSet binding_sets[2] = { p_m_render_pass->m_descriptor_sets.sets[0],p_m_render_pass->m_descriptor_sets.sets[1] };
+
+						VkDescriptorBufferInfo buffer_info = VulkanInfo::aboutVkDescriptorBufferInfo();
+						buffer_info.buffer = current_global_buffer_wait_for_update;
+						buffer_info.offset = 0;
+						buffer_info.range = sizeof(GlobalBufferPerDrawcallVertexShaderData);
+						VkWriteDescriptorSet global_perdrawcall_write = VulkanInfo::aboutVkWriteDescriptorSet();
+						global_perdrawcall_write.dstSet = p_m_render_pass->m_descriptor_sets.sets[0];
+						global_perdrawcall_write.dstBinding = 1;
+						global_perdrawcall_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+						global_perdrawcall_write.pBufferInfo = &buffer_info;
+						VkDescriptorBufferInfo frag_buffer_info = VulkanInfo::aboutVkDescriptorBufferInfo();
+						frag_buffer_info.buffer = current_global_buffer_wait_for_update;
+						frag_buffer_info.offset = 0;
+						frag_buffer_info.range = sizeof(GlobalBufferPerDrawcallFragmentShaderData);
+						VkWriteDescriptorSet global_perdrawcall_frag_write = VulkanInfo::aboutVkWriteDescriptorSet();
+						global_perdrawcall_frag_write.dstSet = p_m_render_pass->m_descriptor_sets.sets[1];
+						global_perdrawcall_frag_write.dstBinding = 0;
+						global_perdrawcall_frag_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+						global_perdrawcall_frag_write.pBufferInfo = &frag_buffer_info;
+
+						VkWriteDescriptorSet writes[2] = { global_perdrawcall_write,global_perdrawcall_frag_write };
+						vkUpdateDescriptorSets(m_vulkan_rhi->m_device, 2, writes, 0, nullptr);
+
+						uint32_t dynamic_offsets[] = { 0,perdrawcall_begin,perdrawcall_frag_begin };
+						vkCmdBindDescriptorSets(m_vulkan_rhi->m_command_buffer,
+							VK_PIPELINE_BIND_POINT_GRAPHICS,
+							m_pipeline_layout, 0, 2,
+							binding_sets,
+							3, dynamic_offsets);
+
+						//draw
+						vkCmdDrawIndexed(m_vulkan_rhi->m_command_buffer, std::get<2>(index_offset_info), current_instance_counts, 0, 0, 0);
+					}
 				}
 			}
 		}
+
+		vkCmdEndRenderPass(m_vulkan_rhi->m_command_buffer);
 	}
 }

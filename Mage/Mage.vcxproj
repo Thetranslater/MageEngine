@@ -204,6 +204,7 @@
     <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_guid.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_guid_generator.h" />
+    <ClInclude Include="..\engine\engine_core\render_engine\render_macro.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_mesh.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_model.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_pass.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_subpass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_system.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h" />
+    <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

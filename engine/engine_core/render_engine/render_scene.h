@@ -2,7 +2,7 @@
 
 #include<engine_core/render_engine/render_guid_generator.h>
 #include<engine_core/render_engine/render_model.h>
-#include<engine_core/render_engine/render_resource.h>
+#include<engine_core/render_engine/resource_swap_header.h>
 
 #include<deque>
 
@@ -28,17 +28,19 @@ namespace Mage {
 		//render_model:代表一个抽象的渲染实例
 		std::vector<VkRenderModel> m_render_models;
 
-		GUIDGenerator<VkRenderMeshURI>& getMeshGUIDGenerator();
-		GUIDGenerator<VkRenderTextureURI>& getTextureGUIDGenerator();
-		GUIDGenerator<VkRenderPartMesh>& getPartMeshGUIDGenerator();
+		GUIDGenerator<VkRenderMeshURI>&						getMeshGUIDGenerator();
+		GUIDGenerator<VkRenderTextureURI>&					getTextureGUIDGenerator();
+		GUIDGenerator<VkRenderPartMesh>&					getPartMeshGUIDGenerator();
+		GUIDGenerator<VkRenderMaterialDescription, GUID64>& getMaterialGUIDGenerator();
 
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_load_deque;
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_delete_deque;
 
 	private:
 		//guid generator
-		GUIDGenerator<VkRenderMeshURI>		m_mesh_guid_generator;
-		GUIDGenerator<VkRenderTextureURI>	m_texture_guid_generator;
-		GUIDGenerator<VkRenderPartMesh>		m_part_mesh_guid_generator;
+		GUIDGenerator<VkRenderMeshURI>						m_mesh_guid_generator;
+		GUIDGenerator<VkRenderTextureURI>					m_texture_guid_generator;
+		GUIDGenerator<VkRenderPartMesh>						m_part_mesh_guid_generator;
+		GUIDGenerator<VkRenderMaterialDescription, GUID64>	m_material_guid_generator;
 	};
 }

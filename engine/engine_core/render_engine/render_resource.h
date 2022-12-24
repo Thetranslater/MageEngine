@@ -10,11 +10,11 @@
 
 #include<core/hash.h>
 
-#include<engine_core/render_engine/render_guid.h>
+#include"engine_core/render_engine/render_guid.h"
+#include"engine_core/render_engine/render_macro.h"
+#include"engine_core/render_engine/resource_swap_header.h"
 
 namespace Mage {
-
-	constexpr static int per_drawcall_max_instances = 60;
 
 	struct VkRenderTexture {
 		VkImage m_texture{VK_NULL_HANDLE};
@@ -23,35 +23,15 @@ namespace Mage {
 		VkSampler m_sampler{ VK_NULL_HANDLE };
 	};
 
-	struct VkRenderMeshURI {
-		std::string m_uri;
-		bool operator==(const VkRenderMeshURI & rh) const {
-			return m_uri == rh.m_uri;
-		}
-	};
-
 	//for gltf
 	struct VkRenderMesh {
 		VkBuffer m_bi_data{ VK_NULL_HANDLE };
 		VkDeviceMemory m_bi_data_memory{ VK_NULL_HANDLE };
 	};
 
-	struct VkRenderTextureURI {
-		std::string m_uri;
-		bool is_srgb{ false };
-
-		bool operator==(const VkRenderTextureURI& rh) const{
-			return rh.m_uri == m_uri;
-		}
-	};
-
-	struct VkRenderPartMesh {
-		GUID32 m_mesh_guid;
-		GUID32 m_part_index;
-
-		bool operator==(const VkRenderPartMesh& rh) const {
-			return m_mesh_guid == rh.m_mesh_guid && m_part_index == rh.m_part_index;
-		}
+	struct VkRenderMaterial {
+		bool m_double_side{ false };
+		VkDescriptorSet m_descriptor_set;
 	};
 
 	struct GlobalUpdatedBuffer {
@@ -80,59 +60,39 @@ namespace Mage {
 	};
 
 	struct GlobalBufferPerDrawcallVertexShaderData {
-		PerMeshVertexShaderData m_mesh_datas[per_drawcall_max_instances];
+		PerMeshVertexShaderData m_mesh_datas[MAGE_PERDRAWCALL_MAX_LIMIT];
 	};
 
 	struct GlobalBufferPerDrawcallFragmentShaderData {
-		PerMeshFragmentShaderData m_frag_datas[per_drawcall_max_instances];
+		PerMeshFragmentShaderData m_frag_datas[MAGE_PERDRAWCALL_MAX_LIMIT];
 	};
 
 	class VulkanRHI;
 	class Buffer;
 	class Texture;
+	struct VkRenderMaterialDescription;
 	class RenderResource {
 	public:
 		using GUID32 = uint32_t;
 		using IO_Buffer = std::variant<VkRenderMesh, Buffer>;
 		using IO_Texture = std::variant<VkRenderTexture, Texture>;
+		using IO_Material = std::variant<VkRenderMaterial, VkRenderMaterialDescription>;
 	public:
 		void initialize(VulkanRHI*);
 
 		bool hasMesh(const GUID32& guid);
 		bool hasTexture(const GUID32& guid);
+		bool hasMaterial(const GUID64& guid);
 
 		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Buffer& param);
 		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Texture& param);
+		bool getOrCreateRenderResource(VulkanRHI*, GUID64& guid, IO_Material& param);
 	public:
-		std::map<GUID32, VkRenderMesh>	m_guid_buffer_map;
+		std::map<GUID32, VkRenderMesh>		m_guid_buffer_map;
 		std::map<GUID32, VkRenderTexture>	m_guid_texture_map;
+		std::map<GUID64, VkRenderMaterial>	m_guid_material_map;
 
 		//global resources
 		GlobalUpdatedBuffer m_global_updated_buffer;
-	};
-}
-
-namespace std {
-	template<>
-	struct hash<Mage::VkRenderMeshURI> {
-		size_t operator()(const Mage::VkRenderMeshURI& uri) const {
-			return hash<std::string>{}(uri.m_uri);
-		}
-	};
-
-	template<>
-	struct hash<Mage::VkRenderTextureURI> {
-		size_t operator()(const Mage::VkRenderTextureURI& uri) const {
-			return hash<std::string>{}(uri.m_uri);
-		}
-	};
-
-	template<>
-	struct hash<Mage::VkRenderPartMesh> {
-		size_t operator()(const Mage::VkRenderPartMesh& part) const {
-			size_t hash = part.m_mesh_guid;
-			Mage::hash_combine(hash, part.m_part_index);
-			return hash;
-		}
 	};
 }

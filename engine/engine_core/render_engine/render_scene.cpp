@@ -17,4 +17,8 @@ namespace Mage {
 	GUIDGenerator<VkRenderPartMesh>& RenderScene::getPartMeshGUIDGenerator() {
 		return m_part_mesh_guid_generator;
 	}
+
+	GUIDGenerator<VkRenderMaterialDescription, GUID64>& RenderScene::getMaterialGUIDGenerator() {
+		return m_material_guid_generator;
+	}
 }

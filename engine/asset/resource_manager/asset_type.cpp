@@ -353,6 +353,8 @@ namespace Mage {
 		m_occlusion_texture.m_index		= material.occlusionTexture.index;
 		m_occlusion_texture.m_texCoord	= material.occlusionTexture.texCoord;
 		m_occlusion_texture.m_strength	= material.occlusionTexture.strength;
+
+		m_double_side = material.doubleSided;
 	}
 
 	//primitive
@@ -428,11 +430,11 @@ namespace Mage {
 
 		auto& mesh_info = render_model_info.m_mesh_info;
 		auto& textures_info = render_model_info.m_textures_info;
+		auto& materials_info = render_model_info.m_materials_info;
 
 		assert(m_buffers.size() == 1); //暂不支持多buffer
 		mesh_info.m_buffer_uri.m_uri = parent_directory + "/" + m_buffers[0].m_uri;
 		
-		//TODO:re-arrange textures: albedo, normal, metallic-roughness
 		textures_info.m_uris.resize(m_textures.size());
 		for (int i = 0; i < textures_info.m_uris.size(); ++i) {
 			textures_info.m_uris[i].m_uri = parent_directory + "/" + m_textures[i].m_uri;
@@ -441,6 +443,15 @@ namespace Mage {
 			if (material.m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
 				textures_info.m_uris[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
 			}
+		}
+
+		materials_info.m_infos.resize(m_materials.size());
+		for (int i{ 0 }; i < materials_info.m_infos.size(); ++i) {
+			materials_info.m_infos[i].m_double_side = m_materials[i].m_double_side;
+			materials_info.m_infos[i].m_base_color_texture_index = m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index;
+			materials_info.m_infos[i].m_metallic_roughness_texture_index = m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index;
+			materials_info.m_infos[i].m_normal_texture_index = m_materials[i].m_normal_texture.m_index;
+			materials_info.m_infos[i].m_occlusion_texture_index = m_materials[i].m_occlusion_texture.m_index;
 		}
 
 		//meshes
@@ -463,23 +474,14 @@ namespace Mage {
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
 					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
 
-					//设置贴图索引值
-					if (primitive_material->m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
-						mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_base_color_index = primitive_material->m_pbr_metallic_roughness.m_base_color_texture.m_index;
-					}
-					if (primitive_material->m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index != -1) {
-						mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallicroughness_index = primitive_material->m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index;
-					}
-					if (primitive_material->m_normal_texture.m_index != -1) {
-						mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_normal_index = primitive_material->m_normal_texture.m_index;
-					}
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_material_index = primitive.m_material;
 				}
 				else {
 					//TODO:无material的primitive
 				}
 
 				//mesh
-				int buffer_stride{ -1 }, buffer_offset{ -1 }, element_count{ -1 };
+				uint32_t buffer_stride{ 0xffffffff }, buffer_offset{ 0xffffffff }, element_count{ 0xffffffff };
 				auto get_attribute_info = [&](const std::string& attribute, int index) {
 					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_offset_infos[index];
 					attribute_accessor = &m_accessors[primitive.m_attributes[attribute]];

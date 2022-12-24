@@ -85,11 +85,30 @@ namespace Mage {
 					if (texture_data_uris[i].is_srgb) raw_texture.m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SRGB;
 					RenderResource::IO_Texture texture_creation_param;
 					texture_creation_param = std::move(raw_texture);
-					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), mesh_guid, texture_creation_param);
+					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), texture_guid, texture_creation_param);
 					assert(create_ret);
 				}
 				texture_guids[i] = texture_guid;
 			}
+
+			//process material
+			std::vector<GUID64> material_guids(process_job.m_materials_info.m_infos.size());
+			for (int i{ 0 }; i < process_job.m_materials_info.m_infos.size(); ++i) {
+				auto& material = process_job.m_materials_info.m_infos[i];
+				VkRenderMaterialDescription raw_material;
+				raw_material.m_base_color_texture_index = texture_guids[material.m_base_color_texture_index];
+				raw_material.m_metallic_roughness_texture_index = texture_guids[material.m_metallic_roughness_texture_index];
+				raw_material.m_normal_texture_index = texture_guids[material.m_normal_texture_index];
+
+				auto material_guid = m_render_scene->getMaterialGUIDGenerator().generateGUID(raw_material);
+				if (not m_render_resource->hasMaterial(material_guid)) {
+					RenderResource::IO_Material material_creation_param = std::move(raw_material);
+					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), material_guid, material_creation_param);
+					assert(create_ret);
+				}
+				material_guids[i] = material_guid;
+			}
+
 
 			//create render models
 			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
@@ -100,10 +119,7 @@ namespace Mage {
 				model.m_mesh_description = std::move(process_job.m_mesh_info.m_transfer_mesh_descriptions[i]);
 				model.m_model_guid32 = part_mesh_guid;
 				model.m_mesh_guid32 = mesh_guid;
-				model.m_texture_guid32s = {
-					texture_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_base_color_index],
-					texture_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_normal_index],
-					texture_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_metallicroughness_index] };
+				model.m_material_guid64 = material_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_material_index];
 
 				m_render_scene->m_render_models.emplace_back(model);
 			}

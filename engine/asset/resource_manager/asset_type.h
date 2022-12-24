@@ -142,6 +142,7 @@ namespace Mage {
 	public:
 		void loadFromgLTF_Material(tinygltf::Material& material);
 	public:
+		bool					m_double_side{ false };
 		Vector3					m_emissive_factor{ 0.f,0.f,0.f };
 		PbrMetallicRoughness	m_pbr_metallic_roughness;
 		NormalTextureInfo		m_normal_texture;

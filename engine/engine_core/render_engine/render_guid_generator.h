@@ -82,8 +82,6 @@ namespace Mage {
 		std::unordered_map<resource_type, guid_type> m_res_guid_map;
 
 		std::deque<guid_type> m_free_guid;
-		static guid_type m_allocated_guid;
+		guid_type m_allocated_guid = 0;
 	};
-
-	template<typename R, typename G> G GUIDGenerator<R, G>::m_allocated_guid = 0;
 }

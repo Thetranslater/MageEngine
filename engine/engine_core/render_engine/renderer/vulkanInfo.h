@@ -7,7 +7,7 @@
 
 namespace Mage {
 	namespace VulkanInfo {
-#if VULKAN_INFO < 1
+#if VULKAN_INFO > -1
 
 		/// <summary>
 		/// SEPCIFY: x, y, width, height, minDepth, maxDepth.////
@@ -1071,9 +1071,31 @@ namespace Mage {
 		inline VkBindBufferMemoryInfo aboutVkBindBufferMemoryInfo();
 
 		inline VkBindImageMemoryInfo abuoutVkBindImageMemoryInfo();
-#endif // VULKAN_INFO
 
-#if VULKAN_INFO > 2
+		/// <summary>
+		/// Usually using this structure to require device's features. In Vulkan1.1, you must specify the sType field of this so that you can
+		/// call vkGetPhysicalDeviceFeatures2 correctly;
+		/// You can assign another supportive structure to pNext to require extension features. 
+		/// </summary>
+		inline VkPhysicalDeviceFeatures2 aboutVkPhisicalDeviceFeatures2() {
+			VkPhysicalDeviceFeatures2 features2{};
+			features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+			return features2;
+		}
+
+		/// <summary>
+		/// This structure provided by VK_EXT_robustness2. You require extension features by assign this structure to VkPhysicalDeviceFeaatures2.pNext when you 
+		/// call VkGetPhysicalDeviceFeatures2.
+		/// If you want to enable some extension features on device, assign this to VkDeviceCreateInfo.pNext when you create it.
+		/// </summary>
+		inline VkPhysicalDeviceRobustness2FeaturesEXT abouotVkPhysicalDeviceRobustness2FeaturesEXT() {
+			VkPhysicalDeviceRobustness2FeaturesEXT featuresEXT{};
+			featuresEXT.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
+			return featuresEXT;
+		}
+#endif // VULKAN_INFO 1
+
+#if VULKAN_INFO > 1
 		inline VkBufferCopy2KHR aboutVkBufferCopy2KHR();
 #endif
 

@@ -289,6 +289,13 @@ namespace Mage {
 		deviceInfo.queueCreateInfoCount = static_cast<uint32_t>(queue_create_infos.size());
 		deviceInfo.pQueueCreateInfos = queue_create_infos.data();
 
+		//extenson features;
+		VkPhysicalDeviceRobustness2FeaturesEXT features{};
+		features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
+		features.nullDescriptor = VK_TRUE;
+
+		deviceInfo.pNext = &features;
+
 		if (vkCreateDevice(m_physical_device, &deviceInfo, nullptr, &m_device) != VK_SUCCESS) {
 			MAGE_THROW(failed to create device);
 		}

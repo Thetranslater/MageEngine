@@ -242,5 +242,11 @@
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_macro.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

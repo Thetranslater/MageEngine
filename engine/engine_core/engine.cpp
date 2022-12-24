@@ -19,7 +19,6 @@ namespace Mage {
 	}
 
 	void MageEngine::logicalTick(float delta_time) {
-
 		Model markov;
 		std::string err;
 		std::string warn;
