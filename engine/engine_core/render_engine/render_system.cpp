@@ -40,6 +40,8 @@ namespace Mage {
 
 		m_vulkan_rhi->waitForFences();
 
+		//m_render_pass->rebindGlobalBuffer();
+
 		m_vulkan_rhi->prepareVulkanRHIBeforeRender();
 
 		m_render_pass->draw();

@@ -470,11 +470,11 @@ namespace Mage {
 				//material
 				if (primitive.m_material != -1) {
 					primitive_material = &m_materials[primitive.m_material];
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_base_color_factor	= primitive_material->m_pbr_metallic_roughness.m_base_color_factor;
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
+					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_base_color_factor	= primitive_material->m_pbr_metallic_roughness.m_base_color_factor;
+					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
+					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
 
-					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_material_index = primitive.m_material;
+					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_material_index = primitive.m_material;
 				}
 				else {
 					//TODO:ÎÞmaterialµÄprimitive
@@ -483,7 +483,7 @@ namespace Mage {
 				//mesh
 				uint32_t buffer_stride{ 0xffffffff }, buffer_offset{ 0xffffffff }, element_count{ 0xffffffff };
 				auto get_attribute_info = [&](const std::string& attribute, int index) {
-					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_offset_infos[index];
+					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_mesh_data_offset_infos[index];
 					attribute_accessor = &m_accessors[primitive.m_attributes[attribute]];
 					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
 					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
@@ -517,7 +517,7 @@ namespace Mage {
 				
 				//indices
 				if (primitive.m_indices != -1) {
-					auto& indices_tuple = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_mesh_data_offset_infos[6];
+					auto& indices_tuple = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_mesh_data_offset_infos[6];
 					attribute_accessor = &m_accessors[primitive.m_indices];
 					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride == 0 ? attribute_accessor->getAccessBytes() : m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
 					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
@@ -526,9 +526,9 @@ namespace Mage {
 				}
 
 				//params
-				mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_matrix = matrix;
+				mesh_info.m_transfer_mesh_descriptions[mesh_index].m_matrix = matrix;
 
-				++sub_meshes_num;
+				//++sub_meshes_num;
 			}
 		};
 		Matrix4x4 root_mat{ Matrix4x4::identity };
@@ -552,13 +552,13 @@ namespace Mage {
 
 		//process node
 		if (node.m_mesh != -1) {
-			process_func(node.m_mesh, parent_matrix * curr_matrix);
+			process_func(node.m_mesh, curr_matrix);
 		}
 		//TODO:process other things
 
 		//process children
 		for (auto& child : node.m_children) {
-			processNode(nodes, child, parent_matrix * curr_matrix, process_func);
+			processNode(nodes, child, curr_matrix, process_func);
 		}
 	}
 

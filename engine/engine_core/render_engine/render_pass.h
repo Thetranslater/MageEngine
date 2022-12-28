@@ -35,8 +35,8 @@ namespace Mage {
 		virtual void draw() {}; //forward for now, mesh resources should passed from here
 
 		const VkRenderPass& getVkRenderPass() { return m_render_pass; }
-		//virtual VkFramebuffer getVkFrameBuffer();
-		//virtual DescriptorSets getDescriptorSets();
+
+		virtual void rebindGlobalBuffer() {};
 
 		VkRenderPass m_render_pass;
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };	//vulkanRHI

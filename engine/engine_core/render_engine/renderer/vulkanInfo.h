@@ -352,6 +352,7 @@ namespace Mage {
 		/// When the descriptor type is one of two that VK_DESCRIPTOR_TYPE_SAMPLER and VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, then you can use the pImmutableSamplers.
 		/// </summary>
 		/// <param name="binding		"> : the binding point corresponding to the shader.</param>
+		/// <param name="stageFlags		"> : the shader stage which the descriptor set used in.</param> 
 		/// <param name="descriptorType	"> : the type of the resource.</param>
 		/// <param name="descriptorCount	"> : the number of descritors that the binding has.Always 1, except that the shader has an resource array of the type.</param>
 		/// <param name="pImmutableSamplers	"> : a pointer to an array of samplers.</param>

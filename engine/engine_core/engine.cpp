@@ -37,10 +37,11 @@ namespace Mage {
 
 	void MageEngine::tick(float delta_time) {
 		logicalTick(delta_time);
-
-		renderTick(delta_time);
-		//after render tick
-		engine_global_context.m_window_system->pollEvents();
+		while (true) {
+			renderTick(delta_time);
+			//after render tick
+			engine_global_context.m_window_system->pollEvents();
+		}
 	}
 
 	//TODO:shut engine

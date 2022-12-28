@@ -294,7 +294,7 @@ namespace Mage {
 		features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
 		features.nullDescriptor = VK_TRUE;
 
-		deviceInfo.pNext = &features;
+		deviceInfo.pNext = nullptr;//&features
 
 		if (vkCreateDevice(m_physical_device, &deviceInfo, nullptr, &m_device) != VK_SUCCESS) {
 			MAGE_THROW(failed to create device);

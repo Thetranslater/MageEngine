@@ -27,14 +27,6 @@ layout(location = 3) out highp vec2 out_texcoord;
 layout(location = 4) out int out_instanceID;
 
 void main(){
-    out_instanceID = gl_InstanceIndex;
-
-    highp mat4 model_matrix = mesh_datas[gl_InstanceIndex].matrix;
-    highp mat3 model_matrix_3x3 = mat3(model_matrix[0].xyz, model_matrix[1].xyz, model_matrix[2].xyz);
-    //NO BLENDING FOR NOW
-    out_world_position = (model_matrix * vec4(in_position,1.f)).xyz;
-    out_world_normal = normalize(model_matrix_3x3 * in_normal);
-    out_world_tangent = vec4(normalize(model_matrix_3x3 * in_tangent.xyz), in_tangent.w);
-    
-    gl_Position = (camera_perspective_matrix * camera_view_matrix * vec4(out_world_position, 1.f));
+    out_world_position = vec3(gl_VertexIndex % 2, gl_VertexIndex % 2, 0.f);
+    gl_Position = vec4(out_world_position,1.f);
 }

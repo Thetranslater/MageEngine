@@ -8,7 +8,7 @@
 namespace Mage {
 	void RenderResource::initialize(VulkanRHI* rhi) {
 		//create global buffer;
-		VkDeviceSize global_buffer_size = 1024 * 1024 * 42;
+		VkDeviceSize global_buffer_size = 1024 * 1024 * 20;
 
 		//resize
 		int size = rhi->m_swapchain_size;
@@ -148,6 +148,7 @@ namespace Mage {
 		bindings[0] = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
 		bindings[0].binding = 0;
 		bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		bindings[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 		bindings[0].pImmutableSamplers = std::get<1>(material).m_base_color_texture_index != 0xffffffff ?
 			&m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_sampler : nullptr;
 		bindings[1] = bindings[0];
@@ -175,6 +176,35 @@ namespace Mage {
 		if (VK_SUCCESS != vkAllocateDescriptorSets(rhi->m_device, &alloc_info, &render_material.m_descriptor_set)) {
 			MAGE_THROW(failed to allocate descritor set when create material resource)
 		}
+
+
+		VkDescriptorImageInfo binding_base_color = VulkanInfo::aboutVkDescriptorImageInfo();
+		binding_base_color.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		binding_base_color.imageView = m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_texture_view;
+		VkWriteDescriptorSet material_write_binding_0 = VulkanInfo::aboutVkWriteDescriptorSet();
+		material_write_binding_0.dstSet = render_material.m_descriptor_set;
+		material_write_binding_0.dstBinding = 0;
+		material_write_binding_0.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		material_write_binding_0.pImageInfo = &binding_base_color;
+
+		VkDescriptorImageInfo binding_normal = VulkanInfo::aboutVkDescriptorImageInfo();
+		binding_normal = binding_base_color;
+		binding_normal.imageView = m_guid_texture_map[std::get<1>(material).m_normal_texture_index].m_texture_view;
+		VkWriteDescriptorSet material_write_binding_1 = VulkanInfo::aboutVkWriteDescriptorSet();
+		material_write_binding_1 = material_write_binding_0;
+		material_write_binding_1.dstBinding = 1;
+		material_write_binding_1.pImageInfo = &binding_normal;
+
+		VkDescriptorImageInfo binding_metallic_roughness = VulkanInfo::aboutVkDescriptorImageInfo();
+		binding_metallic_roughness = binding_base_color;
+		binding_metallic_roughness.imageView = m_guid_texture_map[std::get<1>(material).m_metallic_roughness_texture_index].m_texture_view;
+		VkWriteDescriptorSet material_write_binding_2 = VulkanInfo::aboutVkWriteDescriptorSet();
+		material_write_binding_2 = material_write_binding_0;
+		material_write_binding_2.dstBinding = 2;
+		material_write_binding_2.pImageInfo = &binding_metallic_roughness;
+
+		VkWriteDescriptorSet updates[3] = { material_write_binding_0,material_write_binding_1,material_write_binding_2 };
+		vkUpdateDescriptorSets(rhi->m_device, 3, updates, 0, nullptr);
 
 		m_guid_material_map.insert(std::make_pair(guid, render_material));
 
