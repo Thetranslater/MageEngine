@@ -9,7 +9,7 @@ struct PerMeshFragmentShaderData
     highp vec4 base_color_factor;
 };
 
-layout(set = 0, binding = 2) readonly uniform GlobalBufferPerDrawcallFragmentShaderData
+layout(set = 0, binding = 2) readonly buffer GlobalBufferPerDrawcallFragmentShaderData
 {
     PerMeshFragmentShaderData frag_datas[60];
 };
@@ -27,5 +27,5 @@ layout(location = 4) flat in int in_instanceID;
 layout(location = 0) out highp vec4 out_final_color;
 
 void main(){
-    out_final_color = vec4(in_world_position,1.f);
+    out_final_color = texture(albedo_texture, in_texcoord);
 }

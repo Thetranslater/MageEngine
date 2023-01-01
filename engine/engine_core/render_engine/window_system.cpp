@@ -24,7 +24,20 @@ namespace Mage {
 		}
 
 		//invoke the registers to set up the call back functions
+		glfwSetWindowUserPointer(m_window, this);
+		glfwSetKeyCallback(m_window, keyInterface);
+		glfwSetCharCallback(m_window, charInterface);
+		glfwSetCharModsCallback(m_window, charModsInterface);
+		glfwSetMouseButtonCallback(m_window, mouseButtonInterface);
+		glfwSetCursorPosCallback(m_window, cursorPosInterface);
+		glfwSetCursorEnterCallback(m_window, cursorEnterInterface);
+		glfwSetScrollCallback(m_window, scrollInterface);
+		glfwSetDropCallback(m_window, dropInterface);
+		glfwSetWindowSizeCallback(m_window, windowSizeInterface);
+		glfwSetWindowCloseCallback(m_window, windowCloseInterface);
 
+		glfwSetInputMode(m_window, GLFW_LOCK_KEY_MODS, GLFW_TRUE);
+		glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	}
 
 	void WindowSystem::pollEvents() {
@@ -41,5 +54,9 @@ namespace Mage {
 
 	std::array<int, 2> WindowSystem::getWindowSize() {
 		return std::array<int, 2>{m_width, m_height};
+	}
+
+	void WindowSystem::setInputMode(int mode,int value) {
+		glfwSetInputMode(m_window, mode, value);
 	}
 }

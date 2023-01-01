@@ -4,13 +4,13 @@ struct PerMeshVertexShaderData{
     highp mat4 matrix;
 };
 
-layout(set = 0, binding = 0) readonly uniform per_frame_data
+layout(set = 0, binding = 0) readonly buffer per_frame_data
 {
     highp mat4 camera_view_matrix;
     highp mat4 camera_perspective_matrix;
 };
 
-layout(set = 0, binding = 1) readonly uniform GlobalBufferPerDrawcallVertexShaderData
+layout(set = 0, binding = 1) readonly buffer GlobalBufferPerDrawcallVertexShaderData
 {
     PerMeshVertexShaderData mesh_datas[60];
 };
@@ -27,6 +27,8 @@ layout(location = 3) out highp vec2 out_texcoord;
 layout(location = 4) out int out_instanceID;
 
 void main(){
-    out_world_position = vec3(gl_VertexIndex % 2, gl_VertexIndex % 2, 0.f);
-    gl_Position = vec4(out_world_position,1.f);
+    highp vec4 world = camera_perspective_matrix * camera_view_matrix * mesh_datas[gl_InstanceIndex].matrix * vec4(in_position,1.f);
+    out_world_position = world.xyz;
+    out_texcoord = in_texcoord;
+    gl_Position = world;
 }

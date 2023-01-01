@@ -1,5 +1,6 @@
 #pragma once
 #include "_generated\serializer\reflection_test.serializer.gen.h"
+#include "_generated\serializer\vector3.serializer.gen.h"
 namespace Mage{
     template<>
     PJson PSerializer::write(const BaseTest& instance){
@@ -76,6 +77,30 @@ namespace Mage{
             for (size_t index=0; index < array_m_test_base_array.size();++index){
                 PSerializer::read(array_m_test_base_array[index], instance.m_test_base_array[index]);
             }
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const Vector3& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("x", PSerializer::write(instance.x));
+        ret_context.insert_or_assign("y", PSerializer::write(instance.y));
+        ret_context.insert_or_assign("z", PSerializer::write(instance.z));
+        return  PJson(ret_context);
+    }
+    template<>
+    Vector3& PSerializer::read(const PJson& json_context, Vector3& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["x"].is_null()){
+            PSerializer::read(json_context["x"], instance.x);
+        }
+        if(!json_context["y"].is_null()){
+            PSerializer::read(json_context["y"], instance.y);
+        }
+        if(!json_context["z"].is_null()){
+            PSerializer::read(json_context["z"], instance.z);
         }
         return instance;
     }

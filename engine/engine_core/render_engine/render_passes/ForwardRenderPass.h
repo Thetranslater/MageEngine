@@ -7,7 +7,7 @@ namespace Mage {
 
 	class ForwardRenderPass :public RenderPass {
 	public:
-		void initialize(const RenderPassCreateInfo* createInfo) override final;
+		void initialize(const RenderPassCreateInfo*) override final;
 
 		void draw() override final;
 
@@ -29,12 +29,12 @@ namespace Mage {
 
 	class ForwardRenderSubpass :public Subpass {
 	public:
-		void initialize(SubpassCreateInfo* createInfo) override final;
+		void initialize(SubpassCreateInfo*) override final;
 
 		void draw() override final;
 	private:
 		//void setupDescriptorSetLayouts(const std::vector<int>& indices) override final;
 		//void setupDescriptorSets(const std::vector<int>& indices) override final;
-		void setupPipeline(const std::vector<int>& indices) override final;
+		void setupPipeline(const std::vector<int>&) override final;
 	};
 }

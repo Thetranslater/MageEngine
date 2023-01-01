@@ -52,6 +52,12 @@
     <Filter Include="Mage\engine\asset\resource_manager">
       <UniqueIdentifier>{c309bb14-dea4-4737-9318-6434af8d8efb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TEST">
+      <UniqueIdentifier>{b2075b71-2e77-4d45-90e2-3333d777618d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\input">
+      <UniqueIdentifier>{285edaf9-6962-4f68-9fdd-06319097a92a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -134,6 +140,12 @@
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\TEST.cpp">
+      <Filter>TEST</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\input\input_system.cpp">
+      <Filter>Mage\engine\engine_core\input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -247,6 +259,12 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\input\input_system.h">
+      <Filter>Mage\engine\engine_core\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\input\key_family.h">
+      <Filter>Mage\engine\engine_core\input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

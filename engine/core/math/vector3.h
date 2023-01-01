@@ -6,11 +6,14 @@
 #include<glm-master/glm/vec3.hpp>
 
 #include<core/math/math.h>
+#include<core/meta/reflection/reflection.h>
 
 #include<vector>
 
 namespace Mage {
-	class Vector3 {
+	REFLECTION_TYPE(Vector3)
+	CLASS(Vector3, Fields) {
+		REFLECTION_BODY(Vector3)
 	public:
 		float x{ 0.f };
 		float y{ 0.f };

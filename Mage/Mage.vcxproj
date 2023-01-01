@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\editor\TEST.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
@@ -166,6 +167,7 @@
     <ClCompile Include="..\engine\core\random.cpp" />
     <ClCompile Include="..\engine\engine_core\engine.cpp" />
     <ClCompile Include="..\engine\engine_core\function\global_context\global_context.cpp" />
+    <ClCompile Include="..\engine\engine_core\input\input_system.cpp" />
     <ClCompile Include="..\engine\engine_core\platform\file_system.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.cpp" />
@@ -198,6 +200,8 @@
     <ClInclude Include="..\engine\core\random.h" />
     <ClInclude Include="..\engine\engine_core\engine.h" />
     <ClInclude Include="..\engine\engine_core\function\global_context\global_context.h" />
+    <ClInclude Include="..\engine\engine_core\input\input_system.h" />
+    <ClInclude Include="..\engine\engine_core\input\key_family.h" />
     <ClInclude Include="..\engine\engine_core\platform\file_system.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanInfo.h" />
@@ -216,6 +220,11 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\engine\core\meta_parser\build\PiccoloParser.vcxproj">
+      <Project>{12fbaacb-7a11-3b9a-b8fe-8698423bda95}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

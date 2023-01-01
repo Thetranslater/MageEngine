@@ -11,18 +11,18 @@ namespace Mage {
 		VkDeviceSize global_buffer_size = 1024 * 1024 * 20;
 
 		//resize
-		int size = rhi->m_swapchain_size;
+		int size = rhi->getSwapchainSize();
 		m_global_updated_buffer.m_buffers.resize(size);
 		m_global_updated_buffer.m_buffer_memories.resize(size);
 		m_global_updated_buffer.m_followed_camera_updated_data_pointers.resize(size);
 
 		for (int i{ 0 }; i < size; ++i) {
 			VulkanHelper::bufferCreationHelper(rhi, global_buffer_size,
-				VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+				VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 				m_global_updated_buffer.m_buffers[i], m_global_updated_buffer.m_buffer_memories[i]);
 			//TODO:unmap as program terminated.
-			vkMapMemory(rhi->m_device, m_global_updated_buffer.m_buffer_memories[i], 0, VK_WHOLE_SIZE, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointers[i]);
+			vkMapMemory(rhi->getDevice(), m_global_updated_buffer.m_buffer_memories[i], 0, size, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointers[i]);
 		}
 	}
 
@@ -90,9 +90,9 @@ namespace Mage {
 
 		//copy data from out to vkbuffer
 		void* ppdata{ nullptr };
-		vkMapMemory(rhi->m_device, staging_memory, 0, texture_size, 0, &ppdata);
+		vkMapMemory(rhi->getDevice(), staging_memory, 0, texture_size, 0, &ppdata);
 		memcpy(ppdata, itexture.m_data.data(), texture_size);
-		vkUnmapMemory(rhi->m_device, staging_memory);
+		vkUnmapMemory(rhi->getDevice(), staging_memory);
 
 		//transition image layout to destination
 		VulkanHelper::transitionImageLayout(rhi, render_texture.m_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1);
@@ -118,7 +118,7 @@ namespace Mage {
 		image_view_creatInfo.subresourceRange.layerCount = 1;
 		image_view_creatInfo.subresourceRange.levelCount = 1;
 
-		if (VK_SUCCESS != vkCreateImageView(rhi->m_device, &image_view_creatInfo, nullptr, &render_texture.m_texture_view)) {
+		if (VK_SUCCESS != vkCreateImageView(rhi->getDevice(), &image_view_creatInfo, nullptr, &render_texture.m_texture_view)) {
 			MAGE_THROW(failed to create image view for asset)
 		}
 
@@ -126,8 +126,8 @@ namespace Mage {
 		render_texture.m_sampler = itexture.m_combined_sampler.asVulkanSampler(rhi);
 
 		//free temporary buffer
-		vkDestroyBuffer(rhi->m_device, staging_buffer, nullptr);
-		vkFreeMemory(rhi->m_device, staging_memory, nullptr);
+		vkDestroyBuffer(rhi->getDevice(), staging_buffer, nullptr);
+		vkFreeMemory(rhi->getDevice(), staging_memory, nullptr);
 
 		m_guid_texture_map.emplace(std::make_pair(guid, render_texture));
 
@@ -164,16 +164,16 @@ namespace Mage {
 		layout_info.bindingCount = 3;
 		layout_info.pBindings = bindings;
 		VkDescriptorSetLayout layout;
-		if (VK_SUCCESS != vkCreateDescriptorSetLayout(rhi->m_device, &layout_info, nullptr, &layout)) {
+		if (VK_SUCCESS != vkCreateDescriptorSetLayout(rhi->getDevice(), &layout_info, nullptr, &layout)) {
 			MAGE_THROW(failed to create descriptor set layout in material)
 		}
 
 		VkDescriptorSetAllocateInfo alloc_info = VulkanInfo::aboutVkDescriptorSetAllocateInfo();
-		alloc_info.descriptorPool = rhi->m_descriptor_pool;
+		alloc_info.descriptorPool = rhi->getDescriptorPool();
 		alloc_info.descriptorSetCount = 1;
 		alloc_info.pSetLayouts = &layout;
 
-		if (VK_SUCCESS != vkAllocateDescriptorSets(rhi->m_device, &alloc_info, &render_material.m_descriptor_set)) {
+		if (VK_SUCCESS != vkAllocateDescriptorSets(rhi->getDevice(), &alloc_info, &render_material.m_descriptor_set)) {
 			MAGE_THROW(failed to allocate descritor set when create material resource)
 		}
 
@@ -204,7 +204,7 @@ namespace Mage {
 		material_write_binding_2.pImageInfo = &binding_metallic_roughness;
 
 		VkWriteDescriptorSet updates[3] = { material_write_binding_0,material_write_binding_1,material_write_binding_2 };
-		vkUpdateDescriptorSets(rhi->m_device, 3, updates, 0, nullptr);
+		vkUpdateDescriptorSets(rhi->getDevice(), 3, updates, 0, nullptr);
 
 		m_guid_material_map.insert(std::make_pair(guid, render_material));
 

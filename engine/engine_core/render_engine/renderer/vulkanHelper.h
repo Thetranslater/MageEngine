@@ -27,7 +27,7 @@ namespace Mage {
 			void* pUserData);
 
 		//check physical device suitable or not, surface for present function, features for select suitable device
-		static bool isDeviceSuitable(VkPhysicalDevice& physical_device, VkPhysicalDeviceFeatures required_features, VkSurfaceKHR surface);
+		static bool isDeviceSuitable(VkPhysicalDevice physical_device, VkPhysicalDeviceFeatures required_features, VkSurfaceKHR surface);
 		
 		//find a suitable memory type for buffer
 		static uint32_t findMemoryType(VulkanRHI* rhi, uint32_t typeFilter, VkMemoryPropertyFlags properties);
@@ -38,10 +38,10 @@ namespace Mage {
 		static void transitionImageLayout(VulkanRHI* rhi, VkImage image, VkImageLayout old_layout, VkImageLayout new_layout, uint32_t miplevels);
 
 		//surface for present
-		static QueueFamilyIndices findQueueFamily(VkPhysicalDevice& physical_device,VkSurfaceKHR surface);
-		static bool checkDeviceExtensionSupport(VkPhysicalDevice& physical_device);
-		static SwapchainSupportDetails querySwapchainDetails(VkPhysicalDevice& physical_device, VkSurfaceKHR surface);
-		static bool checkDeviceFeaturesSupport(VkPhysicalDevice& physical_device, VkPhysicalDeviceFeatures required_features);
+		static QueueFamilyIndices findQueueFamily(VkPhysicalDevice physical_device,VkSurfaceKHR surface);
+		static bool checkDeviceExtensionSupport(VkPhysicalDevice physical_device);
+		static SwapchainSupportDetails querySwapchainDetails(VkPhysicalDevice physical_device, VkSurfaceKHR surface);
+		static bool checkDeviceFeaturesSupport(VkPhysicalDevice physical_device, VkPhysicalDeviceFeatures required_features);
 		static VkSurfaceFormatKHR chooseSwapchainSurfaceFormatFromDetails(const std::vector<VkSurfaceFormatKHR>& formats);
 		static VkPresentModeKHR chooseSwapchainSurfacePresentModeFromDetails(const std::vector<VkPresentModeKHR>& modes);
 		static VkExtent2D chooseSwapchainSurfaceExtentFromDetails(GLFWwindow* window, const VkSurfaceCapabilitiesKHR& surface_capabilities);
@@ -49,7 +49,8 @@ namespace Mage {
 		//creation helper
 		static void imageCreationHelper(VulkanRHI* rhi, uint32_t width, uint32_t height, VkFormat format, uint32_t mip_levels, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags memory_properties, VkImage& image, VkDeviceMemory& image_memory);
 		static void bufferCreationHelper(VulkanRHI* rhi, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
-		static VkShaderModule shaderModuleCreationHelper(VkDevice& device, const std::string& filename);
+		static VkShaderModule shaderModuleCreationHelper(VkDevice device, const std::string& filename);
+		static void imageViewCreationHelper(VulkanRHI* rhi, VkImage parent, VkFormat format, VkImageAspectFlags aspect, uint32_t mipmaplevel, VkImageView& view);
 
 		//move helper
 		//库中的模板函数声明和定义需要放在一起
@@ -67,14 +68,14 @@ namespace Mage {
 
 			void* ppdata{ nullptr };
 
-			vkMapMemory(rhi->m_device, staging_memory, 0, size, 0, &ppdata);
+			vkMapMemory(rhi->getDevice(), staging_memory, 0, size, 0, &ppdata);
 			memcpy(ppdata, (const void*)&(*start), size);
-			vkUnmapMemory(rhi->m_device, staging_memory);
+			vkUnmapMemory(rhi->getDevice(), staging_memory);
 
 			fromBufferToBufferCopyHelper(rhi, staging_buffer, buffer, size);
 
-			vkDestroyBuffer(rhi->m_device, staging_buffer, nullptr);
-			vkFreeMemory(rhi->m_device, staging_memory, nullptr);
+			vkDestroyBuffer(rhi->getDevice(), staging_buffer, nullptr);
+			vkFreeMemory(rhi->getDevice(), staging_memory, nullptr);
 		}
 		static void fromBufferToBufferCopyHelper(VulkanRHI* rhi, VkBuffer src, VkBuffer dst, VkDeviceSize size);
 		static void fromBufferToImageCopyHelper(VulkanRHI* rhi, VkBuffer src, VkImage dst, uint32_t width, uint32_t height);

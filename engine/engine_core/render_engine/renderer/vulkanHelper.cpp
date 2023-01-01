@@ -1,4 +1,7 @@
 #define VULKAN_INFO 1
+
+#include"core/macro.h"
+
 #include"engine_core/render_engine/renderer/vulkanHelper.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
 #include"engine_core/render_engine/renderer/vulkanInfo.h"
@@ -68,7 +71,7 @@ namespace Mage {
 		return VK_FALSE;
 	}
 
-	QueueFamilyIndices VulkanHelper::findQueueFamily(VkPhysicalDevice& physical_device,VkSurfaceKHR surface) {
+	QueueFamilyIndices VulkanHelper::findQueueFamily(VkPhysicalDevice physical_device,VkSurfaceKHR surface) {
 		QueueFamilyIndices indices;
 		uint32_t queueFamiliesCount{ 0 };
 		vkGetPhysicalDeviceQueueFamilyProperties(physical_device, &queueFamiliesCount, nullptr);
@@ -93,8 +96,8 @@ namespace Mage {
 
 	uint32_t VulkanHelper::findMemoryType(VulkanRHI* rhi, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
 
-		for (int i = 0; i < rhi->m_physical_device_memory_properties.memoryTypeCount; ++i) {
-			if (typeFilter & (1 << i) && (rhi->m_physical_device_memory_properties.memoryTypes[i].propertyFlags & properties) == properties) {
+		for (int i = 0; i < rhi->getPhysicalDeviceMemoryProperties().memoryTypeCount; ++i) {
+			if (typeFilter & (1 << i) && (rhi->getPhysicalDeviceMemoryProperties().memoryTypes[i].propertyFlags & properties) == properties) {
 				return i;
 			}
 		}
@@ -106,7 +109,7 @@ namespace Mage {
 		for (auto format : formats) {
 			VkFormatProperties props;
 			//the support of a format cann be queried using....
-			vkGetPhysicalDeviceFormatProperties(rhi->m_physical_device, format, &props);
+			vkGetPhysicalDeviceFormatProperties(rhi->getPhysicalDevice(), format, &props);
 
 			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) return format;
 			else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) return format;
@@ -114,7 +117,7 @@ namespace Mage {
 		throw std::runtime_error("failed to find support format!");
 	}
 
-	bool VulkanHelper::checkDeviceExtensionSupport(VkPhysicalDevice& physical_device) {
+	bool VulkanHelper::checkDeviceExtensionSupport(VkPhysicalDevice physical_device) {
 		uint32_t extensionCount{ 0 };
 		vkEnumerateDeviceExtensionProperties(physical_device, nullptr, &extensionCount, nullptr);
 		std::vector<VkExtensionProperties> extension_properties(extensionCount);
@@ -127,7 +130,7 @@ namespace Mage {
 		return required_extensions.empty();
 	}
 
-	SwapchainSupportDetails VulkanHelper::querySwapchainDetails(VkPhysicalDevice& physical_device, VkSurfaceKHR surface) {
+	SwapchainSupportDetails VulkanHelper::querySwapchainDetails(VkPhysicalDevice physical_device, VkSurfaceKHR surface) {
 		SwapchainSupportDetails details;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(physical_device, surface, &details.capabilities);
 
@@ -148,7 +151,7 @@ namespace Mage {
 		return details;
 	}
 
-	bool VulkanHelper::checkDeviceFeaturesSupport(VkPhysicalDevice& physical_device, VkPhysicalDeviceFeatures required_features) {
+	bool VulkanHelper::checkDeviceFeaturesSupport(VkPhysicalDevice physical_device, VkPhysicalDeviceFeatures required_features) {
 		VkPhysicalDeviceFeatures2 device_features = VulkanInfo::aboutVkPhisicalDeviceFeatures2();
 		VkPhysicalDeviceRobustness2FeaturesEXT extension_features = VulkanInfo::abouotVkPhysicalDeviceRobustness2FeaturesEXT();
 		extension_features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ROBUSTNESS_2_FEATURES_EXT;
@@ -166,7 +169,7 @@ namespace Mage {
 		return true && extension_features.nullDescriptor;
 	}
 
-	bool VulkanHelper::isDeviceSuitable(VkPhysicalDevice& physical_device, VkPhysicalDeviceFeatures required_features, VkSurfaceKHR surface) {
+	bool VulkanHelper::isDeviceSuitable(VkPhysicalDevice physical_device, VkPhysicalDeviceFeatures required_features, VkSurfaceKHR surface) {
 		auto indices = findQueueFamily(physical_device, surface);
 
 		bool is_features_support = checkDeviceFeaturesSupport(physical_device, required_features);
@@ -266,7 +269,7 @@ namespace Mage {
 		rhi->submitCommandsTemporarily(command_buffer);
 	}
 
-	VkShaderModule VulkanHelper::shaderModuleCreationHelper(VkDevice& device,const std::string& filename) {
+	VkShaderModule VulkanHelper::shaderModuleCreationHelper(VkDevice device,const std::string& filename) {
 		std::ifstream file(filename, std::ios::ate | std::ios::binary);
 		
 		if (!file.is_open()) {
@@ -305,19 +308,19 @@ namespace Mage {
 		image_create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		image_create_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
-		if (VK_SUCCESS != vkCreateImage(rhi->m_device, &image_create_info, nullptr, &image)) {
+		if (VK_SUCCESS != vkCreateImage(rhi->getDevice(), &image_create_info, nullptr, &image)) {
 			MAGE_THROW(failed to create image)
 		}
 
 		VkMemoryRequirements image_memory_requires;
-		vkGetImageMemoryRequirements(rhi->m_device, image, &image_memory_requires);
+		vkGetImageMemoryRequirements(rhi->getDevice(), image, &image_memory_requires);
 
 		VkMemoryAllocateInfo image_allocate_info = VulkanInfo::aboutVkMemoryAllocateInfo();
 		image_allocate_info.allocationSize = image_memory_requires.size;
 		image_allocate_info.memoryTypeIndex = VulkanHelper::findMemoryType(rhi, image_memory_requires.memoryTypeBits, memory_properties);
-		vkAllocateMemory(rhi->m_device, &image_allocate_info, nullptr, &image_memory);
+		vkAllocateMemory(rhi->getDevice(), &image_allocate_info, nullptr, &image_memory);
 
-		vkBindImageMemory(rhi->m_device, image, image_memory, 0);
+		vkBindImageMemory(rhi->getDevice(), image, image_memory, 0);
 	}
 
 	void VulkanHelper::bufferCreationHelper(VulkanRHI* rhi, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory) {
@@ -326,22 +329,22 @@ namespace Mage {
 		buffer_create_info.size = size;
 		buffer_create_info.usage = usage;
 
-		if (VK_SUCCESS != vkCreateBuffer(rhi->m_device, &buffer_create_info, nullptr, &buffer)) {
+		if (VK_SUCCESS != vkCreateBuffer(rhi->getDevice(), &buffer_create_info, nullptr, &buffer)) {
 			MAGE_THROW(failed to create buffer)
 		}
 
 		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(rhi->m_device, buffer, &memRequirements);
+		vkGetBufferMemoryRequirements(rhi->getDevice(), buffer, &memRequirements);
 
 		VkMemoryAllocateInfo allocation = VulkanInfo::aboutVkMemoryAllocateInfo();
 		allocation.allocationSize = memRequirements.size;
 		allocation.memoryTypeIndex = findMemoryType(rhi, memRequirements.memoryTypeBits, properties);
 
-		if (VK_SUCCESS != vkAllocateMemory(rhi->m_device, &allocation, nullptr, &memory)) {
+		if (VK_SUCCESS != vkAllocateMemory(rhi->getDevice(), &allocation, nullptr, &memory)) {
 			MAGE_THROW(failed to allocate memory for buffer)
 		}
 
-		vkBindBufferMemory(rhi->m_device, buffer, memory, 0);
+		vkBindBufferMemory(rhi->getDevice(), buffer, memory, 0);
 	}
 
 	void VulkanHelper::fromBufferToBufferCopyHelper(VulkanRHI* rhi, VkBuffer src, VkBuffer dst, VkDeviceSize size) {
@@ -375,5 +378,23 @@ namespace Mage {
 		vkCmdCopyBufferToImage(command_buffer, src, dst, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copy_region);
 
 		rhi->submitCommandsTemporarily(command_buffer);
+	}
+
+	void VulkanHelper::imageViewCreationHelper(VulkanRHI* rhi, VkImage parent, VkFormat format, VkImageAspectFlags aspect, uint32_t mipmaplevel, VkImageView& imageView) {
+		VkImageViewCreateInfo view_info = VulkanInfo::aboutVkImageViewCeateInfo();
+		view_info.image = parent;
+		view_info.format = format;
+		view_info.components.a = VK_COMPONENT_SWIZZLE_A;
+		view_info.components.r = VK_COMPONENT_SWIZZLE_R;
+		view_info.components.g = VK_COMPONENT_SWIZZLE_G;
+		view_info.components.b = VK_COMPONENT_SWIZZLE_B;
+		view_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
+		view_info.subresourceRange.aspectMask = aspect;
+		view_info.subresourceRange.baseArrayLayer = 0;
+		view_info.subresourceRange.layerCount = 1;
+		view_info.subresourceRange.baseMipLevel = 0;
+		view_info.subresourceRange.levelCount = mipmaplevel;
+
+		ASSERT_RESULT(vkCreateImageView(rhi->getDevice(), &view_info, nullptr, &imageView));
 	}
 }

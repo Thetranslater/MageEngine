@@ -15,12 +15,12 @@ int main(int argc, char* argv[])
 
     /*if (argv[1] != nullptr && argv[2] != nullptr && argv[3] != nullptr && argv[4] != nullptr && argv[5] != nullptr &&
         argv[6] != nullptr)*/
-    {
+    {   
         MetaParser::prepare();
 
-        result = parse("E:\\ProgramingFile\\C++\\Mage\\Engine\\precompile.json",
-                       "E:\\ProgramingFile\\C++\\Mage\\Engine\\parser_header.h", 
-                       "E:\\ProgramingFile\\C++\\Mage\\Engine\\core",
+        result = parse("E:/Mage/engine/precompile.json",
+                       "E:/Mage/engine/parser_header.h", 
+                       "E:/Mage/engine/core",
                        "*",
                        "Mage",
                        "0");

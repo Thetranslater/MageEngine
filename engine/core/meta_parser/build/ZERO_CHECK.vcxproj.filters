@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="E:\ProgramingFile\C++\Mage\Engine\core\meta_parser\build\CMakeFiles\f17462d3fbfafc549efa7a428288fe2a\generate.stamp.rule">
+    <CustomBuild Include="E:\Mage\engine\core\meta_parser\build\CMakeFiles\7940f3f00c4bd84a86537c0d919cba0f\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{8B13A1B2-2945-3637-9C08-F5DAE1896AC2}</UniqueIdentifier>
+      <UniqueIdentifier>{0AC761C6-87CF-3498-A236-9574F9CC8A22}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

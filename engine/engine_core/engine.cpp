@@ -2,9 +2,10 @@
 #include"engine_core/render_engine/render_resource.h"
 #include"engine_core/engine.h"
 
-#include"render_engine/render_system.h"
-#include"render_engine/window_system.h"
-#include"render_engine/render_scene.h"
+#include"engine_core/render_engine/render_system.h"
+#include"engine_core/render_engine/window_system.h"
+#include"engine_core/render_engine/render_scene.h"
+#include"engine_core/input/input_system.h"
 
 #include"core/macro.h"
 #include"core/meta/reflection/reflection_register.h"
@@ -19,25 +20,28 @@ namespace Mage {
 	}
 
 	void MageEngine::logicalTick(float delta_time) {
-		Model markov;
-		std::string err;
-		std::string warn;
-		if (!engine_global_context.m_resource_manager->loadAsset("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn,false)) {
-			MAGE_THROW(failed to load gltf model)
-		}
+		engine_global_context.m_input_system->tick();
+		engine_global_context.m_input_system->print();
 
-		auto render_scene = engine_global_context.m_render_system->getRenderScene();
-		VkRenderModelInfo markov_info = markov.getVkRenderModelInfo();
-		render_scene->m_p_scene_load_deque->push_back(markov_info);
+		//Model markov;
+		//std::string err;
+		//std::string warn;
+		//if (!engine_global_context.m_resource_manager->loadAsset("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn,false)) {
+		//	MAGE_THROW(failed to load gltf model)
+		//}
+
+		//auto render_scene = engine_global_context.m_render_system->getRenderScene();
+		//VkRenderModelInfo markov_info = markov.getVkRenderModelInfo();
+		//render_scene->m_p_scene_load_deque->push_back(markov_info);
 	}
 
 	void MageEngine::renderTick(float delta_time) {
 		engine_global_context.m_render_system->tick();
 	}
 
-	void MageEngine::tick(float delta_time) {
-		logicalTick(delta_time);
-		while (true) {
+	void MageEngine::run(float delta_time) {
+		while (!engine_global_context.m_window_system->shouldClose()) {
+			logicalTick(delta_time);
 			renderTick(delta_time);
 			//after render tick
 			engine_global_context.m_window_system->pollEvents();

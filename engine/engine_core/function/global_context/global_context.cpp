@@ -1,6 +1,7 @@
 #include"engine_core/function/global_context/global_context.h"
 #include"engine_core/render_engine/window_system.h"
 #include"engine_core/render_engine/render_system.h"
+#include"engine_core/input/input_system.h"
 
 #include"asset/resource_manager/resource_manager.h"
 
@@ -12,6 +13,9 @@ namespace Mage {
 
 		m_window_system = std::make_shared<WindowSystem>();
 		m_window_system->initialize();
+
+		m_input_system = std::make_shared<InputSystem>();
+		m_input_system->initialize(m_window_system);
 
 		m_render_system = std::make_shared<RenderSystem>();
 		m_render_system->initialize(m_window_system);

@@ -9,7 +9,7 @@ namespace Mage {
 		void startEngine();
 		void shutdownEngine();
 
-		void tick(float delta_time);
+		void run(float delta_time);
 	private:
 		void logicalTick(float delta_time);
 		void renderTick(float delta_time);

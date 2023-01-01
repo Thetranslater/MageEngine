@@ -120,7 +120,7 @@ namespace Mage {
 			sampler_create_info.unnormalizedCoordinates = optional_info->unnormalizedCoordinates;
 		}
 
-		if (VK_SUCCESS != vkCreateSampler(rhi->m_device, &sampler_create_info, nullptr, &sampler)) {
+		if (VK_SUCCESS != vkCreateSampler(rhi->getDevice(), &sampler_create_info, nullptr, &sampler)) {
 			MAGE_THROW(failed to create sampler)
 		}
 
@@ -205,9 +205,9 @@ namespace Mage {
 
 
 			void* copy_to{ nullptr };
-			vkMapMemory(rhi->m_device, staging_memory, 0, m_data.size(), 0, &copy_to);
+			vkMapMemory(rhi->getDevice(), staging_memory, 0, m_data.size(), 0, &copy_to);
 			memcpy(copy_to, m_data.data(), static_cast<size_t>(m_data.size()));
-			vkUnmapMemory(rhi->m_device, staging_memory);
+			vkUnmapMemory(rhi->getDevice(), staging_memory);
 
 			//transition image layout
 			VulkanHelper::transitionImageLayout(rhi, render_texture.m_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_mipmap_levels);
@@ -220,8 +220,8 @@ namespace Mage {
 			//transition image layout to shader read only
 			VulkanHelper::transitionImageLayout(rhi, render_texture.m_texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipmap_levels);
 		
-			vkDestroyBuffer(rhi->m_device, staging_buffer, nullptr);
-			vkFreeMemory(rhi->m_device, staging_memory, nullptr);
+			vkDestroyBuffer(rhi->getDevice(), staging_buffer, nullptr);
+			vkFreeMemory(rhi->getDevice(), staging_memory, nullptr);
 		}
 
 		//create image view
@@ -237,7 +237,7 @@ namespace Mage {
 			view_create_info.subresourceRange.baseArrayLayer = 0;
 			view_create_info.subresourceRange.layerCount = m_layer_counts;
 		}
-		if (VK_SUCCESS != vkCreateImageView(rhi->m_device, &view_create_info, nullptr, &render_texture.m_texture_view)) {
+		if (VK_SUCCESS != vkCreateImageView(rhi->getDevice(), &view_create_info, nullptr, &render_texture.m_texture_view)) {
 			MAGE_THROW(failed to create texture image view)
 		}
 
