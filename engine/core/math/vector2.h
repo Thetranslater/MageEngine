@@ -8,9 +8,12 @@
 #include<glm-master/glm/vec2.hpp>
 
 #include<core/math/math.h>
+#include"core/meta/reflection/reflection.h"
 
 namespace Mage {
-	class Vector2 {
+	REFLECTION_TYPE(Vector2)
+	CLASS(Vector2, Fields) {
+		REFLECTION_BODY(Vector2)
 	public:
 		float x{ 0.f }, y{ 0.f };
 	public:

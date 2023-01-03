@@ -38,6 +38,7 @@ namespace Mage {
 
 		glfwSetInputMode(m_window, GLFW_LOCK_KEY_MODS, GLFW_TRUE);
 		glfwSetInputMode(m_window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+		//glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
 	void WindowSystem::pollEvents() {

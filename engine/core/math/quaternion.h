@@ -5,11 +5,13 @@
 #include<glm-master/glm/gtc/quaternion.hpp>
 
 #include<core/math/math.h>
+#include"core/meta/reflection/reflection.h"
 
 namespace Mage {
 	class Vector3;
-
-	class Quaternion {
+	REFLECTION_TYPE(Quaternion)
+	CLASS(Quaternion, Fields) {
+		REFLECTION_BODY(Quaternion)
 	public:
 		float w{ 1.f };
 		float x{ 0.f };

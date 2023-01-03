@@ -118,7 +118,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Mage\3rdparty;E:\Tools\Vulkan\Include;E:\Mage\engine\core;E:\Mage\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Mage\3rdparty;E:\Tools\Vulkan\Include;E:\Mage\engine\core;E:\Mage\editor;E:\Mage\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -181,8 +181,12 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\editor\TEST.h" />
+    <ClInclude Include="..\engine\asset\object.h" />
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h" />
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h" />
+    <ClInclude Include="..\engine\asset\scene.h" />
+    <ClInclude Include="..\engine\asset\world.h" />
     <ClInclude Include="..\engine\core\hash.h" />
     <ClInclude Include="..\engine\core\macro.h" />
     <ClInclude Include="..\engine\core\math\math.h" />
@@ -220,6 +224,10 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\component.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\Transform_component.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\game_object\game_object.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\game_object\game_object_id_allocator.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\engine\core\meta_parser\build\PiccoloParser.vcxproj">

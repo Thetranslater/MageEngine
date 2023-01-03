@@ -5,6 +5,7 @@
 #include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/window_system.h"
 #include"engine_core/render_engine/render_scene.h"
+#include"engine_core/input/key_family.h"
 #include"engine_core/input/input_system.h"
 
 #include"core/macro.h"

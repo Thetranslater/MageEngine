@@ -6,6 +6,7 @@
 #include<core/math/vector3.h>
 #include<core/math/vector4.h>
 #include<core/math/quaternion.h>
+//#include"core/meta/reflection/reflection.h"
 
 #include<cassert>
 

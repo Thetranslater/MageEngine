@@ -1,85 +1,11 @@
 #pragma once
-#include "_generated\serializer\reflection_test.serializer.gen.h"
 #include "_generated\serializer\vector3.serializer.gen.h"
+#include "_generated\serializer\object.serializer.gen.h"
+#include "_generated\serializer\scene.serializer.gen.h"
+#include "_generated\serializer\world.serializer.gen.h"
+#include "_generated\serializer\quaternion.serializer.gen.h"
+#include "_generated\serializer\vector2.serializer.gen.h"
 namespace Mage{
-    template<>
-    PJson PSerializer::write(const BaseTest& instance){
-        PJson::object  ret_context;
-        
-        ret_context.insert_or_assign("int", PSerializer::write(instance.m_int));
-        PJson::array m_int_vector_json;
-        for (auto& item : instance.m_int_vector){
-            m_int_vector_json.emplace_back(PSerializer::write(item));
-        }
-        ret_context.insert_or_assign("int_vector",m_int_vector_json);
-        
-        return  PJson(ret_context);
-    }
-    template<>
-    BaseTest& PSerializer::read(const PJson& json_context, BaseTest& instance){
-        assert(json_context.is_object());
-        
-        if(!json_context["int"].is_null()){
-            PSerializer::read(json_context["int"], instance.m_int);
-        }
-        if(!json_context["int_vector"].is_null()){
-            assert(json_context["int_vector"].is_array());
-            PJson::array array_m_int_vector = json_context["int_vector"].array_items();
-            instance.m_int_vector.resize(array_m_int_vector.size());
-            for (size_t index=0; index < array_m_int_vector.size();++index){
-                PSerializer::read(array_m_int_vector[index], instance.m_int_vector[index]);
-            }
-        }
-        return instance;
-    }
-    template<>
-    PJson PSerializer::write(const Test1& instance){
-        PJson::object  ret_context;
-        auto&&  json_context_0 = PSerializer::write(*(Mage::BaseTest*)&instance);
-        assert(json_context_0.is_object());
-        auto&& json_context_map_0 = json_context_0.object_items();
-        ret_context.insert(json_context_map_0.begin() , json_context_map_0.end());
-        ret_context.insert_or_assign("char", PSerializer::write(instance.m_char));
-        return  PJson(ret_context);
-    }
-    template<>
-    Test1& PSerializer::read(const PJson& json_context, Test1& instance){
-        assert(json_context.is_object());
-        PSerializer::read(json_context,*(Mage::BaseTest*)&instance);
-        if(!json_context["char"].is_null()){
-            PSerializer::read(json_context["char"], instance.m_char);
-        }
-        return instance;
-    }
-    template<>
-    PJson PSerializer::write(const Test2& instance){
-        PJson::object  ret_context;
-        auto&&  json_context_0 = PSerializer::write(*(Mage::BaseTest*)&instance);
-        assert(json_context_0.is_object());
-        auto&& json_context_map_0 = json_context_0.object_items();
-        ret_context.insert(json_context_map_0.begin() , json_context_map_0.end());
-        PJson::array m_test_base_array_json;
-        for (auto& item : instance.m_test_base_array){
-            m_test_base_array_json.emplace_back(PSerializer::write(item));
-        }
-        ret_context.insert_or_assign("test_base_array",m_test_base_array_json);
-        
-        return  PJson(ret_context);
-    }
-    template<>
-    Test2& PSerializer::read(const PJson& json_context, Test2& instance){
-        assert(json_context.is_object());
-        PSerializer::read(json_context,*(Mage::BaseTest*)&instance);
-        if(!json_context["test_base_array"].is_null()){
-            assert(json_context["test_base_array"].is_array());
-            PJson::array array_m_test_base_array = json_context["test_base_array"].array_items();
-            instance.m_test_base_array.resize(array_m_test_base_array.size());
-            for (size_t index=0; index < array_m_test_base_array.size();++index){
-                PSerializer::read(array_m_test_base_array[index], instance.m_test_base_array[index]);
-            }
-        }
-        return instance;
-    }
     template<>
     PJson PSerializer::write(const Vector3& instance){
         PJson::object  ret_context;
@@ -101,6 +27,148 @@ namespace Mage{
         }
         if(!json_context["z"].is_null()){
             PSerializer::read(json_context["z"], instance.z);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const ObjectAsset& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("name", PSerializer::write(instance.name));
+        PJson::array components_json;
+        for (auto& item : instance.components){
+            components_json.emplace_back(PSerializer::write(item));
+        }
+        ret_context.insert_or_assign("components",components_json);
+        
+        return  PJson(ret_context);
+    }
+    template<>
+    ObjectAsset& PSerializer::read(const PJson& json_context, ObjectAsset& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["name"].is_null()){
+            PSerializer::read(json_context["name"], instance.name);
+        }
+        if(!json_context["components"].is_null()){
+            assert(json_context["components"].is_array());
+            PJson::array array_components = json_context["components"].array_items();
+            instance.components.resize(array_components.size());
+            for (size_t index=0; index < array_components.size();++index){
+                PSerializer::read(array_components[index], instance.components[index]);
+            }
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const SceneAsset& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("name", PSerializer::write(instance.name));
+        PJson::array objects_json;
+        for (auto& item : instance.objects){
+            objects_json.emplace_back(PSerializer::write(item));
+        }
+        ret_context.insert_or_assign("objects",objects_json);
+        
+        return  PJson(ret_context);
+    }
+    template<>
+    SceneAsset& PSerializer::read(const PJson& json_context, SceneAsset& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["name"].is_null()){
+            PSerializer::read(json_context["name"], instance.name);
+        }
+        if(!json_context["objects"].is_null()){
+            assert(json_context["objects"].is_array());
+            PJson::array array_objects = json_context["objects"].array_items();
+            instance.objects.resize(array_objects.size());
+            for (size_t index=0; index < array_objects.size();++index){
+                PSerializer::read(array_objects[index], instance.objects[index]);
+            }
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const WorldAsset& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("name", PSerializer::write(instance.name));
+        ret_context.insert_or_assign("default_scene", PSerializer::write(instance.default_scene));
+        PJson::array scene_urls_json;
+        for (auto& item : instance.scene_urls){
+            scene_urls_json.emplace_back(PSerializer::write(item));
+        }
+        ret_context.insert_or_assign("scene_urls",scene_urls_json);
+        
+        return  PJson(ret_context);
+    }
+    template<>
+    WorldAsset& PSerializer::read(const PJson& json_context, WorldAsset& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["name"].is_null()){
+            PSerializer::read(json_context["name"], instance.name);
+        }
+        if(!json_context["default_scene"].is_null()){
+            PSerializer::read(json_context["default_scene"], instance.default_scene);
+        }
+        if(!json_context["scene_urls"].is_null()){
+            assert(json_context["scene_urls"].is_array());
+            PJson::array array_scene_urls = json_context["scene_urls"].array_items();
+            instance.scene_urls.resize(array_scene_urls.size());
+            for (size_t index=0; index < array_scene_urls.size();++index){
+                PSerializer::read(array_scene_urls[index], instance.scene_urls[index]);
+            }
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const Quaternion& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("w", PSerializer::write(instance.w));
+        ret_context.insert_or_assign("x", PSerializer::write(instance.x));
+        ret_context.insert_or_assign("y", PSerializer::write(instance.y));
+        ret_context.insert_or_assign("z", PSerializer::write(instance.z));
+        return  PJson(ret_context);
+    }
+    template<>
+    Quaternion& PSerializer::read(const PJson& json_context, Quaternion& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["w"].is_null()){
+            PSerializer::read(json_context["w"], instance.w);
+        }
+        if(!json_context["x"].is_null()){
+            PSerializer::read(json_context["x"], instance.x);
+        }
+        if(!json_context["y"].is_null()){
+            PSerializer::read(json_context["y"], instance.y);
+        }
+        if(!json_context["z"].is_null()){
+            PSerializer::read(json_context["z"], instance.z);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const Vector2& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("x", PSerializer::write(instance.x));
+        ret_context.insert_or_assign("y", PSerializer::write(instance.y));
+        return  PJson(ret_context);
+    }
+    template<>
+    Vector2& PSerializer::read(const PJson& json_context, Vector2& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["x"].is_null()){
+            PSerializer::read(json_context["x"], instance.x);
+        }
+        if(!json_context["y"].is_null()){
+            PSerializer::read(json_context["y"], instance.y);
         }
         return instance;
     }
