@@ -1,7 +1,7 @@
 #pragma once
 #include<string>
 
-#include"asset/object.h"
+#include"asset/object_asset.h"
 #include"core/meta/reflection/reflection.h"
 
 namespace Mage {

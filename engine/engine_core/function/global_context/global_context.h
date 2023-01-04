@@ -8,6 +8,7 @@ namespace Mage {
 	class WindowSystem;
 	class InputSystem;
 	class ResourceManager;
+	class WorldManager;
 
 	class MageEngineGlobalContext {
 	public:
@@ -18,6 +19,7 @@ namespace Mage {
 		std::shared_ptr<RenderSystem> m_render_system;
 		std::shared_ptr<WindowSystem> m_window_system;
 		std::shared_ptr<ResourceManager> m_resource_manager;
+		std::shared_ptr<WorldManager> m_world_manager;
 	};
 
 	extern MageEngineGlobalContext engine_global_context;

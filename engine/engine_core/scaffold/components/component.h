@@ -9,10 +9,13 @@ namespace Mage {
 	CLASS(Component, WhiteListFields) {
 		REFLECTION_BODY(Component)
 	protected:
+		bool should_tick_in_editor{ false };
 		GameObject* parent{nullptr};
 	public:
 		Component() = default;
 		virtual ~Component() {}
+
+		void setParent(GameObject* new_parent) { parent = new_parent; }
 		virtual void tick(float delta) {}
 	};
 }

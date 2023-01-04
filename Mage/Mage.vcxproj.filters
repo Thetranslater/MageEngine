@@ -61,14 +61,14 @@
     <Filter Include="Mage\engine\engine_core\scaffold">
       <UniqueIdentifier>{c32bd5b6-2d8a-4c87-92c0-5c12f1260998}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mage\engine\engine_core\scaffold\game_object">
-      <UniqueIdentifier>{f04b7c45-dcf2-4f9e-9816-955cdc0a2b6b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Mage\engine\engine_core\scaffold\components">
       <UniqueIdentifier>{f790544b-a0ab-4ba3-bf09-d01a8c82c753}</UniqueIdentifier>
     </Filter>
     <Filter Include="Mage\engine\engine_core\scaffold\components\transform">
       <UniqueIdentifier>{b8007572-83b4-4aff-a438-640eed62b65c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\scaffold\world_manager">
+      <UniqueIdentifier>{4478e270-5e04-4b92-935a-ae2f58ef652f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -158,6 +158,21 @@
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\input\input_system.cpp">
       <Filter>Mage\engine\engine_core\input</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\world_manager\world_manager.cpp">
+      <Filter>Mage\engine\engine_core\scaffold\world_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\world.cpp">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\scene.cpp">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\game_object.cpp">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\components\Transform_component.cpp">
+      <Filter>Mage\engine\engine_core\scaffold\components\transform</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -278,22 +293,16 @@
     <ClInclude Include="..\engine\engine_core\input\key_family.h">
       <Filter>Mage\engine\engine_core\input</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\scaffold\game_object\game_object.h">
-      <Filter>Mage\engine\engine_core\scaffold\game_object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\scaffold\game_object\game_object_id_allocator.h">
-      <Filter>Mage\engine\engine_core\scaffold\game_object</Filter>
-    </ClInclude>
     <ClInclude Include="..\editor\TEST.h">
       <Filter>TEST</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\asset\world.h">
+    <ClInclude Include="..\engine\asset\world_asset.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\asset\scene.h">
+    <ClInclude Include="..\engine\asset\scene_asset.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\asset\object.h">
+    <ClInclude Include="..\engine\asset\object_asset.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\components\component.h">
@@ -301,6 +310,21 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\components\Transform_component.h">
       <Filter>Mage\engine\engine_core\scaffold\components\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h">
+      <Filter>Mage\engine\engine_core\scaffold\world_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\world.h">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\game_object.h">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\game_object_id_allocator.h">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\scene.h">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

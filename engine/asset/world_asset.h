@@ -8,7 +8,7 @@ namespace Mage {
 	REFLECTION_TYPE(WorldAsset)
 	CLASS(WorldAsset,Fields) {
 		REFLECTION_BODY(WorldAsset)
-	private:
+	public:
 		std::string name;
 		int default_scene;
 		std::vector<std::string> scene_urls;

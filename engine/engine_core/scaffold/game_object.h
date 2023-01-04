@@ -2,17 +2,21 @@
 #include<string>
 #include<vector>
 
-#include"engine_core/scaffold/game_object/game_object_id_allocator.h"
+#include"engine_core/scaffold/game_object_id_allocator.h"
 #include"core/meta/reflection/reflection.h"
 
 namespace Mage {
 	//base class of all game objects
 	class Component;
+	class ObjectAsset;
 	class GameObject {
 	public:
-		GameObjectID GetInstanceID() { return id; }
-		const std::string& Name() { return name; }
-		void Name(const std::string& new_name) { name = new_name; }
+		GameObjectID getInstanceID() { return id; }
+		void setInstanceID(GameObjectID guid) { id = guid; }
+		const std::string& name() { return go_name; }
+		void setName(const std::string& new_name) { go_name = new_name; }
+
+		virtual void load(ObjectAsset& asset);
 
 		virtual void tick(float delta);
 
@@ -30,7 +34,7 @@ namespace Mage {
 
 	private:
 		GameObjectID id{ invalid_go_id };
-		std::string name;
+		std::string go_name;
 
 		std::vector<Reflection::ReflectionPtr<Component>> components;
 	};
