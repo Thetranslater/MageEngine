@@ -7,6 +7,7 @@
 #include"engine_core/render_engine/render_scene.h"
 #include"engine_core/input/key_family.h"
 #include"engine_core/input/input_system.h"
+#include"engine_core/scaffold/world_manager/world_manager.h"
 
 #include"core/macro.h"
 #include"core/meta/reflection/reflection_register.h"
@@ -22,12 +23,14 @@ namespace Mage {
 
 	void MageEngine::logicalTick(float delta_time) {
 		engine_global_context.m_input_system->tick();
-		engine_global_context.m_input_system->print();
+
+		engine_global_context.m_world_manager->tick(delta_time);
+		//engine_global_context.m_input_system->print();
 
 		//Model markov;
 		//std::string err;
 		//std::string warn;
-		//if (!engine_global_context.m_resource_manager->loadAsset("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn,false)) {
+		//if (!engine_global_context.m_resource_manager->loadMageModel("E:\\Download\\makarov_pistol\\scene.gltf", &markov, &err, &warn,false)) {
 		//	MAGE_THROW(failed to load gltf model)
 		//}
 
@@ -40,8 +43,9 @@ namespace Mage {
 		engine_global_context.m_render_system->tick();
 	}
 
-	void MageEngine::run(float delta_time) {
+	void MageEngine::run() {
 		while (!engine_global_context.m_window_system->shouldClose()) {
+			float delta_time = 1.f;
 			logicalTick(delta_time);
 			renderTick(delta_time);
 			//after render tick

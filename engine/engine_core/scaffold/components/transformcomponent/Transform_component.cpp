@@ -1,4 +1,4 @@
-#include"engine_core/scaffold/components/Transform_component.h"
+#include"engine_core/scaffold/components/transformcomponent/Transform_component.h"
 
 namespace Mage {
 	void TransformComponent::tick(float delta) {

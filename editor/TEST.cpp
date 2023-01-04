@@ -563,7 +563,7 @@ void _process_node(RenderModel& ret_model, const std::vector<Mage::Node>& meshes
 RenderModel loadModel(const std::string& file) {
 	Mage::ResourceManager loader;
 	Mage::Model model;
-	loader.loadAsset(file, &model, nullptr, nullptr, true);
+	loader.loadMageModel(file, &model, nullptr, nullptr, true);
 
 	RenderModel ret_model{};
 

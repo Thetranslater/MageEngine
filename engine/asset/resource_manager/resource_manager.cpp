@@ -37,8 +37,7 @@ namespace Mage {
 		return extensions.find(postfix.generic_string()) != extensions.end();
 	}
 
-	template<>
-	bool ResourceManager::loadAsset<Model>(const std::string& filename, Model* out_model_data, std::string* err, std::string* warn, bool is_real_load) {
+	bool ResourceManager::loadMageModel(const std::string& filename, Model* out_model_data, std::string* err, std::string* warn, bool is_real_load) {
 		FSArguments* pu = static_cast<FSArguments*>(fs.user_data);
 		pu->_is_real_load = is_real_load;
 
@@ -48,8 +47,7 @@ namespace Mage {
 		return ret;
 	}
 
-	template<>
-	bool ResourceManager::loadAsset<Buffer>(const std::string& filename, Buffer* out_buffer_data, std::string* err, std::string* warn, bool is_real_load) {
+	bool ResourceManager::loadMageBuffer(const std::string& filename, Buffer* out_buffer_data, std::string* err, std::string* warn, bool is_real_load) {
 		FSArguments* pu = static_cast<FSArguments*>(fs.user_data);
 		pu->_is_real_load = is_real_load;
 
@@ -58,8 +56,7 @@ namespace Mage {
 		return ret;
 	}
 
-	template<>
-	bool ResourceManager::loadAsset<Texture>(const std::string& filename, Texture* out_texture_data, std::string* err, std::string* warn, bool is_real_load) {
+	bool ResourceManager::loadMageTexture(const std::string& filename, Texture* out_texture_data, std::string* err, std::string* warn, bool is_real_load) {
 		if (is_real_load) {
 			Sampler remain_sampler{ out_texture_data->m_combined_sampler };
 			tinygltf::Image image;

@@ -1,5 +1,6 @@
 #pragma once
 #include<sstream>
+#include<fstream>
 #include<filesystem>
 
 #define TINYGLTF_NO_STB_IMAGE_WRITE
@@ -49,6 +50,11 @@ namespace Mage {
 			}
 			return false;
 		}
+
+		bool loadMageModel(const std::string& filename, Model* out_model, std::string* err, std::string* warn, bool is_real_load = true);
+		bool loadMageBuffer(const std::string& filename, Buffer* out_model, std::string* err, std::string* warn, bool is_real_load = true);
+		bool loadMageTexture(const std::string& filename, Texture* out_model, std::string* err, std::string* warn, bool is_real_load = true);
+
 	private:
 		tinygltf::TinyGLTF gltf_loader;
 		tinygltf::FsCallbacks fs{ &tinygltf::FileExists,&tinygltf::ExpandFilePath,&_custmization_readwholefile, &tinygltf::WriteWholeFile,&global_fsargs };

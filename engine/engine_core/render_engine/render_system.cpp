@@ -68,7 +68,7 @@ namespace Mage {
 			auto mesh_guid = m_render_scene->getMeshGUIDGenerator().generateGUID(mesh_data_uri);
 			if (not m_render_resource->hasMesh(mesh_guid)) {
 				Buffer raw_data;
-				bool load_ret = resource_manager->loadAsset(mesh_data_uri.m_uri, &raw_data, nullptr, nullptr);
+				bool load_ret = resource_manager->loadMageBuffer(mesh_data_uri.m_uri, &raw_data, nullptr, nullptr);
 				assert(load_ret);
 				RenderResource::IO_Buffer mesh_creation_param;
 				mesh_creation_param = std::move(raw_data);
@@ -82,7 +82,7 @@ namespace Mage {
 				auto texture_guid = m_render_scene->getTextureGUIDGenerator().generateGUID(texture_data_uris[i]);
 				if (not m_render_resource->hasTexture(texture_guid)) {
 					Texture raw_texture;
-					bool load_ret = resource_manager->loadAsset(texture_data_uris[i].m_uri, &raw_texture, nullptr, nullptr);
+					bool load_ret = resource_manager->loadMageTexture(texture_data_uris[i].m_uri, &raw_texture, nullptr, nullptr);
 					assert(load_ret);
 					if (texture_data_uris[i].is_srgb) raw_texture.m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SRGB;
 					RenderResource::IO_Texture texture_creation_param;

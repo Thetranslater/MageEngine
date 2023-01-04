@@ -14,16 +14,4 @@ namespace Mage {
 	private:
 		static std::atomic<GameObjectID> id;
 	};
-
-	std::atomic<GameObjectID> GameObjectIDAllocator::id{ 0 };
-
-	GameObjectID GameObjectIDAllocator::alloc() {
-		auto next_id = id.load();
-		id++;
-		if (id >= invalid_go_id) {
-			MAGE_THROW(goid overflow!)
-		}
-
-		return next_id;
-	}
 }

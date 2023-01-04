@@ -150,7 +150,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\editor\TEST.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
@@ -178,15 +177,16 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_subpass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_system.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\window_system.cpp" />
-    <ClCompile Include="..\engine\engine_core\scaffold\components\Transform_component.cpp" />
+    <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp" />
+    <ClCompile Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\game_object.cpp" />
+    <ClCompile Include="..\engine\engine_core\scaffold\game_object_id_allocator.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\scene.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\world.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\world_manager\world_manager.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\editor\TEST.h" />
     <ClInclude Include="..\engine\asset\object_asset.h" />
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h" />
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h" />
@@ -230,17 +230,14 @@
     <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\component.h" />
-    <ClInclude Include="..\engine\engine_core\scaffold\components\Transform_component.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\mesh_asset.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\game_object.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\game_object_id_allocator.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\scene.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\world.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\engine\core\meta_parser\build\PiccoloParser.vcxproj">
-      <Project>{12fbaacb-7a11-3b9a-b8fe-8698423bda95}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

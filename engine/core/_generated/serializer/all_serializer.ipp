@@ -1,10 +1,14 @@
 #pragma once
 #include "_generated\serializer\vector3.serializer.gen.h"
+#include "_generated\serializer\Transform_component.serializer.gen.h"
 #include "_generated\serializer\object_asset.serializer.gen.h"
 #include "_generated\serializer\scene_asset.serializer.gen.h"
+#include "_generated\serializer\mesh_asset.serializer.gen.h"
+#include "_generated\serializer\component.serializer.gen.h"
 #include "_generated\serializer\world_asset.serializer.gen.h"
 #include "_generated\serializer\quaternion.serializer.gen.h"
 #include "_generated\serializer\vector2.serializer.gen.h"
+#include "_generated\serializer\Mesh_component.serializer.gen.h"
 namespace Mage{
     template<>
     PJson PSerializer::write(const Vector3& instance){
@@ -27,6 +31,33 @@ namespace Mage{
         }
         if(!json_context["z"].is_null()){
             PSerializer::read(json_context["z"], instance.z);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const TransformComponent& instance){
+        PJson::object  ret_context;
+        auto&&  json_context_0 = PSerializer::write(*(Mage::Component*)&instance);
+        assert(json_context_0.is_object());
+        auto&& json_context_map_0 = json_context_0.object_items();
+        ret_context.insert(json_context_map_0.begin() , json_context_map_0.end());
+        ret_context.insert_or_assign("position", PSerializer::write(instance.position));
+        ret_context.insert_or_assign("rotation", PSerializer::write(instance.rotation));
+        ret_context.insert_or_assign("scale", PSerializer::write(instance.scale));
+        return  PJson(ret_context);
+    }
+    template<>
+    TransformComponent& PSerializer::read(const PJson& json_context, TransformComponent& instance){
+        assert(json_context.is_object());
+        PSerializer::read(json_context,*(Mage::Component*)&instance);
+        if(!json_context["position"].is_null()){
+            PSerializer::read(json_context["position"], instance.position);
+        }
+        if(!json_context["rotation"].is_null()){
+            PSerializer::read(json_context["rotation"], instance.rotation);
+        }
+        if(!json_context["scale"].is_null()){
+            PSerializer::read(json_context["scale"], instance.scale);
         }
         return instance;
     }
@@ -88,6 +119,48 @@ namespace Mage{
                 PSerializer::read(array_objects[index], instance.objects[index]);
             }
         }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const MeshAsset& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("gltf_model_url", PSerializer::write(instance.gltf_model_url));
+        ret_context.insert_or_assign("albedo", PSerializer::write(instance.albedo));
+        ret_context.insert_or_assign("normal_map", PSerializer::write(instance.normal_map));
+        ret_context.insert_or_assign("metallic_roughness", PSerializer::write(instance.metallic_roughness));
+        return  PJson(ret_context);
+    }
+    template<>
+    MeshAsset& PSerializer::read(const PJson& json_context, MeshAsset& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["gltf_model_url"].is_null()){
+            PSerializer::read(json_context["gltf_model_url"], instance.gltf_model_url);
+        }
+        if(!json_context["albedo"].is_null()){
+            PSerializer::read(json_context["albedo"], instance.albedo);
+        }
+        if(!json_context["normal_map"].is_null()){
+            PSerializer::read(json_context["normal_map"], instance.normal_map);
+        }
+        if(!json_context["metallic_roughness"].is_null()){
+            PSerializer::read(json_context["metallic_roughness"], instance.metallic_roughness);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const Component& instance){
+        PJson::object  ret_context;
+        
+        
+        return  PJson(ret_context);
+    }
+    template<>
+    Component& PSerializer::read(const PJson& json_context, Component& instance){
+        assert(json_context.is_object());
+        
+        
         return instance;
     }
     template<>
@@ -169,6 +242,25 @@ namespace Mage{
         }
         if(!json_context["y"].is_null()){
             PSerializer::read(json_context["y"], instance.y);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const MeshComponent& instance){
+        PJson::object  ret_context;
+        auto&&  json_context_0 = PSerializer::write(*(Mage::Component*)&instance);
+        assert(json_context_0.is_object());
+        auto&& json_context_map_0 = json_context_0.object_items();
+        ret_context.insert(json_context_map_0.begin() , json_context_map_0.end());
+        ret_context.insert_or_assign("mesh", PSerializer::write(instance.mesh));
+        return  PJson(ret_context);
+    }
+    template<>
+    MeshComponent& PSerializer::read(const PJson& json_context, MeshComponent& instance){
+        assert(json_context.is_object());
+        PSerializer::read(json_context,*(Mage::Component*)&instance);
+        if(!json_context["mesh"].is_null()){
+            PSerializer::read(json_context["mesh"], instance.mesh);
         }
         return instance;
     }

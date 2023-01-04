@@ -19,9 +19,9 @@ namespace Mage {
 		Quaternion Rotation() { return rotation; }
 		Vector3 Scale() { return scale; }
 
-		void SetPosition(const Vector3& new_p) { position = new_p; }
-		void SetRotation(const Quaternion& new_q) { rotation = new_q; }
-		void SetScale(const Vector3& new_s) { scale = new_s; }
+		void SetPosition(const Vector3 & new_p) { position = new_p; }
+		void SetRotation(const Quaternion & new_q) { rotation = new_q; }
+		void SetScale(const Vector3 & new_s) { scale = new_s; }
 
 		Matrix4x4 localToWorldMatrix() { return Matrix4x4::TRS(position, rotation, scale); }
 		Matrix4x4 worldToLocalMatrix() { Matrix4x4 ret; Matrix4x4::Inverse3DAffine(Matrix4x4::TRS(position, rotation, scale), ret); return ret; }
@@ -30,8 +30,8 @@ namespace Mage {
 		META(Enable)
 		Vector3 position {Vector3::zero};
 		META(Enable)
-		Quaternion rotation{ Quaternion::identity };
+		Quaternion rotation {Quaternion::identity};
 		META(Enable)
-		Vector3 scale{ Vector3::one };
-	}
+		Vector3 scale {Vector3::one};
+	};
 }

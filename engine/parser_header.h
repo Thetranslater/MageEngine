@@ -11,4 +11,8 @@
 #include  "E:/Mage/engine/asset/world_asset.h"
 #include  "E:/Mage/engine/core/math/quaternion.h"
 #include  "E:/Mage/engine/core/math/vector2.h"
+#include  "E:/Mage/engine/engine_core/scaffold/components/component.h"
+#include  "E:/Mage/engine/engine_core/scaffold/components/transformcomponent/Transform_component.h"
+#include  "E:/Mage/engine/engine_core/scaffold/components/meshcomponent/Mesh_component.h"
+#include  "E:/Mage/engine/engine_core/scaffold/components/meshcomponent/mesh_assset.h"
 #endif

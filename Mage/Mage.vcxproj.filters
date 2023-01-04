@@ -70,6 +70,9 @@
     <Filter Include="Mage\engine\engine_core\scaffold\world_manager">
       <UniqueIdentifier>{4478e270-5e04-4b92-935a-ae2f58ef652f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\engine\engine_core\scaffold\components\mesh">
+      <UniqueIdentifier>{d94f659d-e5a0-45ba-8eb2-cc36564397fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -153,9 +156,6 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
     </ClCompile>
-    <ClCompile Include="..\editor\TEST.cpp">
-      <Filter>TEST</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\engine_core\input\input_system.cpp">
       <Filter>Mage\engine\engine_core\input</Filter>
     </ClCompile>
@@ -171,8 +171,14 @@
     <ClCompile Include="..\engine\engine_core\scaffold\game_object.cpp">
       <Filter>Mage\engine\engine_core\scaffold</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\engine_core\scaffold\components\Transform_component.cpp">
+    <ClCompile Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.cpp">
       <Filter>Mage\engine\engine_core\scaffold\components\transform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp">
+      <Filter>Mage\engine\engine_core\scaffold\components\mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\game_object_id_allocator.cpp">
+      <Filter>Mage\engine\engine_core\scaffold</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -293,23 +299,8 @@
     <ClInclude Include="..\engine\engine_core\input\key_family.h">
       <Filter>Mage\engine\engine_core\input</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\TEST.h">
-      <Filter>TEST</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\asset\world_asset.h">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\asset\scene_asset.h">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\asset\object_asset.h">
-      <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\components\component.h">
       <Filter>Mage\engine\engine_core\scaffold\components</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\scaffold\components\Transform_component.h">
-      <Filter>Mage\engine\engine_core\scaffold\components\transform</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h">
       <Filter>Mage\engine\engine_core\scaffold\world_manager</Filter>
@@ -325,6 +316,24 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\scene.h">
       <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.h">
+      <Filter>Mage\engine\engine_core\scaffold\components\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\mesh_asset.h">
+      <Filter>Mage\engine\engine_core\scaffold\components\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.h">
+      <Filter>Mage\engine\engine_core\scaffold\components\mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\world_asset.h">
+      <Filter>Mage\engine\asset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\scene_asset.h">
+      <Filter>Mage\engine\asset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\asset\object_asset.h">
+      <Filter>Mage\engine\asset</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

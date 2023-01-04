@@ -6,15 +6,15 @@
 #include"core/_generated/serializer/all_serializer.h"
 #include"core/meta/reflection/reflection.h"
 #include"core/meta/serializer/serializer.h"
-#include"TEST.h"
+//#include"TEST.h"
 
 int main() {
-	Mage::World temp;
+	Mage::WorldAsset temp;
 	temp.name = "3121321";
-	temp.urls.resize(3);
-	temp.urls[0] = "ab";
-	temp.urls[1] = "bc";
-	temp.urls[2] = "cd";
+	temp.scene_urls.resize(3);
+	temp.scene_urls[0] = "ab";
+	temp.scene_urls[1] = "bc";
+	temp.scene_urls[2] = "cd";
 	auto res = Mage::PSerializer::write(temp);
 	std::string str = res.dump();
 
