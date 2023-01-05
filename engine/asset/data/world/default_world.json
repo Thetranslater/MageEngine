@@ -1,0 +1,5 @@
+{
+	"default_scene": 0, 
+	"name": "default_world", 
+	"scene_urls": ["E:/Mage/engine/asset/data/scene/default_scene.json"]
+}

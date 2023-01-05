@@ -2,7 +2,7 @@
 #include<unordered_map>
 #include<memory>
 
-#define MAGE_DEFAUT_WORLD ""
+#define MAGE_DEFAUT_WORLD "E:/Mage/engine/asset/data/world/default_world.json"
 
 namespace Mage {
 	class World;

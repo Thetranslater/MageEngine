@@ -40,9 +40,11 @@ namespace Mage {
 			MAGE_THROW(failed to load world)
 		}
 		
-		std::shared_ptr<World> current_world = std::make_shared<World>();
-		current_world->load(asset);
-		worlds.insert(std::make_pair(url, current_world));
+		std::shared_ptr<World> current_default_world = std::make_shared<World>();
+		current_default_world->load(asset);
+		worlds.insert(std::make_pair(url, current_default_world));
+
+		current_world = current_default_world;
 
 		is_any_world_loaded = true;
 	}

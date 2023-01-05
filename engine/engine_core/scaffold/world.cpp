@@ -48,9 +48,11 @@ namespace Mage {
 			MAGE_THROW(failed to load current scene)
 		}
 
-		std::shared_ptr<Scene> current_scene = std::make_shared<Scene>();
-		current_scene->load(asset);
-		scenes[url] = current_scene;
+		std::shared_ptr<Scene> current_default_scene = std::make_shared<Scene>();
+		current_default_scene->load(asset);
+		scenes[url] = current_default_scene;
+
+		current_scene = current_default_scene;
 
 		is_any_scene_loaded = true;
 	}
