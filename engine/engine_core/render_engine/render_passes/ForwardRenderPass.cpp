@@ -38,18 +38,12 @@ namespace Mage {
 			global_perdrawcall_layout_binding_Vertex.descriptorType		= VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 			global_perdrawcall_layout_binding_Vertex.stageFlags			= VK_SHADER_STAGE_VERTEX_BIT;
 
-			VkDescriptorSetLayoutBinding global_perdrawcall_layout_binding_Frag = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
-			global_perdrawcall_layout_binding_Frag.binding = 2;
-			global_perdrawcall_layout_binding_Frag.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-			global_perdrawcall_layout_binding_Frag.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-
-			std::array<VkDescriptorSetLayoutBinding, 3> global_setlayout = {
+			std::array<VkDescriptorSetLayoutBinding, 2> global_setlayout = {
 				global_perframe_layout_binding_Vertex,
-				global_perdrawcall_layout_binding_Vertex,
-				global_perdrawcall_layout_binding_Frag };
+				global_perdrawcall_layout_binding_Vertex};
 
 			VkDescriptorSetLayoutCreateInfo set_1 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
-			set_1.bindingCount = 3;
+			set_1.bindingCount = 2;
 			set_1.pBindings = global_setlayout.data();
 			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->getDevice(), &set_1, nullptr, &m_descriptor_sets.layout_infos[0])) {
 				MAGE_THROW(failed to create forward renderpass descriptor set layout)
@@ -99,9 +93,9 @@ namespace Mage {
 			}
 
 			for (int i{ 0 }; i < m_vulkan_rhi->getSwapchainSize(); ++i) {
-				VkDescriptorBufferInfo buffer_info[3] = { VulkanInfo::aboutVkDescriptorBufferInfo()};
-				VkWriteDescriptorSet writes[3] = { VulkanInfo::aboutVkWriteDescriptorSet() };
-				for (int j{ 0 }; j < 3; ++j) {
+				VkDescriptorBufferInfo buffer_info[2] = { VulkanInfo::aboutVkDescriptorBufferInfo()};
+				VkWriteDescriptorSet writes[2] = { VulkanInfo::aboutVkWriteDescriptorSet() };
+				for (int j{ 0 }; j < 2; ++j) {
 					buffer_info[j] = VulkanInfo::aboutVkDescriptorBufferInfo();
 					buffer_info[j].buffer = m_render_resource->m_global_updated_buffer.m_buffers[i];
 					buffer_info[j].offset = 0;
@@ -114,14 +108,12 @@ namespace Mage {
 					writes[j].descriptorCount = 1;
 				}
 				buffer_info[0].range = sizeof(GlobalBufferPerFrameData);
-				buffer_info[1].range = sizeof(GlobalBufferPerDrawcallVertexShaderData);
-				buffer_info[2].range = sizeof(GlobalBufferPerDrawcallFragmentShaderData);
+				buffer_info[1].range = sizeof(GlobalBufferPerDrawcallData);
 
 				writes[0].pBufferInfo = &buffer_info[0];
 				writes[1].pBufferInfo = &buffer_info[1];
-				writes[2].pBufferInfo = &buffer_info[2];
 
-				vkUpdateDescriptorSets(m_vulkan_rhi->getDevice(), 3, writes, 0, nullptr);
+				vkUpdateDescriptorSets(m_vulkan_rhi->getDevice(), 2, writes, 0, nullptr);
 			}
 		}
 	}
@@ -241,44 +233,6 @@ namespace Mage {
 		vkCmdBeginRenderPass(m_vulkan_rhi->getCurrentCommandBuffer(), &pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
 		m_p_subpasses[0]->draw();
-	}
-
-	void ForwardRenderPass::rebindGlobalBuffer() {
-		VkBuffer current_global_buffer_wait_for_update = m_render_resource->m_global_updated_buffer.m_buffers[m_vulkan_rhi->getCurrentFrameIndex()];
-		void* map_pointer = m_render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
-
-		VkDescriptorBufferInfo descriptor_buffer_info = VulkanInfo::aboutVkDescriptorBufferInfo();
-		descriptor_buffer_info.buffer = current_global_buffer_wait_for_update;
-		descriptor_buffer_info.offset = 0;
-		descriptor_buffer_info.range = sizeof(GlobalBufferPerFrameData);
-		VkWriteDescriptorSet global_perframe_write = VulkanInfo::aboutVkWriteDescriptorSet();
-		global_perframe_write.dstBinding = 0;
-		global_perframe_write.dstSet = m_descriptor_sets.sets[m_vulkan_rhi->getCurrentFrameIndex()];
-		global_perframe_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-		global_perframe_write.pBufferInfo = &descriptor_buffer_info;
-
-		VkDescriptorBufferInfo buffer_info = VulkanInfo::aboutVkDescriptorBufferInfo();
-		buffer_info.buffer = current_global_buffer_wait_for_update;
-		buffer_info.offset = 0;
-		buffer_info.range = sizeof(GlobalBufferPerDrawcallVertexShaderData);
-		VkWriteDescriptorSet global_perdrawcall_write = VulkanInfo::aboutVkWriteDescriptorSet();
-		global_perdrawcall_write.dstSet = m_descriptor_sets.sets[m_vulkan_rhi->getCurrentFrameIndex()];
-		global_perdrawcall_write.dstBinding = 1;
-		global_perdrawcall_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-		global_perdrawcall_write.pBufferInfo = &buffer_info;
-
-		VkDescriptorBufferInfo frag_buffer_info = VulkanInfo::aboutVkDescriptorBufferInfo();
-		frag_buffer_info.buffer = current_global_buffer_wait_for_update;
-		frag_buffer_info.offset = 0;
-		frag_buffer_info.range = sizeof(GlobalBufferPerDrawcallFragmentShaderData);
-		VkWriteDescriptorSet global_perdrawcall_frag_write = VulkanInfo::aboutVkWriteDescriptorSet();
-		global_perdrawcall_frag_write.dstSet = m_descriptor_sets.sets[m_vulkan_rhi->getCurrentFrameIndex()];
-		global_perdrawcall_frag_write.dstBinding = 2;
-		global_perdrawcall_frag_write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-		global_perdrawcall_frag_write.pBufferInfo = &frag_buffer_info;
-
-		VkWriteDescriptorSet writes[3] = { global_perframe_write,global_perdrawcall_write,global_perdrawcall_frag_write };
-		vkUpdateDescriptorSets(m_vulkan_rhi->getDevice(), 3, writes, 0, nullptr);
 	}
 
 	//subpass
@@ -516,37 +470,34 @@ namespace Mage {
 					int total_drawcall_counts = (total_drawcall_instances + MAGE_PERDRAWCALL_MAX_LIMIT - 1) / MAGE_PERDRAWCALL_MAX_LIMIT;
 					for (int i{ 0 }; i < total_drawcall_counts; ++i) {
 						uint32_t perdrawcall_begin = begin_offset;
-						uint32_t perdrawcall_frag_begin = begin_offset + sizeof(GlobalBufferPerDrawcallVertexShaderData);
-						perdrawcall_frag_begin = Mathf::RoundUp(perdrawcall_frag_begin, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 
 						//populate the instance data
-						GlobalBufferPerDrawcallVertexShaderData* transforms =
-							reinterpret_cast<GlobalBufferPerDrawcallVertexShaderData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_begin);
-						GlobalBufferPerDrawcallFragmentShaderData* factors =
-							reinterpret_cast<GlobalBufferPerDrawcallFragmentShaderData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_frag_begin);
+						GlobalBufferPerDrawcallData* drawcall_begin =
+							reinterpret_cast<GlobalBufferPerDrawcallData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_begin);
+
 						int current_instance_counts =
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) < MAGE_PERDRAWCALL_MAX_LIMIT ?
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
 						for (int j{ 0 }; j < current_instance_counts; ++j) {
-							transforms->m_mesh_datas[j].m_matrix = 
+							drawcall_begin->m_data[j].m_vertex_data.m_matrix =
 								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_matrix;
-							factors->m_frag_datas[j].m_base_color_factor =
+							drawcall_begin->m_data[j].m_fragment_data.m_base_color_factor =
 								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_base_color_factor;
-							factors->m_frag_datas[j].m_metallic_factor =
+							drawcall_begin->m_data[j].m_fragment_data.m_metallic_factor =
 								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_metallic_factor;
-							factors->m_frag_datas[j].m_roughness_factor =
+							drawcall_begin->m_data[j].m_fragment_data.m_roughness_factor =
 								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_roughness_factor;
 						}
-						begin_offset = perdrawcall_frag_begin + sizeof(GlobalBufferPerDrawcallFragmentShaderData);
+						begin_offset = perdrawcall_begin + sizeof(GlobalBufferPerDrawcallData);
 						begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 						//DONE
 
-						uint32_t dynamic_offsets[] = { offset,perdrawcall_begin,perdrawcall_frag_begin };
+						uint32_t dynamic_offsets[] = { offset,perdrawcall_begin };
 						vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(),
 							VK_PIPELINE_BIND_POINT_GRAPHICS,
 							m_pipeline_layout, 0, 1,
 							&p_m_render_pass->m_descriptor_sets.sets[m_vulkan_rhi->getCurrentFrameIndex()],
-							3, dynamic_offsets);
+							2, dynamic_offsets);
 
 						//draw
 						vkCmdDrawIndexed(m_vulkan_rhi->getCurrentCommandBuffer(), std::get<2>(index_offset_info), current_instance_counts, 0, 0, 0);

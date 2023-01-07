@@ -59,12 +59,14 @@ namespace Mage {
 		glm::vec4 m_base_color_factor{ 1.f,1.f,1.f,1.f };
 	};
 
-	struct GlobalBufferPerDrawcallVertexShaderData {
-		PerMeshVertexShaderData m_mesh_datas[MAGE_PERDRAWCALL_MAX_LIMIT];
+	struct PerMeshShaderData {
+		PerMeshVertexShaderData m_vertex_data;
+		PerMeshFragmentShaderData m_fragment_data;
 	};
 
-	struct GlobalBufferPerDrawcallFragmentShaderData {
-		PerMeshFragmentShaderData m_frag_datas[MAGE_PERDRAWCALL_MAX_LIMIT];
+	struct GlobalBufferPerDrawcallData {
+		//PerMeshVertexShaderData m_mesh_datas[MAGE_PERDRAWCALL_MAX_LIMIT];
+		PerMeshShaderData m_data[MAGE_PERDRAWCALL_MAX_LIMIT] ;
 	};
 
 	class VulkanRHI;

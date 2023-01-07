@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
 
         result = parse("E:/Mage/engine/precompile.json",
                        "E:/Mage/engine/parser_header.h", 
-                       "E:/Mage/engine/core",
+                       "E:/Mage/engine",
                        "*",
                        "Mage",
                        "0");

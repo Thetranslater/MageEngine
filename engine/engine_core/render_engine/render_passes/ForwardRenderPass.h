@@ -11,8 +11,6 @@ namespace Mage {
 
 		void draw() override final;
 
-		void rebindGlobalBuffer() override final;
-
 	private:
 		void setupRenderPass();
 		void setupDescriptorLayouts();
