@@ -11,11 +11,13 @@ namespace Mage {
 	class Subpass;
 	class RenderScene;
 	class RenderResource;
+	class RenderCamera;
 	struct GlobalUpdatedBuffer;
 
 	struct RenderPassCreateInfo{
 		RenderResource* render_global_resource;
 		RenderScene* render_scene;
+		RenderCamera* render_camera;
 	};
 
 	//primary pipeline
@@ -49,5 +51,6 @@ namespace Mage {
 		
 		RenderResource* m_render_resource{ nullptr };
 		RenderScene* m_render_scene{ nullptr };
+		RenderCamera* m_render_camera{ nullptr };
 	};
 }

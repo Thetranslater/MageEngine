@@ -21,24 +21,23 @@ namespace Mage {
 		engine_global_context.startEngine();
 	}
 
-	void MageEngine::logicalTick(float delta_time) {
+	void MageEngine::logicalTick(float delta) {
 		engine_global_context.m_input_system->tick();
 
-		engine_global_context.m_world_manager->tick(delta_time);
+		engine_global_context.m_world_manager->tick(delta);
 	}
 
-	void MageEngine::renderTick(float delta_time) {
+	void MageEngine::renderTick(float delta) {
 		engine_global_context.m_render_system->tick();
 	}
 
-	void MageEngine::run() {
-		while (!engine_global_context.m_window_system->shouldClose()) {
-			float delta_time = 1.f;
-			logicalTick(delta_time);
-			renderTick(delta_time);
+	bool MageEngine::tick(float delta) {
+		logicalTick(delta);
+		renderTick(delta);
 
-			engine_global_context.m_window_system->pollEvents();
-		}
+		engine_global_context.m_window_system->pollEvents();
+		
+		return engine_global_context.m_window_system->shouldClose();
 	}
 
 	//TODO:shut engine

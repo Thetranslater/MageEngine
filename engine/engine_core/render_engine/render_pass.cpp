@@ -8,5 +8,6 @@ namespace Mage {
 		m_vulkan_rhi = engine_global_context.m_render_system->getVulkanRHI();
 		m_render_resource = createInfo->render_global_resource;
 		m_render_scene = createInfo->render_scene;
+		m_render_camera = createInfo->render_camera;
 	}
 }

@@ -6,6 +6,7 @@
 #include"engine_core/render_engine/render_passes/ForwardRenderPass.h"
 #include"engine_core/render_engine/render_scene.h"
 #include"engine_core/render_engine/render_resource.h"
+#include"engine_core/render_engine/render_camera.h"
 #include"engine_core/function/global_context/global_context.h"
 
 #include"asset/resource_manager/resource_manager.h"
@@ -15,12 +16,19 @@
 
 namespace Mage {
 	void RenderSystem::initialize(std::shared_ptr<WindowSystem> window_system) {
+		m_pending_data = std::make_shared<RenderPendingData>();
 		//rhi setup
 		m_vulkan_rhi = std::make_shared<VulkanRHI>();
 		m_vulkan_rhi->initialize(window_system);
 		//render scene setup
 		m_render_scene = std::make_shared<RenderScene>();
 		m_render_scene->initialize();
+
+		m_render_camera = std::make_shared<RenderCamera>();
+		m_render_camera->setzNear(0.1f);
+		m_render_camera->setzFar(100.f);
+		m_render_camera->setAspect(m_vulkan_rhi->getSwapchainExtent().width / m_vulkan_rhi->getSwapchainExtent().height);
+
 
 		m_render_resource = std::make_shared<RenderResource>();
 		m_render_resource->initialize(m_vulkan_rhi.get());
@@ -29,6 +37,7 @@ namespace Mage {
 		RenderPassCreateInfo create_info{};
 		create_info.render_global_resource = m_render_resource.get();
 		create_info.render_scene = m_render_scene.get();
+		create_info.render_camera = m_render_camera.get();
 		m_render_pass->initialize(&create_info);
 	}
 
@@ -132,5 +141,13 @@ namespace Mage {
 		while (not m_render_scene->m_p_scene_delete_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_delete_deque->getNextProcess();
 		}
+
+		//camera
+		m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
+		m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
+		m_render_camera->setFov(m_pending_data->m_camera.m_pending_fov);
+		m_render_camera->setAspect(m_pending_data->m_camera.m_pending_aspect);
+		m_render_camera->setzNear(m_pending_data->m_camera.m_pending_znear);
+		m_render_camera->setzFar(m_pending_data->m_camera.m_pending_zfar);
 	}
 }

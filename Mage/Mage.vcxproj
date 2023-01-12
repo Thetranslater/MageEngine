@@ -150,6 +150,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\editor\editor.cpp" />
+    <ClCompile Include="..\editor\input\editor_input.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
@@ -170,6 +172,7 @@
     <ClCompile Include="..\engine\engine_core\platform\file_system.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.cpp" />
+    <ClCompile Include="..\engine\engine_core\render_engine\render_camera.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_pass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp" />
@@ -177,6 +180,7 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_subpass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_system.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\window_system.cpp" />
+    <ClCompile Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\game_object.cpp" />
@@ -187,6 +191,9 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\editor\context\editor_global_context.h" />
+    <ClInclude Include="..\editor\editor.h" />
+    <ClInclude Include="..\editor\input\editor_input.h" />
     <ClInclude Include="..\engine\asset\object_asset.h" />
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h" />
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h" />
@@ -215,6 +222,7 @@
     <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanInfo.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.h" />
+    <ClInclude Include="..\engine\engine_core\render_engine\render_camera.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_guid.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_guid_generator.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_macro.h" />
@@ -229,6 +237,7 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\component.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\mesh_asset.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.h" />

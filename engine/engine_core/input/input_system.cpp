@@ -186,10 +186,10 @@ namespace Mage {
 			}
 		}
 	}
-
+	//TODO:确认更新逻辑是否正确
 	void InputSystem::onCursorPos(double xpos, double ypos) {
-		m_mouse.m_delta_x = xpos - m_mouse.m_x;
-		m_mouse.m_delta_y = ypos - m_mouse.m_y;
+		m_mouse.m_delta_x = xpos - m_frame_mouse.m_x;
+		m_mouse.m_delta_y = ypos - m_frame_mouse.m_y;
 		m_mouse.m_x = xpos;
 		m_mouse.m_y = ypos;
 	}

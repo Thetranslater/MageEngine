@@ -29,6 +29,7 @@ namespace Mage {
 					return (component*)comp;
 				}
 			}
+			return nullptr;
 		}
 #define GetComponent(ComponentType) GetComponent<ComponentType>(#ComponentType)
 

@@ -1,6 +1,5 @@
 #pragma once
 
-#include"core/meta/reflection/reflection.h"
 #include"core/math/vector3.h"
 #include"core/math/quaternion.h"
 #include"core/math/matrix4x4.h"
@@ -19,9 +18,13 @@ namespace Mage {
 		Quaternion Rotation() { return rotation; }
 		Vector3 Scale() { return scale; }
 
-		void SetPosition(const Vector3 & new_p) { position = new_p; }
-		void SetRotation(const Quaternion & new_q) { rotation = new_q; }
-		void SetScale(const Vector3 & new_s) { scale = new_s; }
+		void SetPosition(const Vector3& new_p) { position = new_p; position_write_buffer = new_p; }
+		void SetRotation(const Quaternion& new_q) { rotation = new_q; rotation_write_buffer = new_q; }
+		void SetScale(const Vector3& new_s) { scale = new_s; scale_write_buffer = new_s; }
+
+		void WritePosition(const Vector3& new_p) { position_write_buffer = new_p; }
+		void WriteRotation(const Quaternion& new_q) { rotation_write_buffer = new_q; }
+		void WriteScale(const Vector3& new_s) { scale_write_buffer = new_s; }
 
 		Matrix4x4 localToWorldMatrix() { return Matrix4x4::TRS(position, rotation, scale); }
 		Matrix4x4 worldToLocalMatrix() { Matrix4x4 ret; Matrix4x4::Inverse3DAffine(Matrix4x4::TRS(position, rotation, scale), ret); return ret; }
@@ -33,5 +36,9 @@ namespace Mage {
 		Quaternion rotation {Quaternion::identity};
 		META(Enable)
 		Vector3 scale {Vector3::one};
+
+		Vector3 position_write_buffer{ Vector3::zero };
+		Quaternion rotation_write_buffer{ Quaternion::identity };
+		Vector3 scale_write_buffer{ Vector3::one };
 	};
 }

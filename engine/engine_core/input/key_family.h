@@ -1,6 +1,6 @@
 #pragma once
 
-constexpr uint32_t MAGE_KEYFAMILY_FULL = 0xffffffffu;
+constexpr unsigned int MAGE_KEYFAMILY_FULL = 0xffffffffu;
 //character
 #define MAGE_KEYFAMILY_CHARACTER_A 0x00000001u
 #define MAGE_KEYFAMILY_CHARACTER_B 0x00000002u

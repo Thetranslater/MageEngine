@@ -8,9 +8,9 @@
 #include"engine_core/render_engine/render_mesh.h"
 #include"engine_core/render_engine/render_resource.h"
 #include"engine_core/render_engine/render_scene.h"
+#include"engine_core/render_engine/render_camera.h"
 
 #include"core/math/math.h"
-#include"core/math/matrix4x4.h"
 
 namespace Mage {
 	void ForwardRenderPass::initialize(const RenderPassCreateInfo* createInfo) {
@@ -387,6 +387,7 @@ namespace Mage {
 	void ForwardRenderSubpass::draw() {
 		VkBuffer current_global_buffer_wait_for_update = p_m_render_pass->m_render_resource->m_global_updated_buffer.m_buffers[m_vulkan_rhi->getCurrentFrameIndex()];
 		void* map_pointer = p_m_render_pass->m_render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
+		RenderCamera* camera = p_m_render_pass->m_render_camera;
 
 		//buffer,materials, submeshes
 		std::map<GUID32, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;

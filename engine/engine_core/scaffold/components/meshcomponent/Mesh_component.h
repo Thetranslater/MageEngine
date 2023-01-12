@@ -2,7 +2,6 @@
 #include<memory>
 #include<string>
 
-#include"core/meta/reflection/reflection.h"
 #include"engine_core/scaffold/components/component.h"
 #include"engine_core/scaffold/components/meshcomponent/mesh_asset.h"
 

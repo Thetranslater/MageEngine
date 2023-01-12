@@ -5,8 +5,6 @@
 
 #include<iostream>
 
-//#include"engine_core/input/key_family.h"
-
 namespace Mage {
 	/// <summary>
 	/// character[0-25]: characters

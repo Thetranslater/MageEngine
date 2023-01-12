@@ -9,9 +9,9 @@ namespace Mage {
 		void startEngine();
 		void shutdownEngine();
 
-		void run();
+		bool tick(float delta);
 	private:
-		void logicalTick(float delta_time);
-		void renderTick(float delta_time);
+		void logicalTick(float delta);
+		void renderTick(float delta);
 	};
 }

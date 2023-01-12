@@ -73,6 +73,15 @@
     <Filter Include="Mage\engine\engine_core\scaffold\components\mesh">
       <UniqueIdentifier>{d94f659d-e5a0-45ba-8eb2-cc36564397fb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\engine\engine_core\scaffold\components\camera">
+      <UniqueIdentifier>{2aac2c8e-3c10-4e32-bdcf-309861b61b66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\editor\context">
+      <UniqueIdentifier>{cf0f75e8-bca2-4739-ac82-c266221cd794}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\editor\input">
+      <UniqueIdentifier>{fb746f51-e5fa-45a0-b852-7a8e7776f745}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -179,6 +188,18 @@
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\scaffold\game_object_id_allocator.cpp">
       <Filter>Mage\engine\engine_core\scaffold</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_camera.cpp">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.cpp">
+      <Filter>Mage\engine\engine_core\scaffold\components\camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\editor.cpp">
+      <Filter>Mage\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\input\editor_input.cpp">
+      <Filter>Mage\editor\input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +355,21 @@
     </ClInclude>
     <ClInclude Include="..\engine\asset\object_asset.h">
       <Filter>Mage\engine\asset</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_camera.h">
+      <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.h">
+      <Filter>Mage\engine\engine_core\scaffold\components\camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\editor.h">
+      <Filter>Mage\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\context\editor_global_context.h">
+      <Filter>Mage\editor\context</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\input\editor_input.h">
+      <Filter>Mage\editor\input</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

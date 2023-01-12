@@ -162,6 +162,13 @@ namespace Mage {
 		friend Quaternion operator*(float scale, const Quaternion& rhs) {
 			return Quaternion(scale * rhs.x, scale * rhs.y, scale * rhs.z, scale * rhs.w);
 		}
+		Quaternion operator*(const Quaternion& rhs) const {
+			return Quaternion(
+				y * rhs.z - z * rhs.y + w * rhs.x + rhs.w * x,
+				z * rhs.x - x * rhs.z + w * rhs.y + rhs.w * y,
+				x * rhs.y - y * rhs.x + w * rhs.z + rhs.w * z,
+				w * rhs.w - x * rhs.x - y * rhs.y - z * rhs.z);
+		}
 		Quaternion operator/(const float scale) const {
 			float reciprocal_scale = 1.f / scale;
 			return Quaternion(x * reciprocal_scale, y * reciprocal_scale, z * reciprocal_scale, w * reciprocal_scale);
