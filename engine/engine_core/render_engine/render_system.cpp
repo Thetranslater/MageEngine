@@ -25,9 +25,12 @@ namespace Mage {
 		m_render_scene->initialize();
 
 		m_render_camera = std::make_shared<RenderCamera>();
+		m_render_camera->setPosition(1.5f, 1.5f, 1.5f);
+		m_render_camera->setRotation(Quaternion::FromToRotation(RenderCamera::FORWARD, -Vector3::one));
+		m_render_camera->setFov(10.f);
 		m_render_camera->setzNear(0.1f);
 		m_render_camera->setzFar(100.f);
-		m_render_camera->setAspect(m_vulkan_rhi->getSwapchainExtent().width / m_vulkan_rhi->getSwapchainExtent().height);
+		m_render_camera->setAspect(float(m_vulkan_rhi->getSwapchainExtent().width) / m_vulkan_rhi->getSwapchainExtent().height);
 
 
 		m_render_resource = std::make_shared<RenderResource>();
@@ -143,11 +146,11 @@ namespace Mage {
 		}
 
 		//camera
-		m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
-		m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
-		m_render_camera->setFov(m_pending_data->m_camera.m_pending_fov);
-		m_render_camera->setAspect(m_pending_data->m_camera.m_pending_aspect);
-		m_render_camera->setzNear(m_pending_data->m_camera.m_pending_znear);
-		m_render_camera->setzFar(m_pending_data->m_camera.m_pending_zfar);
+		//m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
+		//m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
+		//m_render_camera->setFov(m_pending_data->m_camera.m_pending_fov);
+		//m_render_camera->setAspect(m_pending_data->m_camera.m_pending_aspect);
+		//m_render_camera->setzNear(m_pending_data->m_camera.m_pending_znear);
+		//m_render_camera->setzFar(m_pending_data->m_camera.m_pending_zfar);
 	}
 }

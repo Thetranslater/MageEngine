@@ -411,12 +411,12 @@ namespace Mage {
 		binding_scissor.extent = m_vulkan_rhi->getSwapchainExtent();
 		vkCmdSetScissor(m_vulkan_rhi->getCurrentCommandBuffer(), 0, 1, &binding_scissor);
 
-		//TODO:camera global perframe data and descriptor set update
+		//TODO:确保camera矩阵的正确性, 探讨是否应该乘-1
 		int begin_offset{ 0 };
 		GlobalBufferPerFrameData perframe_data{};
-		perframe_data.m_camera_view_matrix = glm::lookAt(glm::vec3{ 2.f,2.f,2.f }, { 0.f,0.f,0.f }, { 0.f,0.f,1.f });
-		perframe_data.m_camera_perspective_matrix = glm::perspective(glm::radians(4.5f), m_vulkan_rhi->getSwapchainExtent().width / (float)m_vulkan_rhi->getSwapchainExtent().height, 0.5f, 10.f);
-		perframe_data.m_camera_perspective_matrix[1][1] *= -1;
+		perframe_data.m_camera_view_matrix = glm::mat4(p_m_render_pass->m_render_camera->getViewMatrix());
+		perframe_data.m_camera_perspective_matrix = glm::mat4(p_m_render_pass->m_render_camera->getPerspectiveMatrix());
+		//perframe_data.m_camera_perspective_matrix[1][1] *= -1;
 		*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 		uint32_t offset = begin_offset;
 		//DONE

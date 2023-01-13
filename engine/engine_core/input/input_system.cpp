@@ -56,8 +56,9 @@ namespace Mage {
 		m_frame_mouse.buttons = 0u;
 		m_frame_mouse.m_delta_x = 0.f;
 		m_frame_mouse.m_delta_y = 0.f;
-		m_frame_mouse.m_x = 0.f;
-		m_frame_mouse.m_y = 0.f;
+
+		//m_frame_mouse.m_x = 0.f;
+		//m_frame_mouse.m_y = 0.f;
 	}
 
 	void InputSystem::clearKeyOnFlight() {

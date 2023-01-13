@@ -150,6 +150,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\editor\context\editor_global_context.cpp" />
     <ClCompile Include="..\editor\editor.cpp" />
     <ClCompile Include="..\editor\input\editor_input.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />

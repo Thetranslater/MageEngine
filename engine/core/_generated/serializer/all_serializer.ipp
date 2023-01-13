@@ -9,6 +9,7 @@
 #include "_generated\serializer\quaternion.serializer.gen.h"
 #include "_generated\serializer\vector2.serializer.gen.h"
 #include "_generated\serializer\Mesh_component.serializer.gen.h"
+#include "_generated\serializer\Camera_component.serializer.gen.h"
 namespace Mage{
     template<>
     PJson PSerializer::write(const Vector3& instance){
@@ -261,6 +262,33 @@ namespace Mage{
         PSerializer::read(json_context,*(Mage::Component*)&instance);
         if(!json_context["mesh"].is_null()){
             PSerializer::read(json_context["mesh"], instance.mesh);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const CameraComponent& instance){
+        PJson::object  ret_context;
+        auto&&  json_context_0 = PSerializer::write(*(Mage::Component*)&instance);
+        assert(json_context_0.is_object());
+        auto&& json_context_map_0 = json_context_0.object_items();
+        ret_context.insert(json_context_map_0.begin() , json_context_map_0.end());
+        ret_context.insert_or_assign("field_of_view", PSerializer::write(instance.field_of_view));
+        ret_context.insert_or_assign("near_clip_plane", PSerializer::write(instance.near_clip_plane));
+        ret_context.insert_or_assign("far_clip_plane", PSerializer::write(instance.far_clip_plane));
+        return  PJson(ret_context);
+    }
+    template<>
+    CameraComponent& PSerializer::read(const PJson& json_context, CameraComponent& instance){
+        assert(json_context.is_object());
+        PSerializer::read(json_context,*(Mage::Component*)&instance);
+        if(!json_context["field_of_view"].is_null()){
+            PSerializer::read(json_context["field_of_view"], instance.field_of_view);
+        }
+        if(!json_context["near_clip_plane"].is_null()){
+            PSerializer::read(json_context["near_clip_plane"], instance.near_clip_plane);
+        }
+        if(!json_context["far_clip_plane"].is_null()){
+            PSerializer::read(json_context["far_clip_plane"], instance.far_clip_plane);
         }
         return instance;
     }

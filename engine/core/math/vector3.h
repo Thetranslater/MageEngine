@@ -66,7 +66,7 @@ namespace Mage {
 			return *(&x + index);
 		}
 
-		Vector3 operator-() { return Vector3(-x, -y, -z); }
+		Vector3 operator-() const { return Vector3(-x, -y, -z); }
 
 		Vector3& operator+=(const Vector3& rhs) {
 			x += rhs.x;

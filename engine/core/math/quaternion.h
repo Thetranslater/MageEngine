@@ -158,7 +158,7 @@ namespace Mage {
 		Quaternion operator-(const Quaternion& rhs) const { return Quaternion(x - rhs.x, y - rhs.y, z - rhs.z, w - rhs.w); }
 		Quaternion operator+(const Quaternion& rhs) const { return Quaternion(x + rhs.x, y + rhs.y, z + rhs.z, w + rhs.w); }
 		//apply the rotation to a vector, not multi by left
-		Vector3 operator*(const Vector3& direction);
+		Vector3 operator*(const Vector3& direction) const;
 		friend Quaternion operator*(float scale, const Quaternion& rhs) {
 			return Quaternion(scale * rhs.x, scale * rhs.y, scale * rhs.z, scale * rhs.w);
 		}

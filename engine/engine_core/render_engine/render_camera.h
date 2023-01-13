@@ -7,16 +7,23 @@ namespace Mage {
 	class RenderCamera {
 	public:
 		RenderCamera() = default;
-		//TODO:目前是错误的
-		Matrix4x4 getViewMatrix() = delete;
+
+		Matrix4x4 getViewMatrix();
 		Matrix4x4 getPerspectiveMatrix();
 		Matrix4x4 getPerspectiveMatrix_Infinite();
 		Matrix4x4 getPerspectiveMatrix_Precise();
-		Matrix4x4 getInverseViewMatrix() = delete;
-		Matrix4x4 getInversePerspectiveMatrix() = delete;
+		Matrix4x4 getInversePerspectiveMatrix();
 
 		Vector3 position() { return m_position; }
 		Quaternion rotation() { return m_rotation; }
+
+		Vector3 up() { return m_rotation * UP; }
+		Vector3 forward() { return m_rotation * FORWARD; }
+		Vector3 left() { return m_rotation * LEFT; }
+
+		//TODO:检验正确性
+		//radians
+		void rotate(float delte_yaw, float delta_pitch);
 
 		void setPosition(const Vector3& new_p) { m_position = new_p; }
 		void setPosition(float x, float y, float z) { m_position.x = x; m_position.y = y; m_position.z = z; }
@@ -26,7 +33,7 @@ namespace Mage {
 		float fov() { return m_fov; }
 		float aspect() { return m_aspect; }
 		float zNear() { return m_znear; }
-		float zfar() { return m_zfar; }
+		float zFar() { return m_zfar; }
 
 		void setFov(float new_fov) { m_fov = new_fov; }
 		void setAspect(float new_a) { m_aspect = new_a; }
@@ -41,5 +48,9 @@ namespace Mage {
 		float m_aspect{ 0.f };
 		float m_znear{ 0.f };
 		float m_zfar{ 0.f };
+
+		static const Vector3 LEFT;
+		static const Vector3 UP;
+		static const Vector3 FORWARD;
 	};
 }

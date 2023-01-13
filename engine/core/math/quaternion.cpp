@@ -144,7 +144,7 @@ namespace Mage {
 		z = cr * cp * sy - sr * sp * cy;
 	}
 
-	Vector3 Quaternion::operator*(const Vector3& direction) {
+	Vector3 Quaternion::operator*(const Vector3& direction) const {
 		Vector3 uxv, uxuxv;
 		Vector3 vec(x, y, z);
 		uxv = Vector3::Cross(vec, direction);

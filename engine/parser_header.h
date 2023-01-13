@@ -15,4 +15,5 @@
 #include  "E:/Mage/engine/engine_core/scaffold/components/transformcomponent/Transform_component.h"
 #include  "E:/Mage/engine/engine_core/scaffold/components/meshcomponent/Mesh_component.h"
 #include  "E:/Mage/engine/engine_core/scaffold/components/meshcomponent/mesh_assset.h"
+#include  "E:/Mage/engine/engine_core/scaffold/components/cameracomponent/Camera_component.h"
 #endif

@@ -22,7 +22,7 @@ namespace Mage {
 	}
 
 	void MageEngine::logicalTick(float delta) {
-		engine_global_context.m_input_system->tick();
+		//engine_global_context.m_input_system->tick();
 
 		engine_global_context.m_world_manager->tick(delta);
 	}

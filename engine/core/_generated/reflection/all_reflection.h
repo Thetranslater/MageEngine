@@ -11,6 +11,7 @@
 #include "_generated\reflection\quaternion.reflection.gen.h"
 #include "_generated\reflection\vector2.reflection.gen.h"
 #include "_generated\reflection\Mesh_component.reflection.gen.h"
+#include "_generated\reflection\Camera_component.reflection.gen.h"
 
 namespace Mage{
 namespace Reflection{
@@ -25,6 +26,7 @@ namespace Reflection{
     TypeWrappersRegister::Quaternion();
     TypeWrappersRegister::Vector2();
     TypeWrappersRegister::MeshComponent();
+    TypeWrappersRegister::CameraComponent();
     }
 }
 }

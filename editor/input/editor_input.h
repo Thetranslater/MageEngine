@@ -21,5 +21,7 @@ namespace Mage{
 
 		double m_cursor_delta_x;
 		double m_cursor_delta_y;
+		double m_cursor_callback_pos_x;
+		double m_cursor_callback_pos_y;
 	};
 }

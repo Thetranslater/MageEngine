@@ -10,4 +10,5 @@
 #include "_generated\serializer\quaternion.serializer.gen.h"
 #include "_generated\serializer\vector2.serializer.gen.h"
 #include "_generated\serializer\Mesh_component.serializer.gen.h"
+#include "_generated\serializer\Camera_component.serializer.gen.h"
 
