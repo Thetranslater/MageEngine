@@ -24,6 +24,7 @@ namespace Mage {
 		//TODO:检验正确性
 		//radians
 		void rotate(float delte_yaw, float delta_pitch);
+		void move(const Vector3& delta);
 
 		void setPosition(const Vector3& new_p) { m_position = new_p; }
 		void setPosition(float x, float y, float z) { m_position.x = x; m_position.y = y; m_position.z = z; }

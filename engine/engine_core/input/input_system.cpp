@@ -64,6 +64,7 @@ namespace Mage {
 	void InputSystem::clearKeyOnFlight() {
 		m_frame_key.character = 0u;
 		m_frame_key.number = 0u;
+		m_frame_key.others = 0u;
 	}
 
 	void InputSystem::onKey(int key, int scancode, int action, int mods) {
@@ -86,6 +87,8 @@ namespace Mage {
 			if (GLFW_KEY_A <= key && key <= GLFW_KEY_Z) m_key.character |= (MAGE_KEYFAMILY_CHARACTER_A << (key - GLFW_KEY_A));
 			else if (GLFW_KEY_1 <= key && key <= GLFW_KEY_9) m_key.number |= (MAGE_KEYFAMILY_NUMBER_ALPHA1 << (key - GLFW_KEY_1));
 			else if (GLFW_KEY_KP_1 <= key && key <= GLFW_KEY_KP_9) m_key.number |= (MAGE_KEYFAMILY_NUMBER_1 << (key - GLFW_KEY_KP_1));
+			else if (GLFW_KEY_F1 <= key && key <= GLFW_KEY_F12) m_key.others |= (MAGE_KEYFAMILY_FUNCTION_1 << (key - GLFW_KEY_F1));
+
 			switch (key)
 			{
 			case GLFW_KEY_UP:
@@ -130,6 +133,33 @@ namespace Mage {
 			case GLFW_KEY_KP_DECIMAL:
 				m_key.number |= MAGE_KEYFAMILY_NUMBER_PERIOD;
 				break;
+			case GLFW_KEY_TAB:
+				m_key.others |= MAGE_KEYFAMILY_TAB;
+				break;
+			case GLFW_KEY_LEFT_SHIFT:
+				m_key.others |= MAGE_KEYFAMILY_LEFT_SHIFT;
+				break;
+			case GLFW_KEY_RIGHT_SHIFT:
+				m_key.others |= MAGE_KEYFAMILY_RIGHT_SHIFT;
+				break;
+			case GLFW_KEY_LEFT_ALT:
+				m_key.others |= MAGE_KEYFAMILY_LEFT_ALT;
+				break;
+			case GLFW_KEY_RIGHT_ALT:
+				m_key.others |= MAGE_KEYFAMILY_RIGHT_ALT;
+				break;
+			case GLFW_KEY_LEFT_CONTROL:
+				m_key.others |= MAGE_KEYFAMILY_LEFT_CONTROL;
+				break;
+			case GLFW_KEY_RIGHT_CONTROL:
+				m_key.others |= MAGE_KEYFAMILY_RIGHT_CONTROL;
+				break;
+			case GLFW_KEY_DELETE:
+				m_key.others |= MAGE_KEYFAMILY_DELETE;
+				break;
+			case GLFW_KEY_BACKSPACE:
+				m_key.others |= MAGE_KEYFAMILY_BACKSPACE;
+				break;
 			default:
 				break;
 			}
@@ -138,6 +168,8 @@ namespace Mage {
 			if (GLFW_KEY_A <= key && key <= GLFW_KEY_Z) m_key.character &= (MAGE_KEYFAMILY_FULL ^ (MAGE_KEYFAMILY_CHARACTER_A << (key - GLFW_KEY_A)));
 			else if (GLFW_KEY_1 <= key && key <= GLFW_KEY_9) m_key.number &= MAGE_KEYFAMILY_FULL ^ (MAGE_KEYFAMILY_NUMBER_ALPHA1 << (key - GLFW_KEY_1));
 			else if (GLFW_KEY_KP_1 <= key && key <= GLFW_KEY_KP_9) m_key.number &= MAGE_KEYFAMILY_FULL ^ (MAGE_KEYFAMILY_NUMBER_1 << (key - GLFW_KEY_KP_1));
+			else if (GLFW_KEY_F1 <= key && key <= GLFW_KEY_F12) m_key.others &= MAGE_KEYFAMILY_FULL ^ (MAGE_KEYFAMILY_FUNCTION_1 << (key - GLFW_KEY_F1));
+
 			switch (key)
 			{
 			case GLFW_KEY_UP:
@@ -181,6 +213,33 @@ namespace Mage {
 				break;
 			case GLFW_KEY_KP_DECIMAL:
 				m_key.number &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_NUMBER_PERIOD;
+				break;
+			case GLFW_KEY_TAB:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_TAB;
+				break;
+			case GLFW_KEY_LEFT_SHIFT:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_LEFT_SHIFT;
+				break;
+			case GLFW_KEY_RIGHT_SHIFT:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_RIGHT_SHIFT;
+				break;
+			case GLFW_KEY_LEFT_ALT:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_LEFT_ALT;
+				break;
+			case GLFW_KEY_RIGHT_ALT:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_RIGHT_ALT;
+				break;
+			case GLFW_KEY_LEFT_CONTROL:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_LEFT_CONTROL;
+				break;
+			case GLFW_KEY_RIGHT_CONTROL:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_RIGHT_CONTROL;
+				break;
+			case GLFW_KEY_DELETE:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_DELETE;
+				break;
+			case GLFW_KEY_BACKSPACE:
+				m_key.others &= MAGE_KEYFAMILY_FULL ^ MAGE_KEYFAMILY_BACKSPACE;
 				break;
 			default:
 				break;
@@ -268,6 +327,9 @@ namespace Mage {
 		}
 		else if ((convert - 32) <= 31) {
 			return (m_frame_key.number & (1u << (convert - 32))) != 0u;
+		}
+		else if ((convert - 64) <= 31) {
+			return (m_frame_key.others & (1u << (convert - 64))) != 0u;
 		}
 		return false;
 	}

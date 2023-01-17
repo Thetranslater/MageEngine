@@ -141,9 +141,6 @@
     <ClCompile Include="..\engine\engine_core\engine.cpp">
       <Filter>Mage\engine\engine_core</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Mage\editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\engine_core\function\global_context\global_context.cpp">
       <Filter>Mage\engine\engine_core\function\global_context</Filter>
     </ClCompile>
@@ -203,6 +200,9 @@
     </ClCompile>
     <ClCompile Include="..\editor\context\editor_global_context.cpp">
       <Filter>Mage\editor\context</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Mage\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -473,8 +473,8 @@ void Pipeline::draw(RenderModel& model) {
 	vkMapMemory(rhi->getDevice(), memories[rhi->getCurrentFrameIndex()], 0, 1024*1024*20, 0, &begin);
 
 	uint32_t perframe_offset{ 0 };
-	(reinterpret_cast<PerFrame*>(reinterpret_cast<uint8_t*>(begin) + perframe_offset))->view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-	(reinterpret_cast<PerFrame*>(reinterpret_cast<uint8_t*>(begin) + perframe_offset))->perspective = glm::perspective(glm::radians(4.5f), rhi->getSwapchainExtent().width / (float)rhi->getSwapchainExtent().height, 0.5f, 10.0f);
+	(reinterpret_cast<PerFrame*>(reinterpret_cast<uint8_t*>(begin) + perframe_offset))->view = glm::lookAt(glm::vec3(1.f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	(reinterpret_cast<PerFrame*>(reinterpret_cast<uint8_t*>(begin) + perframe_offset))->perspective = glm::perspective(glm::radians(10.f), rhi->getSwapchainExtent().width / (float)rhi->getSwapchainExtent().height, 0.1f, 10.0f);
 	(reinterpret_cast<PerFrame*>(reinterpret_cast<uint8_t*>(begin) + perframe_offset))->perspective[1][1] *= -1;
 
 	rhi->waitForFences();
@@ -879,3 +879,10 @@ void run() {
 		window->pollEvents();
 	}
 }
+
+//int main() {
+//
+//	run();
+//
+//	return 0;
+//}

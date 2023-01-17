@@ -15,10 +15,20 @@ namespace Mage {
 	/// number[0-9]: 0-9
 	/// number[10]: is num lock
 	/// number[11-16]:+-*/[]
+	/// number[17-26]:alpha 0-9(top of the keyboard)
+	/// 
+	/// others[0-11]: F1 -F12
+	/// others[12]:tab
+	/// others[13-14]:left/right shift
+	/// others[15-16]:left/right alt
+	/// others[17-18]:left/right ctrl
+	/// others[19]:delete
+	/// others[20]:backspace
 	/// </summary>
 	struct KeyFamily {
 		uint32_t character;
 		uint32_t number;
+		uint32_t others;
 	};
 
 	/// <summary>

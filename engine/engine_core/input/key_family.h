@@ -69,6 +69,30 @@ constexpr unsigned int MAGE_KEYFAMILY_FULL = 0xffffffffu;
 #define MAGE_KEYFAMILY_NUMBER_ALPHA9 0x01000000u
 #define MAGE_KEYFAMILY_NUMBER_ALPHA0 0x02000000u
 
+//others
+#define MAGE_KEYFAMILY_FUNCTION_1 0x00000001u
+#define MAGE_KEYFAMILY_FUNCTION_2 0x00000002u
+#define MAGE_KEYFAMILY_FUNCTION_3 0x00000004u
+#define MAGE_KEYFAMILY_FUNCTION_4 0x00000008u
+#define MAGE_KEYFAMILY_FUNCTION_5 0x00000010u
+#define MAGE_KEYFAMILY_FUNCTION_6 0x00000020u
+#define MAGE_KEYFAMILY_FUNCTION_7 0x00000040u
+#define MAGE_KEYFAMILY_FUNCTION_8 0x00000080u
+#define MAGE_KEYFAMILY_FUNCTION_9 0x00000100u
+#define MAGE_KEYFAMILY_FUNCTION_10 0x00000200u
+#define MAGE_KEYFAMILY_FUNCTION_11 0x00000400u
+#define MAGE_KEYFAMILY_FUNCTION_12 0x00000800u
+
+#define MAGE_KEYFAMILY_TAB 0x00001000u
+#define MAGE_KEYFAMILY_LEFT_SHIFT 0x00002000u
+#define MAGE_KEYFAMILY_RIGHT_SHIFT 0x00004000u
+#define MAGE_KEYFAMILY_LEFT_ALT 0x00008000u
+#define MAGE_KEYFAMILY_RIGHT_ALT 0x00010000u
+#define MAGE_KEYFAMILY_LEFT_CONTROL 0x00020000u
+#define MAGE_KEYFAMILY_RIGHT_CONTROL 0x00040000u
+#define MAGE_KEYFAMILY_DELETE 0x00080000u
+#define MAGE_KEYFAMILY_BACKSPACE 0x00100000u
+
 //mouse
 #define MAGE_MOUSEFAMILY_BUTTON01 0x00000001u
 #define MAGE_MOUSEFAMILY_BUTTON02 0x00000002u
@@ -93,10 +117,12 @@ namespace Mage {
 	};
 
 	enum KeyCode {
-		A=0,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,
+		A = 0, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
 		UpArrow, DownArrow, LeftArrow, RightArrow, Space, CapsLock,
 		Keypad1, Keypad2, Keypad3, Keypad4, Keypad5, Keypad6, Keypad7, Keypad8, Keypad9, Keypad0,
 		NumLock, KeypadPlus, KeypadMinus, KeypadMultiply, KeypadDivide, KeypadPeriod,
-		Alpha1, Alpha2, Alpha3, Alpha4, Alpha5, Alpha6, Alpha7, Alpha8, Alpha9, Alpha0
+		Alpha1, Alpha2, Alpha3, Alpha4, Alpha5, Alpha6, Alpha7, Alpha8, Alpha9, Alpha0,
+		F1 = 64, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, 
+		Tab, LeftShift, RightShift, LeftAlt, RightAlt, LeftControl, RightControl, Delete, Backspace
 	};
 }

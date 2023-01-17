@@ -25,11 +25,11 @@ namespace Mage {
 		m_render_scene->initialize();
 
 		m_render_camera = std::make_shared<RenderCamera>();
-		m_render_camera->setPosition(1.5f, 1.5f, 1.5f);
-		m_render_camera->setRotation(Quaternion::FromToRotation(RenderCamera::FORWARD, -Vector3::one));
+		m_render_camera->setPosition(1.f, 0.f, -2.f);
+		m_render_camera->setRotation(Quaternion::FromToRotation(Vector3{ 0.f,0.f,1.f }, Vector3{ -1.f,0.f,2.f }));
 		m_render_camera->setFov(10.f);
 		m_render_camera->setzNear(0.1f);
-		m_render_camera->setzFar(100.f);
+		m_render_camera->setzFar(10.f);
 		m_render_camera->setAspect(float(m_vulkan_rhi->getSwapchainExtent().width) / m_vulkan_rhi->getSwapchainExtent().height);
 
 

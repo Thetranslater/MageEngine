@@ -6,6 +6,7 @@
 #include"engine_core/function/global_context/global_context.h"
 #include"engine_core/render_engine/window_system.h"
 #include"engine_core/render_engine/render_system.h"
+#include"engine_core/input/key_family.h"
 #include"engine_core/input/input_system.h"
 #include"engine_core/render_engine/render_camera.h"
 
@@ -31,14 +32,41 @@ namespace Mage {
 	void EditorInput::tick(float delta) {
 		m_cursor_pos_x = m_cursor_callback_pos_x;
 		m_cursor_pos_y = m_cursor_callback_pos_y;
-
+		//camera rotation
 		if (engine_global_context.m_input_system->GetMouseButton(1)) {
-			float factor = (2.f * Mathf::Tan(editor_global_context.m_render_system.lock()->getRenderCamera()->fov() / 2.f)) / editor_global_context.m_window_system.lock()->getWindowSize()[0];
-			float delta_yaw = -Mathf::Atan(factor * m_cursor_delta_x) * Mathf::Rad2Deg;
-			float delta_pitch = Mathf::Atan(factor * m_cursor_delta_y) * Mathf::Rad2Deg;
-			std::cout << delta_yaw << ',' << delta_pitch << std::endl;
+			std::shared_ptr<RenderCamera> camera = editor_global_context.m_render_system.lock()->getRenderCamera();
+			//camera rotation
+			float angular_velocity = 90.f / editor_global_context.m_window_system.lock()->getWindowSize()[0];
+			float delta_yaw = -m_cursor_delta_x * angular_velocity;
+			float delta_pitch = m_cursor_delta_y * angular_velocity;
 
-			editor_global_context.m_render_system.lock()->getRenderCamera()->rotate(delta_yaw, delta_pitch);
+			camera->rotate(delta_yaw, delta_pitch);
+
+			Vector3 l = camera->left();
+			Vector3 f = camera->forward();
+			Vector3 u = camera->up();
+			//Vector3 cu = Vector3::Cross(f, l);
+			//camera movement
+			constexpr float camera_speed_detail_mode = 0.0005f;
+			Vector3 direction{ Vector3::zero };
+			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::A) or engine_global_context.m_input_system->GetKeyDown(KeyCode::LeftArrow)) {
+				direction += camera->left();
+			}
+			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::W) or engine_global_context.m_input_system->GetKeyDown(KeyCode::UpArrow)) {
+				direction += camera->forward();
+			}
+			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::D) or engine_global_context.m_input_system->GetKeyDown(KeyCode::RightArrow)) {
+				direction -= camera->left();
+			}
+			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::S) or engine_global_context.m_input_system->GetKeyDown(KeyCode::DownArrow)) {
+				direction -= camera->forward();
+			}
+			direction.Normalize();
+			direction *= camera_speed_detail_mode;
+			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::LeftShift) or engine_global_context.m_input_system->GetKeyDown(KeyCode::RightShift)) {
+				direction *= 10;
+			}
+			camera->move(direction);
 		}
 
 		m_cursor_delta_x = 0.f;

@@ -1,9 +1,9 @@
 #include"engine_core/render_engine/render_camera.h"
 
 namespace Mage {
-	const Vector3 RenderCamera::LEFT = { 0.f,1.f,0.f };
-	const Vector3 RenderCamera::UP = { 0.f,0.f,1.f };
-	const Vector3 RenderCamera::FORWARD = { 1.f,0.f,0.f };
+	const Vector3 RenderCamera::LEFT = { 1.f,0.f,0.f };
+	const Vector3 RenderCamera::UP = { 0.f,1.f,0.f };
+	const Vector3 RenderCamera::FORWARD = { 0.f,0.f,1.f };
 
 	Matrix4x4 RenderCamera::getViewMatrix() {
 		Matrix4x4 view;
@@ -33,7 +33,12 @@ namespace Mage {
 	}
 
 	Matrix4x4 RenderCamera::getPerspectiveMatrix() {
-		return Matrix4x4::Perspective(m_fov, m_aspect, m_znear, m_zfar);
+		Matrix4x4 factor{ Matrix4x4::identity };
+		//camera axis reverse
+		factor[0][0] = -1.f;
+		//vulkan 
+		factor[1][1] = -1.f;
+		return factor * Matrix4x4::Perspective(m_fov, m_aspect, m_znear, m_zfar);
 	}
 
 	Matrix4x4 RenderCamera::getInversePerspectiveMatrix() {
@@ -67,6 +72,11 @@ namespace Mage {
 		pitch = Quaternion::AngleAxis(delta_pitch, LEFT);
 		yaw = Quaternion::AngleAxis(delta_yaw, UP);
 
-		m_rotation = m_rotation * yaw * pitch;
+		//??
+		m_rotation = yaw * m_rotation * pitch;
+	}
+
+	void RenderCamera::move(const Vector3& delta) {
+		m_position += delta;
 	}
 }
