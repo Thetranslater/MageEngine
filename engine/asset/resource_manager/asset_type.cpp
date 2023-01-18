@@ -6,10 +6,34 @@
 #include<engine_core/render_engine/renderer/vulkanRHI.h>
 #include<engine_core/render_engine/renderer/vulkanHelper.h>
 #include<engine_core/platform/file_system.h>
+#include<engine_core/render_engine/resource_swap_header.h>
+#include<engine_core/render_engine/render_model.h>
 
 
 namespace Mage {
 	//buffer
+	Buffer::Buffer(const Buffer& lbuffer) {
+		m_data = lbuffer.m_data;
+		m_uri = lbuffer.m_uri;
+	}
+
+	Buffer::Buffer(Buffer&& rbuffer) {
+		m_data = std::move(rbuffer.m_data);
+		m_uri = std::move(rbuffer.m_uri);
+	}
+
+	Buffer& Buffer::operator=(const Buffer& lbuffer) {
+		m_data = lbuffer.m_data;
+		m_uri = lbuffer.m_uri;
+		return *this;
+	}
+
+	Buffer& Buffer::operator=(Buffer&& rbuffer) {
+		m_data = std::move(rbuffer.m_data);
+		m_uri = std::move(rbuffer.m_uri);
+		return *this;
+	}
+
 	VkBuffer Buffer::asVulkanBuffer(VulkanRHI* rhi) {
 		assert(!m_data.empty());
 
@@ -178,6 +202,58 @@ namespace Mage {
 	}
 
 	//texture
+	Texture::Texture(const Texture& ltexture) {
+		m_width = ltexture.m_width;
+		m_height = ltexture.m_height;
+		m_format = ltexture.m_format;
+		m_layer_counts = ltexture.m_layer_counts;
+		m_mipmap_levels = ltexture.m_mipmap_levels;
+		m_combined_sampler = ltexture.m_combined_sampler;
+
+		m_uri = ltexture.m_uri;
+		m_data = ltexture.m_data;
+	}
+
+	Texture::Texture(Texture&& rtexture) {
+		m_width = rtexture.m_width;
+		m_height = rtexture.m_height;
+		m_format = rtexture.m_format;
+		m_layer_counts = rtexture.m_layer_counts;
+		m_mipmap_levels = rtexture.m_mipmap_levels;
+		m_combined_sampler = rtexture.m_combined_sampler;
+
+		m_uri = std::move(rtexture.m_uri);
+		m_data = std::move(rtexture.m_data);
+	}
+
+	Texture& Texture::operator=(const Texture& ltexture) {
+		m_width = ltexture.m_width;
+		m_height = ltexture.m_height;
+		m_format = ltexture.m_format;
+		m_layer_counts = ltexture.m_layer_counts;
+		m_mipmap_levels = ltexture.m_mipmap_levels;
+		m_combined_sampler = ltexture.m_combined_sampler;
+
+		m_uri = ltexture.m_uri;
+		m_data = ltexture.m_data;
+		
+		return *this;
+	}
+
+	Texture& Texture::operator=(Texture&& rtexture) {
+		m_width = rtexture.m_width;
+		m_height = rtexture.m_height;
+		m_format = rtexture.m_format;
+		m_layer_counts = rtexture.m_layer_counts;
+		m_mipmap_levels = rtexture.m_mipmap_levels;
+		m_combined_sampler = rtexture.m_combined_sampler;
+
+		m_uri = std::move(rtexture.m_uri);
+		m_data = std::move(rtexture.m_data);
+
+		return *this;
+	}
+
 	VkRenderTexture Texture::asVulkanRenderTexture(VulkanRHI* rhi) {
 		assert(!m_data.empty());
 
@@ -247,78 +323,74 @@ namespace Mage {
 		return render_texture;
 	}
 	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image) {
-		if (gltf_image.bufferView == -1) {
-			m_data = std::move(gltf_image.image);
-			m_uri = std::move(gltf_image.uri);
+		m_data = std::move(gltf_image.image);
+		m_uri = std::move(gltf_image.uri);
 
-			m_width = (uint32_t)gltf_image.width;
-			m_height = (uint32_t)gltf_image.height;
-			m_layer_counts = 1;
-			m_mipmap_levels = 1;
+		m_width = (uint32_t)gltf_image.width;
+		m_height = (uint32_t)gltf_image.height;
+		m_layer_counts = 1;
+		m_mipmap_levels = 1;
 
-			if (gltf_image.component == 4) {
-				switch (gltf_image.pixel_type)
-				{
-				case TINYGLTF_COMPONENT_TYPE_BYTE:
-					m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SNORM;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
-					m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_UNORM;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_INT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_SINT;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_UINT;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_FLOAT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_SFLOAT;
-					break;
-				default:
-					m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
-				}
+		if (gltf_image.component == 4) {
+			switch (gltf_image.pixel_type)
+			{
+			case TINYGLTF_COMPONENT_TYPE_BYTE:
+				m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SNORM;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+				m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_UNORM;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_INT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_SINT;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_UINT;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_FLOAT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32B32A32_SFLOAT;
+				break;
+			default:
+				m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 			}
-			else if (gltf_image.component == 3) {
-				switch (gltf_image.pixel_type)
-				{
-				case TINYGLTF_COMPONENT_TYPE_BYTE:
-					m_format = MageFormat::MAGE_FORMAT_R8G8B8_SNORM;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
-					m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_UNORM;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_INT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32B32_SINT;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32B32_UINT;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_FLOAT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32B32_SFLOAT;
-					break;
-				default:
-					m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
-				}
+		}
+		else if (gltf_image.component == 3) {
+			switch (gltf_image.pixel_type)
+			{
+			case TINYGLTF_COMPONENT_TYPE_BYTE:
+				m_format = MageFormat::MAGE_FORMAT_R8G8B8_SNORM;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE:
+				m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_UNORM;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_INT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32B32_SINT;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32B32_UINT;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_FLOAT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32B32_SFLOAT;
+				break;
+			default:
+				m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 			}
-			else if (gltf_image.component == 2) {
-				switch (gltf_image.pixel_type)
-				{
-				case TINYGLTF_COMPONENT_TYPE_INT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32_SINT;
-					break;
-				case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
-					m_format = MageFormat::MAGE_FORMAT_R32G32_UINT;
-					break;
-				default:
-					m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
-				}
-			}
-			else {
-				//MAGE_THROW(unsupport texture format)
+		}
+		else if (gltf_image.component == 2) {
+			switch (gltf_image.pixel_type)
+			{
+			case TINYGLTF_COMPONENT_TYPE_INT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32_SINT;
+				break;
+			case TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT:
+				m_format = MageFormat::MAGE_FORMAT_R32G32_UINT;
+				break;
+			default:
 				m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 			}
 		}
 		else {
+			//MAGE_THROW(unsupport texture format)
+			m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 		}
 	}
 	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler) {
@@ -410,7 +482,12 @@ namespace Mage {
 		for (int i = 0; i < m_accessors.size();				++i) m_accessors[i].loadFromgLTF_Accessor(model.accessors[i]);
 		for (int i = 0; i < m_buffers.size();				++i) m_buffers[i].loadFromgLTF_Buffer(model.buffers[i]);
 		for (int i = 0; i < m_buffer_views.size();			++i) m_buffer_views[i].loadFromgLTF_BufferView(model.bufferViews[i]);
-		for (int i = 0; i < m_textures.size();				++i) m_textures[i].loadFromgLTF_Image(model.images[model.textures[i].source], model.samplers[model.textures[i].sampler]);
+		for (int i = 0; i < m_textures.size(); ++i) {
+			if (model.textures[i].sampler != -1)
+				m_textures[i].loadFromgLTF_Image(model.images[model.textures[i].source], model.samplers[model.textures[i].sampler]);
+			else
+				m_textures[i].loadFromgLTF_Image(model.images[model.textures[i].source]);
+		}
 		for (int i = 0; i < m_materials.size();				++i) m_materials[i].loadFromgLTF_Material(model.materials[i]);
 		for (int i = 0; i < m_nodes.size();					++i) m_nodes[i].loadFromgLTF_Node(model.nodes[i]);
 		for (int i = 0; i < m_nodes.size();					++i) {
@@ -419,9 +496,9 @@ namespace Mage {
 			}
 		}
 		
-		//TODO:process transform matrixs that attached to specific mesh 
+		//TODO:process transform matrixs that attached to specific mesh
 	}
-	//TODO
+	//TODO:处理嵌入的数据
 	VkRenderModelInfo Model::getVkRenderModelInfo() {
 		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
 
@@ -432,16 +509,41 @@ namespace Mage {
 		auto& textures_info = render_model_info.m_textures_info;
 		auto& materials_info = render_model_info.m_materials_info;
 
-		assert(m_buffers.size() == 1); //暂不支持多buffer
-		mesh_info.m_buffer_uri.m_uri = parent_directory + "/" + m_buffers[0].m_uri;
+		assert(m_buffers.size() == 1); //TODO:暂不支持多buffer
+		for (int i = 0; i < 1; ++i) {
+			if (not m_buffers[i].m_data.empty()) {
+				m_buffers[i].m_uri.clear();
+
+				std::string combined_path_index = m_model_filepath + ":" + std::to_string(i);
+				RawMeshData front_mesh;
+				front_mesh.m_accessory = combined_path_index;
+				front_mesh.m_raw = std::move(m_buffers[i]);
+
+				mesh_info.m_info = std::move(front_mesh);
+			}
+			else {
+				mesh_info.m_info = VkRenderMeshURI{ parent_directory + "/" + m_buffers[i].m_uri };
+			}
+		}
 		
-		textures_info.m_uris.resize(m_textures.size());
-		for (int i = 0; i < textures_info.m_uris.size(); ++i) {
-			textures_info.m_uris[i].m_uri = parent_directory + "/" + m_textures[i].m_uri;
+		textures_info.m_infos.resize(m_textures.size());
+		for (int i = 0; i < m_textures.size(); ++i) {
+			if (not m_textures[i].m_data.empty()) {
+				m_textures[i].m_uri.clear();
+
+				RawTextureData rtd;
+				rtd.m_accessory = m_model_filepath + ':' + std::to_string(i);
+				rtd.m_raw = std::move(m_textures[i]);
+
+				textures_info.m_infos[i].m_detail = std::move(rtd);
+			}
+			else {
+				textures_info.m_infos[i].m_detail = VkRenderTextureURI{ parent_directory + "/" + m_textures[i].m_uri };
+			}
 		}
 		for (auto& material : m_materials) {
 			if (material.m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
-				textures_info.m_uris[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
+				textures_info.m_infos[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
 			}
 		}
 

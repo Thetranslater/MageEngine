@@ -12,7 +12,6 @@
 
 #include"engine_core/render_engine/render_guid.h"
 #include"engine_core/render_engine/render_macro.h"
-#include"engine_core/render_engine/resource_swap_header.h"
 
 namespace Mage {
 

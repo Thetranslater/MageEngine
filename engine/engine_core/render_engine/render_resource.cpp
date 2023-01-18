@@ -2,8 +2,7 @@
 #include<engine_core/render_engine/renderer/vulkanInfo.h>
 #include<engine_core/render_engine/renderer/vulkanRHI.h>
 #include<engine_core/render_engine/renderer/vulkanHelper.h>
-
-#include<asset/resource_manager/asset_type.h>
+#include<engine_core/render_engine/resource_swap_header.h>
 
 namespace Mage {
 	void RenderResource::initialize(VulkanRHI* rhi) {

@@ -11,7 +11,7 @@
 #include<core/math/vector4.h>
 
 #include<engine_core/render_engine/render_resource.h>
-#include<engine_core/render_engine/render_model.h>
+//#include<engine_core/render_engine/render_model.h>
 
 /*
 * 目前已经更改完tinygltf头文件相关内容，实现了buffer数据和image数据延迟加载，目前只加载存储数据文件的相对路径，加载功能延迟到后面组件更新（tick()）功能中
@@ -73,6 +73,10 @@ namespace Mage {
 
 	class Texture {
 	public:
+		Texture() = default;
+		Texture(const Texture& ltexture);
+		Texture(Texture&& rtexture);
+
 		uint32_t getHeight() { return m_height; }
 		uint32_t getWidth() { return m_width; }
 
@@ -82,6 +86,9 @@ namespace Mage {
 		void loadFromgLTF_Image(tinygltf::Image& gltf_image);
 
 		bool load(const std::string& base_dir, std::string& err, std::string& warn);
+
+		Texture& operator=(const Texture& ltexture);
+		Texture& operator=(Texture&& rtexture);
 
 	public:
 		uint32_t m_height{0};
@@ -189,11 +196,17 @@ namespace Mage {
 
 	class Buffer {
 	public:
+		Buffer() = default;
+		Buffer(const Buffer& lbuffer);
+		Buffer(Buffer&& rbuffer);
 		VkBuffer asVulkanBuffer(VulkanRHI* rhi);
 		void loadFromgLTF_Buffer(tinygltf::Buffer& buffer);
 		unsigned char* data() { return m_data.data(); }
 		uint32_t size() { return static_cast<uint32_t>(m_data.size()); }
 		bool load(const std::string& base_dir, std::string& err, std::string& warn);
+
+		Buffer& operator=(const Buffer& lbuffer);
+		Buffer& operator=(Buffer&& rbuffer);
 	public:
 		std::vector<unsigned char> m_data;
 		std::string m_uri;

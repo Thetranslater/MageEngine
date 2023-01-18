@@ -13,7 +13,7 @@ namespace Mage {
 
 	bool ResourceManager::_custmization_readwholefile(std::vector<unsigned char>* _out_data, std::string* _err, const std::string& _filepath, void* _user_arg) {
 		using namespace std;
-		static unordered_set<std::string> extensions{ ".jpeg",".png",".jpg",".bin" };
+		static const unordered_set<std::string> extensions{ ".jpeg",".png",".jpg",".bin" };
 		FSArguments* _user_args = static_cast<FSArguments*>(_user_arg);
 		filesystem::path filepath(_filepath);
 

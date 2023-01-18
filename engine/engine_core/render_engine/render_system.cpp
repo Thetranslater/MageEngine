@@ -76,36 +76,48 @@ namespace Mage {
 				texture_data_uris[i] = std::move(process_job.m_textures_info.m_uris[i]);
 			}
 
-			//process mesh
-			auto mesh_guid = m_render_scene->getMeshGUIDGenerator().generateGUID(mesh_data_uri);
+			//process mesh infos
+			auto& mesh_info = process_job.m_mesh_info.m_info;
+			auto mesh_guid = m_render_scene->getMeshGUIDGenerator().generateGUID(mesh_info);
 			if (not m_render_resource->hasMesh(mesh_guid)) {
 				Buffer raw_data;
-				bool load_ret = resource_manager->loadMageBuffer(mesh_data_uri.m_uri, &raw_data, nullptr, nullptr);
-				assert(load_ret);
-				RenderResource::IO_Buffer mesh_creation_param;
-				mesh_creation_param = std::move(raw_data);
-				bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), mesh_guid, mesh_creation_param);
-				assert(create_ret);
+				if (mesh_info.index() == 0 /* uri */) {
+					bool load_ret = resource_manager->loadMageBuffer(std::get<0>(mesh_info).m_uri, &raw_data, nullptr, nullptr);
+					assert(load_ret);
+				}
+				else /* embedded data */ {
+					raw_data = std::move(std::get<1>(mesh_info).m_raw);
+				}
+				RenderResource::IO_Buffer iBuffer;
+				iBuffer = std::move(raw_data);
+				bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), mesh_guid, iBuffer);
 			}
 
 			//process texture
-			std::vector<GUID32> texture_guids(texture_data_uris.size(), std::numeric_limits<GUID32>{}.max());
-			for (int i{ 0 }; i < texture_data_uris.size(); ++i) {
-				auto texture_guid = m_render_scene->getTextureGUIDGenerator().generateGUID(texture_data_uris[i]);
+			std::vector<GUID32> texture_guids(process_job.m_textures_info.m_infos.size(), std::numeric_limits<GUID32>{}.max());
+			for (int i{ 0 }; i < process_job.m_textures_info.m_infos.size(); ++i) {
+				auto& info = process_job.m_textures_info.m_infos[i];
+				auto texture_guid = m_render_scene->getTextureGUIDGenerator().generateGUID(info.m_detail);
+				Texture raw_texture;
 				if (not m_render_resource->hasTexture(texture_guid)) {
 					Texture raw_texture;
-					bool load_ret = resource_manager->loadMageTexture(texture_data_uris[i].m_uri, &raw_texture, nullptr, nullptr);
-					assert(load_ret);
-					if (texture_data_uris[i].is_srgb) raw_texture.m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SRGB;
-					RenderResource::IO_Texture texture_creation_param;
-					texture_creation_param = std::move(raw_texture);
-					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), texture_guid, texture_creation_param);
+					if (info.m_detail.index() == 0) {
+						bool load_ret = resource_manager->loadMageTexture(std::get<0>(info.m_detail).m_uri, &raw_texture, nullptr, nullptr);
+						assert(load_ret);
+						if (info.is_srgb) raw_texture.m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SRGB;
+					}
+					else {
+						raw_texture = std::move(std::get<1>(info.m_detail).m_raw);
+					}
+					RenderResource::IO_Texture iTexture;
+					iTexture = std::move(raw_texture);
+					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), texture_guid, iTexture);
 					assert(create_ret);
 				}
 				texture_guids[i] = texture_guid;
 			}
 
-			//process material
+			//TODO:process material
 			std::vector<GUID64> material_guids(process_job.m_materials_info.m_infos.size());
 			for (int i{ 0 }; i < process_job.m_materials_info.m_infos.size(); ++i) {
 				auto& material = process_job.m_materials_info.m_infos[i];
@@ -145,7 +157,7 @@ namespace Mage {
 			auto process_job = m_render_scene->m_p_scene_delete_deque->getNextProcess();
 		}
 
-		//camera
+		//camera component?
 		//m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
 		//m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
 		//m_render_camera->setFov(m_pending_data->m_camera.m_pending_fov);
