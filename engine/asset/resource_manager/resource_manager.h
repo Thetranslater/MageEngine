@@ -52,8 +52,8 @@ namespace Mage {
 		}
 
 		bool loadMageModel(const std::string& filename, Model* out_model, std::string* err, std::string* warn, bool is_real_load = true);
-		bool loadMageBuffer(const std::string& filename, Buffer* out_model, std::string* err, std::string* warn, bool is_real_load = true);
-		bool loadMageTexture(const std::string& filename, Texture* out_model, std::string* err, std::string* warn, bool is_real_load = true);
+		bool loadMageBuffer(const std::string& filename, Buffer* out_buffer, std::string* err, std::string* warn, bool is_real_load = true);
+		bool loadMageImage(const std::string& filename, Image* out_image, std::string* err, std::string* warn, bool is_real_load = true);
 
 	private:
 		tinygltf::TinyGLTF gltf_loader;

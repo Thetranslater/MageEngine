@@ -11,7 +11,7 @@ namespace Mage {
 	struct VkRenderModelInfo {
 		GUID32 m_go_id;//TODO
 		VkRenderMeshInfo m_mesh_info{};
-		VkRenderTextureInfo m_textures_info{};
+		VkRenderImageInfo m_images_info{};
 		VkRenderMaterialInfo m_materials_info{};
 	};
 

@@ -11,7 +11,6 @@
 #include<core/math/vector4.h>
 
 #include<engine_core/render_engine/render_resource.h>
-//#include<engine_core/render_engine/render_model.h>
 
 /*
 * 目前已经更改完tinygltf头文件相关内容，实现了buffer数据和image数据延迟加载，目前只加载存储数据文件的相对路径，加载功能延迟到后面组件更新（tick()）功能中
@@ -75,36 +74,35 @@ namespace Mage {
 	public:
 		Texture() = default;
 		Texture(const Texture& ltexture);
-		Texture(Texture&& rtexture);
 
-		uint32_t getHeight() { return m_height; }
-		uint32_t getWidth() { return m_width; }
-
-		VkRenderTexture asVulkanRenderTexture(VulkanRHI* rhi);
-
-		void loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler);
-		void loadFromgLTF_Image(tinygltf::Image& gltf_image);
-
-		bool load(const std::string& base_dir, std::string& err, std::string& warn);
+		void loadFromGLTF_Texture(tinygltf::Texture& gltf_texture);
 
 		Texture& operator=(const Texture& ltexture);
-		Texture& operator=(Texture&& rtexture);
-
 	public:
-		uint32_t m_height{0};
-		uint32_t m_width{0};
-		uint32_t m_layer_counts{ 0 };
-		uint32_t m_mipmap_levels{ 0 };
-		MageFormat m_format{ MageFormat::MAGE_FORMAT_UNDEFINED };
-		Sampler m_combined_sampler;
-
-		std::string m_uri;
-
-		//move from gltf_image
-		std::vector<unsigned char> m_data;
+		uint32_t m_sampler;
+		uint32_t m_source;
 	};
 
-	class Image;
+	class Image {
+	public:
+		void loadFromGLTF_Image(tinygltf::Image& gltf_image);
+
+	public:
+		uint32_t m_width;
+		uint32_t m_height;
+		uint32_t m_component;
+		uint32_t m_bits;
+		int m_pixel_type;
+
+		MageFormat m_format;
+
+		std::vector<unsigned char> m_image;
+		int m_bufferView;//if no uri
+		std::string m_mimeType;//if no uri
+
+		std::string m_uri;
+		
+	};
 
 	class Primitive {
 	public:
@@ -266,12 +264,15 @@ namespace Mage {
 		std::vector<Texture> m_textures;
 		std::vector<Node> m_nodes;
 		std::vector<Material> m_materials;
+		std::vector<Sampler> m_samplers;
+		std::vector<Image> m_images;
 
 		//TODO:等待删除
 		GUID32 m_go_id;
 	private:
 		//for mesh
 		void processNode(const std::vector<Node>& nodes, int curr_index, const Matrix4x4& parent_matrix, const std::function<void(const int&, const Matrix4x4&)>& process_func);
+		void redundancyRemove(tinygltf::Model& gltf_model);
 	};
 
 	//Animation asset types

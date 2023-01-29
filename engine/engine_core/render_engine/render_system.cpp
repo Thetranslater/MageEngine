@@ -60,7 +60,7 @@ namespace Mage {
 
 		m_vulkan_rhi->prepareVulkanRHIAfterRender();
 	}
-
+	//TODO:重写
 	void RenderSystem::preprocess() {
 		//资源的检查需要从一个工作队列中处理，队列存储这所有当前帧需要加载的mesh数据。该队列存储在渲染场景类中
 		std::shared_ptr<ResourceManager> resource_manager = engine_global_context.m_resource_manager;
@@ -69,12 +69,6 @@ namespace Mage {
 		//load job
 		while (not m_render_scene->m_p_scene_load_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_load_deque->getNextProcess();
-			VkRenderMeshURI mesh_data_uri{ std::move(process_job.m_mesh_info.m_buffer_uri) };
-			std::vector<VkRenderTextureURI> texture_data_uris;
-			texture_data_uris.resize(process_job.m_textures_info.m_uris.size());
-			for (int i = 0; i < texture_data_uris.size(); ++i) {
-				texture_data_uris[i] = std::move(process_job.m_textures_info.m_uris[i]);
-			}
 
 			//process mesh infos
 			auto& mesh_info = process_job.m_mesh_info.m_info;
@@ -98,11 +92,11 @@ namespace Mage {
 			for (int i{ 0 }; i < process_job.m_textures_info.m_infos.size(); ++i) {
 				auto& info = process_job.m_textures_info.m_infos[i];
 				auto texture_guid = m_render_scene->getTextureGUIDGenerator().generateGUID(info.m_detail);
-				Texture raw_texture;
+				Image raw_texture;
 				if (not m_render_resource->hasTexture(texture_guid)) {
-					Texture raw_texture;
+					Image raw_texture;
 					if (info.m_detail.index() == 0) {
-						bool load_ret = resource_manager->loadMageTexture(std::get<0>(info.m_detail).m_uri, &raw_texture, nullptr, nullptr);
+						bool load_ret = resource_manager->loadMageImage(std::get<0>(info.m_detail).m_uri, &raw_texture, nullptr, nullptr);
 						assert(load_ret);
 						if (info.is_srgb) raw_texture.m_format = MageFormat::MAGE_FORMAT_R8G8B8A8_SRGB;
 					}

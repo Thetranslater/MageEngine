@@ -19,7 +19,7 @@ namespace Mage {
 		VkImage m_texture{VK_NULL_HANDLE};
 		VkDeviceMemory m_texture_memory{VK_NULL_HANDLE};
 		VkImageView m_texture_view{VK_NULL_HANDLE};
-		VkSampler m_sampler{ VK_NULL_HANDLE };
+		VkSampler m_sampler{ VK_NULL_HANDLE };//remove?
 	};
 
 	//for gltf
@@ -70,13 +70,13 @@ namespace Mage {
 
 	class VulkanRHI;
 	class Buffer;
-	class Texture;
+	class Image;
 	struct VkRenderMaterialDescription;
 	class RenderResource {
 	public:
 		using GUID32 = uint32_t;
 		using IO_Buffer = std::variant<VkRenderMesh, Buffer>;
-		using IO_Texture = std::variant<VkRenderTexture, Texture>;
+		using IO_Texture = std::variant<VkRenderTexture, Image>;
 		using IO_Material = std::variant<VkRenderMaterial, VkRenderMaterialDescription>;
 	public:
 		void initialize(VulkanRHI*);

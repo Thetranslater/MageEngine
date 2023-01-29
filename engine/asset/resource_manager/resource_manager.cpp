@@ -56,9 +56,8 @@ namespace Mage {
 		return ret;
 	}
 
-	bool ResourceManager::loadMageTexture(const std::string& filename, Texture* out_texture_data, std::string* err, std::string* warn, bool is_real_load) {
+	bool ResourceManager::loadMageImage(const std::string& filename, Image* out_image_data, std::string* err, std::string* warn, bool is_real_load) {
 		if (is_real_load) {
-			Sampler remain_sampler{ out_texture_data->m_combined_sampler };
 			tinygltf::Image image;
 			image.bits = 8;
 			image.pixel_type = TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE;
@@ -67,12 +66,8 @@ namespace Mage {
 			int size = image.width * image.height * 4 * (image.bits / 8);
 			image.image.resize(size);
 			image.image = std::vector<unsigned char>(data, data + size);
-			//std::copy(data, data + size, image.image.begin());
-			//stbi_image_free(data);
-
-			out_texture_data->loadFromgLTF_Image(image);
-			out_texture_data->m_combined_sampler = remain_sampler;
-
+			
+			out_image_data->loadFromGLTF_Image(image);
 			return true;
 		}
 		return false;

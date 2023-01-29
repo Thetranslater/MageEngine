@@ -203,133 +203,35 @@ namespace Mage {
 
 	//texture
 	Texture::Texture(const Texture& ltexture) {
-		m_width = ltexture.m_width;
-		m_height = ltexture.m_height;
-		m_format = ltexture.m_format;
-		m_layer_counts = ltexture.m_layer_counts;
-		m_mipmap_levels = ltexture.m_mipmap_levels;
-		m_combined_sampler = ltexture.m_combined_sampler;
-
-		m_uri = ltexture.m_uri;
-		m_data = ltexture.m_data;
-	}
-
-	Texture::Texture(Texture&& rtexture) {
-		m_width = rtexture.m_width;
-		m_height = rtexture.m_height;
-		m_format = rtexture.m_format;
-		m_layer_counts = rtexture.m_layer_counts;
-		m_mipmap_levels = rtexture.m_mipmap_levels;
-		m_combined_sampler = rtexture.m_combined_sampler;
-
-		m_uri = std::move(rtexture.m_uri);
-		m_data = std::move(rtexture.m_data);
+		m_sampler = -1;
+		m_source = -1;
 	}
 
 	Texture& Texture::operator=(const Texture& ltexture) {
-		m_width = ltexture.m_width;
-		m_height = ltexture.m_height;
-		m_format = ltexture.m_format;
-		m_layer_counts = ltexture.m_layer_counts;
-		m_mipmap_levels = ltexture.m_mipmap_levels;
-		m_combined_sampler = ltexture.m_combined_sampler;
-
-		m_uri = ltexture.m_uri;
-		m_data = ltexture.m_data;
+		m_sampler = ltexture.m_sampler;
+		m_source = ltexture.m_source;
 		
 		return *this;
 	}
 
-	Texture& Texture::operator=(Texture&& rtexture) {
-		m_width = rtexture.m_width;
-		m_height = rtexture.m_height;
-		m_format = rtexture.m_format;
-		m_layer_counts = rtexture.m_layer_counts;
-		m_mipmap_levels = rtexture.m_mipmap_levels;
-		m_combined_sampler = rtexture.m_combined_sampler;
-
-		m_uri = std::move(rtexture.m_uri);
-		m_data = std::move(rtexture.m_data);
-
-		return *this;
+	void Texture::loadFromGLTF_Texture(tinygltf::Texture& gltf_texture) {
+		m_source = gltf_texture.source;
+		m_sampler = gltf_texture.sampler;
 	}
 
-	VkRenderTexture Texture::asVulkanRenderTexture(VulkanRHI* rhi) {
-		assert(!m_data.empty());
+	//image
+	void Image::loadFromGLTF_Image(tinygltf::Image& gltf_image) {
+		m_width = gltf_image.width;
+		m_height = gltf_image.height;
+		m_component = gltf_image.component;
+		m_bits = gltf_image.bits;
+		m_pixel_type = gltf_image.pixel_type;
 
-		VkRenderTexture render_texture;
-
-		//create image
-		{
-			VulkanHelper::imageCreationHelper(
-				rhi, m_width, m_height, static_cast<VkFormat>(m_format),
-				1,
-				VK_IMAGE_TILING_OPTIMAL,
-				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
-				render_texture.m_texture, render_texture.m_texture_memory);
-
-			//copy data to staging buffer
-			VkBuffer staging_buffer;
-			VkDeviceMemory staging_memory;
-
-			VulkanHelper::bufferCreationHelper(
-				rhi, m_data.size(),
-				VK_BUFFER_USAGE_TRANSFER_SRC_BIT,
-				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-				staging_buffer, staging_memory);
-
-
-			void* copy_to{ nullptr };
-			vkMapMemory(rhi->getDevice(), staging_memory, 0, m_data.size(), 0, &copy_to);
-			memcpy(copy_to, m_data.data(), static_cast<size_t>(m_data.size()));
-			vkUnmapMemory(rhi->getDevice(), staging_memory);
-
-			//transition image layout
-			VulkanHelper::transitionImageLayout(rhi, render_texture.m_texture, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, m_mipmap_levels);
-
-			//copy data from buffer to image
-			VulkanHelper::fromBufferToImageCopyHelper(rhi, staging_buffer, render_texture.m_texture, m_width, m_height);
-
-			//TODO:generate mipmaps
-
-			//transition image layout to shader read only
-			VulkanHelper::transitionImageLayout(rhi, render_texture.m_texture, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, m_mipmap_levels);
-		
-			vkDestroyBuffer(rhi->getDevice(), staging_buffer, nullptr);
-			vkFreeMemory(rhi->getDevice(), staging_memory, nullptr);
-		}
-
-		//create image view
-		VkImageViewCreateInfo view_create_info = VulkanInfo::aboutVkImageViewCeateInfo();
-		{
-			view_create_info.image = render_texture.m_texture;
-			view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-			view_create_info.format = static_cast<VkFormat>(m_format);
-			view_create_info.subresourceRange = VulkanInfo::aboutVkImageSubresourceRange();
-			view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-			view_create_info.subresourceRange.baseMipLevel = 0;
-			view_create_info.subresourceRange.levelCount = m_mipmap_levels;
-			view_create_info.subresourceRange.baseArrayLayer = 0;
-			view_create_info.subresourceRange.layerCount = m_layer_counts;
-		}
-		if (VK_SUCCESS != vkCreateImageView(rhi->getDevice(), &view_create_info, nullptr, &render_texture.m_texture_view)) {
-			MAGE_THROW(failed to create texture image view)
-		}
-
-		//create sampler
-		render_texture.m_sampler = m_combined_sampler.asVulkanSampler(rhi);
-
-		return render_texture;
-	}
-	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image) {
-		m_data = std::move(gltf_image.image);
+		m_image = std::move(gltf_image.image);
 		m_uri = std::move(gltf_image.uri);
+		m_mimeType = std::move(gltf_image.mimeType);
 
-		m_width = (uint32_t)gltf_image.width;
-		m_height = (uint32_t)gltf_image.height;
-		m_layer_counts = 1;
-		m_mipmap_levels = 1;
+		m_bufferView = gltf_image.bufferView;
 
 		if (gltf_image.component == 4) {
 			switch (gltf_image.pixel_type)
@@ -392,10 +294,6 @@ namespace Mage {
 			//MAGE_THROW(unsupport texture format)
 			m_format = MageFormat::MAGE_FORMAT_UNDEFINED;
 		}
-	}
-	void Texture::loadFromgLTF_Image(tinygltf::Image& gltf_image, tinygltf::Sampler& gltf_sampler) {
-		loadFromgLTF_Image(gltf_image);
-		m_combined_sampler.loadFromgLTF_Sampler(gltf_sampler);
 	}
 
 	//Material
@@ -468,6 +366,9 @@ namespace Mage {
 
 	//model
 	void Model::loadFromgLTF_Model(tinygltf::Model& model, const std::string& file) {
+		//cut redundancy
+		redundancyRemove(model);
+
 		m_model_filepath = file;
 		
 		m_meshes.resize(model.meshes.size());
@@ -477,18 +378,17 @@ namespace Mage {
 		m_textures.resize(model.textures.size());
 		m_nodes.resize(model.nodes.size());
 		m_materials.resize(model.materials.size());
+		m_samplers.resize(model.samplers.size());
+		m_images.resize(model.images.size());
 
 		for (int i = 0; i < m_meshes.size();				++i) m_meshes[i].loadFromgLTF_Mesh(model.meshes[i]);
 		for (int i = 0; i < m_accessors.size();				++i) m_accessors[i].loadFromgLTF_Accessor(model.accessors[i]);
 		for (int i = 0; i < m_buffers.size();				++i) m_buffers[i].loadFromgLTF_Buffer(model.buffers[i]);
 		for (int i = 0; i < m_buffer_views.size();			++i) m_buffer_views[i].loadFromgLTF_BufferView(model.bufferViews[i]);
-		for (int i = 0; i < m_textures.size(); ++i) {
-			if (model.textures[i].sampler != -1)
-				m_textures[i].loadFromgLTF_Image(model.images[model.textures[i].source], model.samplers[model.textures[i].sampler]);
-			else
-				m_textures[i].loadFromgLTF_Image(model.images[model.textures[i].source]);
-		}
+		for (int i = 0; i < m_images.size();				++i) m_images[i].loadFromGLTF_Image(model.images[i]);
+		for (int i = 0; i < m_textures.size();				++i) m_textures[i].loadFromGLTF_Texture(model.textures[i]);
 		for (int i = 0; i < m_materials.size();				++i) m_materials[i].loadFromgLTF_Material(model.materials[i]);
+		for (int i = 0; i < m_samplers.size();				++i) m_samplers[i].loadFromgLTF_Sampler(model.samplers[i]);
 		for (int i = 0; i < m_nodes.size();					++i) m_nodes[i].loadFromgLTF_Node(model.nodes[i]);
 		for (int i = 0; i < m_nodes.size();					++i) {
 			for (int j = 0; j < m_nodes[i].m_children.size(); ++j) {
@@ -498,7 +398,7 @@ namespace Mage {
 		
 		//TODO:process transform matrixs that attached to specific mesh
 	}
-	//TODO:处理嵌入的数据
+	//TODO:重新写一遍，根据现有的增加的image结构
 	VkRenderModelInfo Model::getVkRenderModelInfo() {
 		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
 
@@ -506,11 +406,10 @@ namespace Mage {
 		//render_model_info.m_go_id = m_go_id;
 
 		auto& mesh_info = render_model_info.m_mesh_info;
-		auto& textures_info = render_model_info.m_textures_info;
+		auto& images_info = render_model_info.m_images_info;
 		auto& materials_info = render_model_info.m_materials_info;
 
-		assert(m_buffers.size() == 1); //TODO:暂不支持多buffer
-		for (int i = 0; i < 1; ++i) {
+		for (int i = 0; i < m_buffers.size(); ++i) {
 			if (not m_buffers[i].m_data.empty()) {
 				m_buffers[i].m_uri.clear();
 
@@ -519,31 +418,31 @@ namespace Mage {
 				front_mesh.m_accessory = combined_path_index;
 				front_mesh.m_raw = std::move(m_buffers[i]);
 
-				mesh_info.m_info = std::move(front_mesh);
+				mesh_info.m_infos[i] = std::move(front_mesh);
 			}
 			else {
-				mesh_info.m_info = VkRenderMeshURI{ parent_directory + "/" + m_buffers[i].m_uri };
+				mesh_info.m_infos[i] = VkRenderMeshURI{parent_directory + "/" + m_buffers[i].m_uri};
 			}
 		}
-		
-		textures_info.m_infos.resize(m_textures.size());
-		for (int i = 0; i < m_textures.size(); ++i) {
-			if (not m_textures[i].m_data.empty()) {
-				m_textures[i].m_uri.clear();
 
-				RawTextureData rtd;
+		images_info.m_infos.resize(m_images.size());
+		for (int i = 0; i < m_images.size(); ++i) {
+			if (not m_images[i].m_image.empty()) {
+				m_images[i].m_uri.clear();
+
+				RawImageData rtd;
 				rtd.m_accessory = m_model_filepath + ':' + std::to_string(i);
-				rtd.m_raw = std::move(m_textures[i]);
+				rtd.m_raw = std::move(m_images[i]);
 
-				textures_info.m_infos[i].m_detail = std::move(rtd);
+				images_info.m_infos[i].m_detail = std::move(rtd);
 			}
 			else {
-				textures_info.m_infos[i].m_detail = VkRenderTextureURI{ parent_directory + "/" + m_textures[i].m_uri };
+				images_info.m_infos[i].m_detail = VkRenderImageURI{parent_directory + "/" + m_images[i].m_uri};
 			}
 		}
 		for (auto& material : m_materials) {
 			if (material.m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
-				textures_info.m_infos[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
+				images_info.m_infos[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
 			}
 		}
 
@@ -554,6 +453,18 @@ namespace Mage {
 			materials_info.m_infos[i].m_metallic_roughness_texture_index = m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index;
 			materials_info.m_infos[i].m_normal_texture_index = m_materials[i].m_normal_texture.m_index;
 			materials_info.m_infos[i].m_occlusion_texture_index = m_materials[i].m_occlusion_texture.m_index;
+
+			//sampler
+			if (m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_sampler != -1) {
+				materials_info.m_infos[i].m_base_color_texture_sampler = m_samplers[m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_sampler];
+			}
+			if (m_textures[m_materials[i].m_normal_texture.m_index].m_sampler != -1) {
+				materials_info.m_infos[i].m_normal_texture_sampler = m_samplers[m_textures[m_materials[i].m_normal_texture.m_index].m_sampler];
+			}
+			if (m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_sampler != -1) {
+				materials_info.m_infos[i].m_metallic_roughness_texture_sampler = m_samplers[m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_sampler];
+			}
+			//TODO:增加其他的sampler
 		}
 
 		//meshes
@@ -585,12 +496,13 @@ namespace Mage {
 				//mesh
 				uint32_t buffer_stride{ 0xffffffff }, buffer_offset{ 0xffffffff }, element_count{ 0xffffffff };
 				auto get_attribute_info = [&](const std::string& attribute, int index) {
-					auto& attribute_tuple = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_mesh_data_offset_infos[index];
+					auto& attribute_info = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_mesh_data_offset_infos[index];
 					attribute_accessor = &m_accessors[primitive.m_attributes[attribute]];
-					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
-					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
-					element_count = attribute_accessor->m_count;
-					attribute_tuple = std::make_tuple(buffer_stride, buffer_offset, element_count);
+
+					attribute_info.m_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
+					attribute_info.m_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
+					attribute_info.m_count = attribute_accessor->m_count;
+					attribute_info.m_buffer_index = m_buffer_views[attribute_accessor->m_buffer_view].m_buffer;
 				};
 				//position
 				if (primitive.m_attributes.find("POSITION") != primitive.m_attributes.end()) {
@@ -619,18 +531,17 @@ namespace Mage {
 				
 				//indices
 				if (primitive.m_indices != -1) {
-					auto& indices_tuple = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_mesh_data_offset_infos[6];
+					auto& indices_info = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_mesh_data_offset_infos[6];
 					attribute_accessor = &m_accessors[primitive.m_indices];
-					buffer_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride == 0 ? attribute_accessor->getAccessBytes() : m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
-					buffer_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
-					element_count = attribute_accessor->m_count;
-					indices_tuple = std::make_tuple(buffer_stride, buffer_offset, element_count);
+					
+					indices_info.m_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride == 0 ? attribute_accessor->getAccessBytes() : m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
+					indices_info.m_offset = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_offset + attribute_accessor->m_byte_offset;
+					indices_info.m_count = attribute_accessor->m_count;
+					indices_info.m_buffer_index = m_buffer_views[attribute_accessor->m_buffer_view].m_buffer;
 				}
 
 				//params
 				mesh_info.m_transfer_mesh_descriptions[mesh_index].m_matrix = matrix;
-
-				//++sub_meshes_num;
 			}
 		};
 		Matrix4x4 root_mat{ Matrix4x4::identity };
@@ -638,6 +549,7 @@ namespace Mage {
 
 		return render_model_info;
 	}
+
 	void Model::processNode(const std::vector<Node>& nodes, int curr_index, const Matrix4x4& parent_matrix, const std::function<void(const int&, const Matrix4x4&)>& process_func) {
 		auto& node = nodes[curr_index];
 
@@ -663,5 +575,23 @@ namespace Mage {
 			processNode(nodes, child, curr_matrix, process_func);
 		}
 	}
-
+	//目前处理纹理的冗余索引数据
+	void Model::redundancyRemove(tinygltf::Model& gltf_model) {
+		std::unordered_map<uint32_t, uint32_t> img_tex_map;
+		for (uint32_t i{ 0u }; i <= gltf_model.textures.size(); ++i) {
+			if (img_tex_map.find(gltf_model.textures[i].source) != img_tex_map.end()) {
+				int owner = img_tex_map[gltf_model.textures[i].source];
+				for (auto& material : gltf_model.materials) {
+					if (material.normalTexture.index == i) material.normalTexture.index = owner;
+					else if (material.emissiveTexture.index == i) material.emissiveTexture.index = owner;
+					else if (material.occlusionTexture.index == i) material.occlusionTexture.index = owner;
+					else if (material.pbrMetallicRoughness.baseColorTexture.index == i) material.pbrMetallicRoughness.baseColorTexture.index = owner;
+					else if (material.pbrMetallicRoughness.metallicRoughnessTexture.index == i) material.pbrMetallicRoughness.metallicRoughnessTexture.index = owner;
+				}
+			}
+			else {
+				img_tex_map[gltf_model.textures[i].source] = i;
+			}
+		}
+	}
 }

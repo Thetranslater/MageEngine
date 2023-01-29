@@ -3,6 +3,9 @@
 #include<stdexcept>
 #include<memory>
 
+#define STATIC_DATA
+#define DYNAMIC_DATA
+
 #define MAGE_TRUE  1
 #define MAGE_FALSE 0
 
