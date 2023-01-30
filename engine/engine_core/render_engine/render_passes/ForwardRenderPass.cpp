@@ -390,10 +390,10 @@ namespace Mage {
 		RenderCamera* camera = p_m_render_pass->m_render_camera;
 
 		//buffer,materials, submeshes
-		std::map<GUID32, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;
+		std::map<GUID64, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;
 		//batch recognizing
 		for (VkRenderModel& model : p_m_render_pass->m_render_scene->m_render_models) {
-			auto& buffer_batch = model_batch[model.m_mesh_guid32];
+			auto& buffer_batch = model_batch[model.m_mesh_combined_guid64];
 			auto& material_batch = buffer_batch[model.m_material_guid64];
 			auto& mesh_batch = material_batch[model.m_model_guid32];
 			mesh_batch.emplace_back(&model);
@@ -411,14 +411,11 @@ namespace Mage {
 		binding_scissor.extent = m_vulkan_rhi->getSwapchainExtent();
 		vkCmdSetScissor(m_vulkan_rhi->getCurrentCommandBuffer(), 0, 1, &binding_scissor);
 
-		//TODO:确保camera矩阵的正确性, 探讨是否应该乘-1
 		int begin_offset{ 0 };
 		GlobalBufferPerFrameData perframe_data{};
-		//perframe_data.m_camera_view_matrix = glm::lookAt(glm::vec3{ 1.f,0.f,-2.f }, glm::vec3{ 0.f,0.f,0.f }, glm::vec3{ 0.f,1.f,0.f });
-		//perframe_data.m_camera_perspective_matrix = glm::perspective(glm::radians(10.f), p_m_render_pass->m_render_camera->aspect(), 0.1f, 10.f);
-
 		perframe_data.m_camera_view_matrix = glm::mat4(p_m_render_pass->m_render_camera->getViewMatrix());
 		perframe_data.m_camera_perspective_matrix = glm::mat4(p_m_render_pass->m_render_camera->getPerspectiveMatrix());
+
 		*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 		uint32_t offset = begin_offset;
 		//DONE
@@ -427,7 +424,7 @@ namespace Mage {
 		begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 
 		for (auto& [buffer_guid, material_batch] : model_batch) {
-			auto& buffer = p_m_render_pass->m_render_resource->m_guid_buffer_map[buffer_guid];
+			//auto& buffer = p_m_render_pass->m_render_resource->m_guid_buffer_map[buffer_guid];
 			for (auto& [material_guid, mesh_batch] : material_batch) {
 				//VkRenderModel* template_model = mesh_batch.begin()->second.front();
 				//bind materials
@@ -444,29 +441,29 @@ namespace Mage {
 					
 					//bind vertex and index buffer
 					auto get_offset_from = [](VkRenderModel* tmodel, int index)->uint32_t {
-						return std::get<1>(tmodel->m_mesh_description.m_mesh_data_offset_infos[index]);
+						return tmodel->m_mesh_description.m_attribute_infos[index].m_offset;
 					};
-					VkBuffer super_block = buffer.m_bi_data;
 					VkBuffer buffers[MAGE_VERTEX_ATTRIBUTES_COUNT] = { VK_NULL_HANDLE };
 					std::array<VkDeviceSize, MAGE_VERTEX_ATTRIBUTES_COUNT> offsets = {0};
+
 					int index{ 0 };
 					while (index < MAGE_VERTEX_ATTRIBUTES_COUNT) {
 						if (get_offset_from(mark_mesh, index) != 0xffffffff) {
-							while (index < MAGE_VERTEX_ATTRIBUTES_COUNT) {
-								auto offset = get_offset_from(mark_mesh, index);
-								if (offset == 0xffffffff) break;
-								offsets[index] = offset;
-								buffers[index++] = super_block;
-							}
+							auto offset = get_offset_from(mark_mesh, index);
+							offsets[index] = offset;
+							buffers[index] = p_m_render_pass->m_render_resource->m_guid_buffer_map[
+								mark_mesh->m_mesh_description.m_attribute_infos[index].m_buffer_index].m_bi_data;
 						}
 						++index;
 					}
 					vkCmdBindVertexBuffers(m_vulkan_rhi->getCurrentCommandBuffer(), 0, MAGE_VERTEX_ATTRIBUTES_COUNT, buffers, offsets.data());
 
-					auto& index_offset_info = mark_mesh->m_mesh_description.m_mesh_data_offset_infos[6];
+					auto& index_offset_info = mark_mesh->m_mesh_description.m_attribute_infos[6];
 					//TODO:VK_INDEX_TYPE_UINT8_EXT
-					VkIndexType index_type = (std::get<0>(index_offset_info) * 8) == 32 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
-					vkCmdBindIndexBuffer(m_vulkan_rhi->getCurrentCommandBuffer(), super_block, std::get<1>(index_offset_info), index_type);
+					VkIndexType index_type = (index_offset_info.m_stride * 8) == 32 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
+					VkBuffer index_buffer = p_m_render_pass->m_render_resource->m_guid_buffer_map[
+						mark_mesh->m_mesh_description.m_attribute_infos[6].m_buffer_index].m_bi_data;
+					vkCmdBindIndexBuffer(m_vulkan_rhi->getCurrentCommandBuffer(), index_buffer, index_offset_info.m_offset, index_type);
 					//DONE
 
 					//drawcalls
@@ -503,7 +500,7 @@ namespace Mage {
 							2, dynamic_offsets);
 
 						//draw
-						vkCmdDrawIndexed(m_vulkan_rhi->getCurrentCommandBuffer(), std::get<2>(index_offset_info), current_instance_counts, 0, 0, 0);
+						vkCmdDrawIndexed(m_vulkan_rhi->getCurrentCommandBuffer(), index_offset_info.m_count, current_instance_counts, 0, 0, 0);
 					}
 				}
 			}

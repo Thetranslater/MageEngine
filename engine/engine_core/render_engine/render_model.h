@@ -26,8 +26,7 @@ namespace Mage {
 
 		VkRenderMeshDescription m_mesh_description;
 
-		GUID32 m_mesh_guid32;
+		GUID64 m_mesh_combined_guid64;
 		GUID64 m_material_guid64;
-		std::vector<GUID32> m_texture_guid32s;
 	};
 }

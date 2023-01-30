@@ -1,4 +1,5 @@
 #include"core/macro.h"
+#include"core/hash.h"
 
 #include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
@@ -69,31 +70,36 @@ namespace Mage {
 		//load job
 		while (not m_render_scene->m_p_scene_load_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_load_deque->getNextProcess();
+			std::vector<GUID32> mesh_guids(process_job.m_mesh_info.m_infos.size(), invalid_guid32);
+			std::vector<GUID32> image_guids(process_job.m_images_info.m_infos.size(), invalid_guid32);
+			std::vector<GUID64> material_guids(process_job.m_materials_info.m_infos.size(), invalid_guid64);
 
 			//process mesh infos
-			auto& mesh_info = process_job.m_mesh_info.m_info;
-			auto mesh_guid = m_render_scene->getMeshGUIDGenerator().generateGUID(mesh_info);
-			if (not m_render_resource->hasMesh(mesh_guid)) {
-				Buffer raw_data;
-				if (mesh_info.index() == 0 /* uri */) {
-					bool load_ret = resource_manager->loadMageBuffer(std::get<0>(mesh_info).m_uri, &raw_data, nullptr, nullptr);
-					assert(load_ret);
+			auto& mesh_infos = process_job.m_mesh_info.m_infos;
+			for (int i{ 0 }; i < mesh_infos.size(); ++i) {
+				auto mesh_guid = m_render_scene->getMeshGUIDGenerator().generateGUID(mesh_infos[i]);
+				if (not m_render_resource->hasMesh(mesh_guid)) {
+					Buffer raw_data;
+					if (mesh_infos[i].index() == 0) {
+						bool load_ret = resource_manager->loadMageBuffer(std::get<0>(mesh_infos[i]).m_uri, &raw_data, nullptr, nullptr);
+						assert(load_ret);
+					}
+					else {
+						raw_data = std::move(std::get<1>(mesh_infos[i]).m_raw);
+					}
+					RenderResource::IO_Buffer iBuffer;
+					iBuffer = std::move(raw_data);
+					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), mesh_guid, iBuffer);
 				}
-				else /* embedded data */ {
-					raw_data = std::move(std::get<1>(mesh_info).m_raw);
-				}
-				RenderResource::IO_Buffer iBuffer;
-				iBuffer = std::move(raw_data);
-				bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), mesh_guid, iBuffer);
+				mesh_guids[i] = mesh_guid;
 			}
 
 			//process texture
-			std::vector<GUID32> texture_guids(process_job.m_textures_info.m_infos.size(), std::numeric_limits<GUID32>{}.max());
-			for (int i{ 0 }; i < process_job.m_textures_info.m_infos.size(); ++i) {
-				auto& info = process_job.m_textures_info.m_infos[i];
-				auto texture_guid = m_render_scene->getTextureGUIDGenerator().generateGUID(info.m_detail);
+			for (int i{ 0 }; i < process_job.m_images_info.m_infos.size(); ++i) {
+				auto& info = process_job.m_images_info.m_infos[i];
+				auto image_guid = m_render_scene->getImageGUIDGenerator().generateGUID(info.m_detail);
 				Image raw_texture;
-				if (not m_render_resource->hasTexture(texture_guid)) {
+				if (not m_render_resource->hasTexture(image_guid)) {
 					Image raw_texture;
 					if (info.m_detail.index() == 0) {
 						bool load_ret = resource_manager->loadMageImage(std::get<0>(info.m_detail).m_uri, &raw_texture, nullptr, nullptr);
@@ -105,20 +111,19 @@ namespace Mage {
 					}
 					RenderResource::IO_Texture iTexture;
 					iTexture = std::move(raw_texture);
-					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), texture_guid, iTexture);
+					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), image_guid, iTexture);
 					assert(create_ret);
 				}
-				texture_guids[i] = texture_guid;
+				image_guids[i] = image_guid;
 			}
 
 			//TODO:process material
-			std::vector<GUID64> material_guids(process_job.m_materials_info.m_infos.size());
 			for (int i{ 0 }; i < process_job.m_materials_info.m_infos.size(); ++i) {
 				auto& material = process_job.m_materials_info.m_infos[i];
 				VkRenderMaterialDescription raw_material;
-				raw_material.m_base_color_texture_index = texture_guids[material.m_base_color_texture_index];
-				raw_material.m_metallic_roughness_texture_index = texture_guids[material.m_metallic_roughness_texture_index];
-				raw_material.m_normal_texture_index = texture_guids[material.m_normal_texture_index];
+				raw_material.m_base_color_texture_index = image_guids[material.m_base_color_texture_index];
+				raw_material.m_metallic_roughness_texture_index = image_guids[material.m_metallic_roughness_texture_index];
+				raw_material.m_normal_texture_index = image_guids[material.m_normal_texture_index];
 
 				auto material_guid = m_render_scene->getMaterialGUIDGenerator().generateGUID(raw_material);
 				if (not m_render_resource->hasMaterial(material_guid)) {
@@ -133,12 +138,32 @@ namespace Mage {
 			//create render models
 			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
 			for (uint32_t i{ 0 }; i < process_job.m_mesh_info.m_transfer_mesh_descriptions.size();++i) {
-				auto part_mesh_guid = part_mesh_generator.generateGUID({ mesh_guid,i });
-
+				auto& primitive_info = process_job.m_mesh_info.m_transfer_mesh_descriptions[i];
+				auto mesh_guid_combined = [&mesh_guids](VkRenderMeshDescription& primitive_des)->GUID64 {
+					size_t hash{ 0u };
+					primitive_des.m_attribute_infos[0].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[0].m_buffer_index];
+					primitive_des.m_attribute_infos[1].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[1].m_buffer_index];
+					primitive_des.m_attribute_infos[2].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[2].m_buffer_index];
+					primitive_des.m_attribute_infos[3].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[3].m_buffer_index];
+					primitive_des.m_attribute_infos[4].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[4].m_buffer_index];
+					primitive_des.m_attribute_infos[5].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[5].m_buffer_index];
+					primitive_des.m_attribute_infos[6].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[6].m_buffer_index];
+					hash_combine(hash,
+						primitive_des.m_attribute_infos[0].m_buffer_index,
+						primitive_des.m_attribute_infos[1].m_buffer_index,
+						primitive_des.m_attribute_infos[2].m_buffer_index,
+						primitive_des.m_attribute_infos[3].m_buffer_index,
+						primitive_des.m_attribute_infos[4].m_buffer_index,
+						primitive_des.m_attribute_infos[5].m_buffer_index,
+						primitive_des.m_attribute_infos[6].m_buffer_index);
+					return hash;
+				};
 				VkRenderModel model;
+				model.m_mesh_combined_guid64 = mesh_guid_combined(primitive_info);
+				auto part_mesh_guid = part_mesh_generator.generateGUID({ model.m_mesh_combined_guid64,i });
+
 				model.m_mesh_description = std::move(process_job.m_mesh_info.m_transfer_mesh_descriptions[i]);
 				model.m_model_guid32 = part_mesh_guid;
-				model.m_mesh_guid32 = mesh_guid;
 				model.m_material_guid64 = material_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_material_index];
 
 				m_render_scene->m_render_models.emplace_back(model);
@@ -150,13 +175,5 @@ namespace Mage {
 		while (not m_render_scene->m_p_scene_delete_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_delete_deque->getNextProcess();
 		}
-
-		//camera component?
-		//m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
-		//m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
-		//m_render_camera->setFov(m_pending_data->m_camera.m_pending_fov);
-		//m_render_camera->setAspect(m_pending_data->m_camera.m_pending_aspect);
-		//m_render_camera->setzNear(m_pending_data->m_camera.m_pending_znear);
-		//m_render_camera->setzFar(m_pending_data->m_camera.m_pending_zfar);
 	}
 }

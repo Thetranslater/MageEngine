@@ -52,16 +52,16 @@ namespace Mage {
 
 		return inv_pers;
 	}
-
+	//TODO:验证
 	Matrix4x4 RenderCamera::getPerspectiveMatrix_Infinite() {
-		Matrix4x4 normal_pers = Matrix4x4::Perspective(m_fov, m_aspect, m_znear, m_zfar);
+		Matrix4x4 normal_pers = getPerspectiveMatrix();
 		normal_pers[2][2] = 1.f - FLT_EPSILON;
 		normal_pers[2][3] = -m_znear * (1.f - FLT_EPSILON);
 		return normal_pers;
 	}
-
+	//TODO::验证
 	Matrix4x4 RenderCamera::getPerspectiveMatrix_Precise() {
-		Matrix4x4 normal_pers = Matrix4x4::Perspective(m_fov, m_aspect, m_znear, m_zfar);
+		Matrix4x4 normal_pers = getPerspectiveMatrix();
 		normal_pers[2][2] = m_znear / (m_znear - m_zfar);
 		normal_pers[2][3] = -normal_pers[2][3];
 		return normal_pers;

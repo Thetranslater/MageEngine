@@ -66,11 +66,11 @@ namespace Mage {
 			return true;
 		}
 
-		assert(not std::get<1>(texture).m_data.empty());
+		assert(not std::get<1>(texture).m_image.empty());
 
 		VkRenderTexture render_texture;
 		auto& itexture = std::get<1>(texture);
-		VkDeviceSize texture_size = itexture.m_data.size();
+		VkDeviceSize texture_size = itexture.m_image.size();
 
 		//create image and bind memory before insert to map
 		VulkanHelper::imageCreationHelper(rhi, itexture.m_width, itexture.m_height,
@@ -90,7 +90,7 @@ namespace Mage {
 		//copy data from out to vkbuffer
 		void* ppdata{ nullptr };
 		vkMapMemory(rhi->getDevice(), staging_memory, 0, texture_size, 0, &ppdata);
-		memcpy(ppdata, itexture.m_data.data(), texture_size);
+		memcpy(ppdata, itexture.m_image.data(), texture_size);
 		vkUnmapMemory(rhi->getDevice(), staging_memory);
 
 		//transition image layout to destination
@@ -122,7 +122,7 @@ namespace Mage {
 		}
 
 		//smapler creation
-		render_texture.m_sampler = itexture.m_combined_sampler.asVulkanSampler(rhi);
+		//render_texture.m_sampler = itexture.m_combined_sampler.asVulkanSampler(rhi);
 
 		//free temporary buffer
 		vkDestroyBuffer(rhi->getDevice(), staging_buffer, nullptr);
@@ -143,21 +143,22 @@ namespace Mage {
 		render_material.m_double_side = std::get<1>(material).m_double_side;
 
 		//TODO:Ôö¼Óocculusion texture
+		VkSampler base_color_sampler = std::get<1>(material).m_base_color_texture_sampler.asVulkanSampler(rhi);
+		VkSampler normal_sampler = std::get<1>(material).m_normal_texture_sampler.asVulkanSampler(rhi);
+		VkSampler metallic_roughness_sampler = std::get<1>(material).m_metallic_roughness_texture_sampler.asVulkanSampler(rhi);
+
 		VkDescriptorSetLayoutBinding bindings[3];
 		bindings[0] = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
 		bindings[0].binding = 0;
 		bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		bindings[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-		bindings[0].pImmutableSamplers = std::get<1>(material).m_base_color_texture_index != 0xffffffff ?
-			&m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_sampler : nullptr;
+		bindings[0].pImmutableSamplers = &base_color_sampler;
 		bindings[1] = bindings[0];
 		bindings[1].binding = 1;
-		bindings[1].pImmutableSamplers = std::get<1>(material).m_normal_texture_index != 0xfffffff ?
-			&m_guid_texture_map[std::get<1>(material).m_normal_texture_index].m_sampler : nullptr;
+		bindings[1].pImmutableSamplers = &normal_sampler;
 		bindings[2] = bindings[0];
 		bindings[2].binding = 2;
-		bindings[2].pImmutableSamplers = std::get<1>(material).m_metallic_roughness_texture_index != 0xffffffff ?
-			&m_guid_texture_map[std::get<1>(material).m_metallic_roughness_texture_index].m_sampler : nullptr;
+		bindings[2].pImmutableSamplers = &metallic_roughness_sampler;
 
 		VkDescriptorSetLayoutCreateInfo layout_info = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
 		layout_info.bindingCount = 3;

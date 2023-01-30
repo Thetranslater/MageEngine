@@ -25,7 +25,7 @@ namespace Mage {
 
 	struct VkRenderMeshDescription {
 		//mesh
-		STATIC_DATA std::array<VkRenderMeshAttributeDescription, 7> m_mesh_data_offset_infos{}; //6和vertex属性顺序对应, 7是indices
+		STATIC_DATA std::array<VkRenderMeshAttributeDescription, 7> m_attribute_infos{}; //6和vertex属性顺序对应, 7是indices
 		//material
 		DYNAMIC_DATA float m_metallic_factor{ 1.f };
 		DYNAMIC_DATA float m_roughness_factor{ 1.f };
@@ -41,10 +41,13 @@ namespace Mage {
 		STATIC_DATA bool m_double_side{ false };
 		STATIC_DATA uint32_t m_base_color_texture_index{ 0xffffffff };
 		STATIC_DATA Sampler m_base_color_texture_sampler{};
+
 		STATIC_DATA uint32_t m_metallic_roughness_texture_index{ 0xffffffff };
 		STATIC_DATA Sampler m_metallic_roughness_texture_sampler{};
+
 		STATIC_DATA uint32_t m_normal_texture_index{ 0xffffffff };
 		STATIC_DATA Sampler m_normal_texture_sampler{};
+
 		STATIC_DATA uint32_t m_occlusion_texture_index{ 0xffffffff };
 		STATIC_DATA Sampler m_occlusion_texture_sampler{};
 
@@ -124,8 +127,8 @@ namespace Mage {
 	};
 
 	struct VkRenderPartMesh {
-		GUID32 m_mesh_guid;
-		GUID32 m_part_index;
+		GUID64 m_mesh_guid;
+		GUID64 m_part_index;
 
 		bool operator==(const VkRenderPartMesh& rh) const {
 			return m_mesh_guid == rh.m_mesh_guid && m_part_index == rh.m_part_index;

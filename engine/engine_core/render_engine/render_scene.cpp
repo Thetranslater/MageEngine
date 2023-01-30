@@ -10,11 +10,11 @@ namespace Mage {
 		return m_mesh_guid_generator;
 	}
 
-	GUIDGenerator<std::variant<VkRenderTextureURI, RawTextureData>>& RenderScene::getTextureGUIDGenerator() {
-		return m_texture_guid_generator;
+	GUIDGenerator<std::variant<VkRenderImageURI, RawImageData>>& RenderScene::getImageGUIDGenerator() {
+		return m_image_guid_generator;
 	}
 
-	GUIDGenerator<VkRenderPartMesh>& RenderScene::getPartMeshGUIDGenerator() {
+	GUIDGenerator<VkRenderPartMesh, GUID64>& RenderScene::getPartMeshGUIDGenerator() {
 		return m_part_mesh_guid_generator;
 	}
 
