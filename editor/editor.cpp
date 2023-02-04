@@ -5,12 +5,15 @@
 #include"engine_core/function/global_context/global_context.h"
 #include"engine_core/engine.h"
 #include"engine_core/input/input_system.h"
+#include"engine_core/render_engine/render_system.h"
 
 namespace Mage {
 	void MageEditor::initialize(MageEngine* engine) {
 		m_engine = engine;
 
 		editor_global_context.initialize(engine_global_context);
+
+		initializeUI();
 	}
 
 	void MageEditor::shutdown() {
@@ -31,5 +34,9 @@ namespace Mage {
 				return;
 			}
 		}
+	}
+
+	void MageEditor::initializeUI() {
+		editor_global_context.m_render_system.lock()->initializeUIBackend();
 	}
 }

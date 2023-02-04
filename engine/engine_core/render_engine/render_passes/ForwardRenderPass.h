@@ -4,13 +4,20 @@
 
 namespace Mage {
 	struct ForwardRenderPassCreateInfo:public RenderPassCreateInfo{};
-
+	//TODO:Ìí¼Óuipass
 	class ForwardRenderPass :public RenderPass {
+
+		enum SubpassType {
+			subpass_type_forward,
+			subpass_type_ui
+		};
+
 	public:
 		void initialize(const RenderPassCreateInfo*) override final;
 
 		void draw() override final;
 
+		void recreateAfterRHI();
 	private:
 		void setupRenderPass();
 		void setupDescriptorLayouts();
@@ -22,7 +29,7 @@ namespace Mage {
 	};
 
 	struct ForwardRenderSubpassCreateInfo :public SubpassCreateInfo {
-		std::vector<int> m_layouts_indices;
+		std::vector<int> info_layout_indices;
 	};
 
 	class ForwardRenderSubpass :public Subpass {
@@ -30,9 +37,9 @@ namespace Mage {
 		void initialize(SubpassCreateInfo*) override final;
 
 		void draw() override final;
+
+		void clean() override final;
 	private:
-		//void setupDescriptorSetLayouts(const std::vector<int>& indices) override final;
-		//void setupDescriptorSets(const std::vector<int>& indices) override final;
 		void setupPipeline(const std::vector<int>&) override final;
 	};
 }

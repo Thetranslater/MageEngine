@@ -409,6 +409,7 @@ namespace Mage {
 		auto& images_info = render_model_info.m_images_info;
 		auto& materials_info = render_model_info.m_materials_info;
 
+		mesh_info.m_infos.resize(m_buffers.size());
 		for (int i = 0; i < m_buffers.size(); ++i) {
 			if (not m_buffers[i].m_data.empty()) {
 				m_buffers[i].m_uri.clear();
@@ -442,26 +443,33 @@ namespace Mage {
 		}
 		for (auto& material : m_materials) {
 			if (material.m_pbr_metallic_roughness.m_base_color_texture.m_index != -1) {
-				images_info.m_infos[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].is_srgb = true;
+				images_info.m_infos[m_textures[material.m_pbr_metallic_roughness.m_base_color_texture.m_index].m_source].is_srgb = true;
 			}
 		}
 
 		materials_info.m_infos.resize(m_materials.size());
 		for (int i{ 0 }; i < materials_info.m_infos.size(); ++i) {
 			materials_info.m_infos[i].m_double_side = m_materials[i].m_double_side;
-			materials_info.m_infos[i].m_base_color_texture_index = m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_source;
-			materials_info.m_infos[i].m_metallic_roughness_texture_index = m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_source;
-			materials_info.m_infos[i].m_normal_texture_index = m_textures[m_materials[i].m_normal_texture.m_index].m_source;
-			materials_info.m_infos[i].m_occlusion_texture_index = m_textures[m_materials[i].m_occlusion_texture.m_index].m_source;
+			materials_info.m_infos[i].m_base_color_texture_index = 
+				m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index == -1 ? 
+					-1 : m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_source;
+			materials_info.m_infos[i].m_metallic_roughness_texture_index = 
+				m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index == -1 ?
+					-1 : m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_source;
+			materials_info.m_infos[i].m_normal_texture_index = 
+				m_materials[i].m_normal_texture.m_index == -1 ?
+					-1 : m_textures[m_materials[i].m_normal_texture.m_index].m_source;
+			//TODO:
+			//materials_info.m_infos[i].m_occlusion_texture_index = m_textures[m_materials[i].m_occlusion_texture.m_index].m_source;
 
 			//sampler
-			if (m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_sampler != -1) {
+			if (m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index != -1 and m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_sampler != -1) {
 				materials_info.m_infos[i].m_base_color_texture_sampler = m_samplers[m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_sampler];
 			}
-			if (m_textures[m_materials[i].m_normal_texture.m_index].m_sampler != -1) {
+			if (m_materials[i].m_normal_texture.m_index != -1 and m_textures[m_materials[i].m_normal_texture.m_index].m_sampler != -1) {
 				materials_info.m_infos[i].m_normal_texture_sampler = m_samplers[m_textures[m_materials[i].m_normal_texture.m_index].m_sampler];
 			}
-			if (m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_sampler != -1) {
+			if (m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index != -1 and m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_sampler != -1) {
 				materials_info.m_infos[i].m_metallic_roughness_texture_sampler = m_samplers[m_textures[m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index].m_sampler];
 			}
 			//TODO:增加其他的sampler
@@ -483,11 +491,11 @@ namespace Mage {
 				//material
 				if (primitive.m_material != -1) {
 					primitive_material = &m_materials[primitive.m_material];
-					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_base_color_factor	= primitive_material->m_pbr_metallic_roughness.m_base_color_factor;
-					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
-					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_base_color_factor	= primitive_material->m_pbr_metallic_roughness.m_base_color_factor;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_metallic_factor	= primitive_material->m_pbr_metallic_roughness.m_metallic_factor;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_roughness_factor	= primitive_material->m_pbr_metallic_roughness.m_roughness_factor;
 
-					mesh_info.m_transfer_mesh_descriptions[mesh_index].m_material_index = primitive.m_material;
+					mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_material_index = primitive.m_material;
 				}
 				else {
 					//TODO:无material的primitive
@@ -496,7 +504,7 @@ namespace Mage {
 				//mesh
 				uint32_t buffer_stride{ 0xffffffff }, buffer_offset{ 0xffffffff }, element_count{ 0xffffffff };
 				auto get_attribute_info = [&](const std::string& attribute, int index) {
-					auto& attribute_info = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_attribute_infos[index];
+					auto& attribute_info = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_attribute_infos[index];
 					attribute_accessor = &m_accessors[primitive.m_attributes[attribute]];
 
 					attribute_info.m_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
@@ -531,7 +539,7 @@ namespace Mage {
 				
 				//indices
 				if (primitive.m_indices != -1) {
-					auto& indices_info = mesh_info.m_transfer_mesh_descriptions[mesh_index].m_attribute_infos[6];
+					auto& indices_info = mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_attribute_infos[6];
 					attribute_accessor = &m_accessors[primitive.m_indices];
 					
 					indices_info.m_stride = m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride == 0 ? attribute_accessor->getAccessBytes() : m_buffer_views[attribute_accessor->m_buffer_view].m_byte_stride;
@@ -541,11 +549,16 @@ namespace Mage {
 				}
 
 				//params
-				mesh_info.m_transfer_mesh_descriptions[mesh_index].m_matrix = matrix;
+				mesh_info.m_transfer_mesh_descriptions[sub_meshes_num].m_matrix = matrix;
+
+				++sub_meshes_num;
 			}
 		};
 		Matrix4x4 root_mat{ Matrix4x4::identity };
-		processNode(m_nodes, 0, root_mat, std::function<void(const int&, const Matrix4x4&)>(mesh_process));
+		for (int i{ 0 }; i < m_nodes.size(); ++i) {
+			if (m_nodes[i].m_parent == -1)
+				processNode(m_nodes, i, root_mat, mesh_process);
+		}
 
 		return render_model_info;
 	}
@@ -578,7 +591,7 @@ namespace Mage {
 	//目前处理纹理的冗余索引数据
 	void Model::redundancyRemove(tinygltf::Model& gltf_model) {
 		std::unordered_map<uint32_t, uint32_t> img_tex_map;
-		for (uint32_t i{ 0u }; i <= gltf_model.textures.size(); ++i) {
+		for (uint32_t i{ 0u }; i < gltf_model.textures.size(); ++i) {
 			if (img_tex_map.find(gltf_model.textures[i].source) != img_tex_map.end()) {
 				int owner = img_tex_map[gltf_model.textures[i].source];
 				for (auto& material : gltf_model.materials) {

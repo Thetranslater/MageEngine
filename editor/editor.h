@@ -13,6 +13,8 @@ namespace Mage {
 		void shutdown();
 
 	private:
+		void initializeUI();
+
 		MageEngine* m_engine{ nullptr };
 	};
 }

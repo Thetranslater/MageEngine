@@ -79,8 +79,8 @@ namespace Mage {
 
 		Texture& operator=(const Texture& ltexture);
 	public:
-		uint32_t m_sampler;
-		uint32_t m_source;
+		int m_sampler;
+		int m_source;
 	};
 
 	class Image {

@@ -9,15 +9,11 @@
 namespace Mage {
 	class VulkanRHI;
 	class Subpass;
-	class RenderScene;
-	class RenderResource;
-	class RenderCamera;
+	class RenderSystem;
 	struct GlobalUpdatedBuffer;
 
 	struct RenderPassCreateInfo{
-		RenderResource* render_global_resource;
-		RenderScene* render_scene;
-		RenderCamera* render_camera;
+		RenderSystem* info_render_system;
 	};
 
 	//primary pipeline
@@ -38,8 +34,6 @@ namespace Mage {
 
 		const VkRenderPass& getVkRenderPass() { return m_render_pass; }
 
-		virtual void rebindGlobalBuffer() {};
-
 		VkRenderPass m_render_pass;
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };	//vulkanRHI
 
@@ -48,9 +42,7 @@ namespace Mage {
 
 		std::vector<VkFramebuffer> m_framebuffers;		//create framebuffer for each swapchain image
 		std::vector<std::shared_ptr<Subpass>> m_p_subpasses;				//pipelines
-		
-		RenderResource* m_render_resource{ nullptr };
-		RenderScene* m_render_scene{ nullptr };
-		RenderCamera* m_render_camera{ nullptr };
+
+		RenderSystem* m_render_system{ nullptr };
 	};
 }

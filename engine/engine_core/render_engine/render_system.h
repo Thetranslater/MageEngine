@@ -23,8 +23,16 @@ namespace Mage {
 		float m_pending_zfar;
 	};
 
+	struct RenderPendingEditor {
+		uint32_t viewport_width;
+		uint32_t viewport_height;
+		double viewport_x;
+		double viewport_y;
+	};
+
 	struct RenderPendingData {
 		RenderPendingCamera m_camera;
+		RenderPendingEditor m_editor;
 	};
 
 	class RenderSystem {
@@ -32,17 +40,22 @@ namespace Mage {
 		RenderSystem() = default;
 		~RenderSystem() {};
 
-		//TODO:initialize
 		void initialize(std::shared_ptr<WindowSystem> window_system);
 		void tick();
 		void preprocess();//渲染前处理，主要负责资源检查和加载
+		//TODO:initializeUI-vulkan backend
+		void initializeUIBackend();
 
-		std::shared_ptr<VulkanRHI> getVulkanRHI() { return m_vulkan_rhi; }
-		std::shared_ptr<RenderScene> getRenderScene() { return m_render_scene; }
-		std::shared_ptr<RenderCamera> getRenderCamera() { return m_render_camera; }
+		inline std::shared_ptr<VulkanRHI> getVulkanRHI() { return m_vulkan_rhi; }
+		inline std::shared_ptr<RenderScene> getRenderScene() { return m_render_scene; }
+		inline std::shared_ptr<RenderCamera> getRenderCamera() { return m_render_camera; }
+		inline std::shared_ptr<RenderResource> getRenderResource() { return m_render_resource; }
+		inline std::shared_ptr<RenderPendingData> getPendingData() { return m_pending_data; }
 
-		std::shared_ptr<RenderPendingData> getPendingData() { return m_pending_data; }
 	private:
+		void imgui_backend_vulkan_init();
+		void imgui_backend_uploadfonts();
+
 		std::shared_ptr<RenderPendingData> m_pending_data{ nullptr };
 
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };

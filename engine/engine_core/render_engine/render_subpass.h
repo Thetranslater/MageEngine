@@ -12,8 +12,8 @@ namespace Mage {
 	class RenderPass;
 
 	struct SubpassCreateInfo {
-		std::shared_ptr<VulkanRHI> m_vulkan_rhi;
-		RenderPass* m_render_pass;
+		std::shared_ptr<VulkanRHI> info_vulkan_rhi;
+		RenderPass* info_render_pass;
 	};
 
 	/*
@@ -27,6 +27,7 @@ namespace Mage {
 
 		virtual void draw() {};
 		virtual void setupPipeline(const std::vector<int>&) {};
+		virtual void clean() {};
 	protected:
 		RenderPass* p_m_render_pass;
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{nullptr};

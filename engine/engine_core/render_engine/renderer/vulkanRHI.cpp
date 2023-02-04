@@ -90,11 +90,14 @@ namespace Mage {
 		}
 	}
 
-	void VulkanRHI::prepareVulkanRHIBeforeRender() {
+	bool VulkanRHI::prepareVulkanRHIBeforeRender(std::function<void()> pass_recreate) {
 		VkResult acquire_result = vkAcquireNextImageKHR(m_device, m_swapchain, UINT64_MAX, m_semaphores[m_current_frame_index], VK_NULL_HANDLE, &m_swapchain_image_index);
 		//TODO acquire_result for recreate swapchain
 
-
+		if (acquire_result == VK_ERROR_OUT_OF_DATE_KHR) {
+			recreateSwapchain(pass_recreate);
+			return true;//TODO:是否会造成死锁
+		}
 
 
 		vkResetCommandBuffer(m_command_buffer,0);
@@ -107,6 +110,7 @@ namespace Mage {
 			MAGE_THROW(failed to begin to record command)
 		}
 
+		return false;
 	}
 
 	void VulkanRHI::prepareVulkanRHIAfterRender() {
@@ -493,4 +497,36 @@ namespace Mage {
 		return VK_ERROR_EXTENSION_NOT_PRESENT;
 	}
 
+	void VulkanRHI::clearupSwapchainRelated() {
+		//depth resource
+		vkDestroyImageView(m_device, m_depth_image_view,nullptr);
+		vkDestroyImage(m_device, m_depth_image, nullptr);
+		vkFreeMemory(m_device, m_depth_image_memory, nullptr);
+
+		//swapchain imageViews
+		for (auto& views : m_swapchain_image_views) {
+			vkDestroyImageView(m_device, views, nullptr);
+		}
+	}
+
+	void VulkanRHI::recreateSwapchain(std::function<void()> pass_recreate) {
+		int width{ 0 }, height{ 0 };
+		glfwGetFramebufferSize(m_window, &width, &height);
+		while (width == 0 or height == 0) {
+			glfwGetFramebufferSize(m_window, &width, &height);
+			glfwWaitEvents();
+		}
+
+		vkDeviceWaitIdle(m_device);
+
+		clearupSwapchainRelated();
+
+		createSwapchain(m_swapchain);
+
+		createSwapchainImageViews();
+
+		createDepthImage();
+
+		pass_recreate();
+	}
 }

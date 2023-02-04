@@ -1,3 +1,6 @@
+#include"imgui-master/imgui.h"
+#include"imgui-master/backends/imgui_impl_vulkan.h"
+
 #include"core/macro.h"
 #include"core/hash.h"
 
@@ -28,9 +31,9 @@ namespace Mage {
 		m_render_camera = std::make_shared<RenderCamera>();
 		m_render_camera->setPosition(1.f, 0.f, -2.f);
 		m_render_camera->setRotation(Quaternion::FromToRotation(Vector3{ 0.f,0.f,1.f }, Vector3{ -1.f,0.f,2.f }));
-		m_render_camera->setFov(10.f);
+		m_render_camera->setFov(90.f);
 		m_render_camera->setzNear(0.1f);
-		m_render_camera->setzFar(10.f);
+		m_render_camera->setzFar(1000.f);
 		m_render_camera->setAspect(float(m_vulkan_rhi->getSwapchainExtent().width) / m_vulkan_rhi->getSwapchainExtent().height);
 
 
@@ -45,7 +48,15 @@ namespace Mage {
 		m_render_pass->initialize(&create_info);
 	}
 
-	//TODO
+	void RenderSystem::initializeUIBackend() {
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
+
+		imgui_backend_vulkan_init();
+		imgui_backend_uploadfonts();
+	}
+
+
 	void RenderSystem::tick() {
 		preprocess();
 
@@ -55,13 +66,14 @@ namespace Mage {
 
 		//m_render_pass->rebindGlobalBuffer();
 
-		m_vulkan_rhi->prepareVulkanRHIBeforeRender();
+		bool is_window_size_change = m_vulkan_rhi->prepareVulkanRHIBeforeRender(std::bind(&ForwardRenderPass::recreateAfterRHI, static_cast<ForwardRenderPass*>(m_render_pass.get())));
+		if (is_window_size_change) return;
 
 		m_render_pass->draw();
 
 		m_vulkan_rhi->prepareVulkanRHIAfterRender();
 	}
-	//TODO:重写
+
 	void RenderSystem::preprocess() {
 		//资源的检查需要从一个工作队列中处理，队列存储这所有当前帧需要加载的mesh数据。该队列存储在渲染场景类中
 		std::shared_ptr<ResourceManager> resource_manager = engine_global_context.m_resource_manager;
@@ -121,9 +133,9 @@ namespace Mage {
 			for (int i{ 0 }; i < process_job.m_materials_info.m_infos.size(); ++i) {
 				auto& material = process_job.m_materials_info.m_infos[i];
 				VkRenderMaterialDescription raw_material;
-				raw_material.m_base_color_texture_index = image_guids[material.m_base_color_texture_index];
-				raw_material.m_metallic_roughness_texture_index = image_guids[material.m_metallic_roughness_texture_index];
-				raw_material.m_normal_texture_index = image_guids[material.m_normal_texture_index];
+				raw_material.m_base_color_texture_index = material.m_base_color_texture_index == -1 ? -1 : image_guids[material.m_base_color_texture_index];
+				raw_material.m_metallic_roughness_texture_index = material.m_metallic_roughness_texture_index == -1? -1 : image_guids[material.m_metallic_roughness_texture_index];
+				raw_material.m_normal_texture_index = material.m_normal_texture_index == -1 ? -1 : image_guids[material.m_normal_texture_index];
 
 				auto material_guid = m_render_scene->getMaterialGUIDGenerator().generateGUID(raw_material);
 				if (not m_render_resource->hasMaterial(material_guid)) {
@@ -143,11 +155,11 @@ namespace Mage {
 					size_t hash{ 0u };
 					primitive_des.m_attribute_infos[0].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[0].m_buffer_index];
 					primitive_des.m_attribute_infos[1].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[1].m_buffer_index];
-					primitive_des.m_attribute_infos[2].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[2].m_buffer_index];
-					primitive_des.m_attribute_infos[3].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[3].m_buffer_index];
-					primitive_des.m_attribute_infos[4].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[4].m_buffer_index];
-					primitive_des.m_attribute_infos[5].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[5].m_buffer_index];
-					primitive_des.m_attribute_infos[6].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[6].m_buffer_index];
+					primitive_des.m_attribute_infos[2].m_buffer_index = primitive_des.m_attribute_infos[2].m_buffer_index == -1 ? -1 : mesh_guids[primitive_des.m_attribute_infos[2].m_buffer_index];
+					primitive_des.m_attribute_infos[3].m_buffer_index = primitive_des.m_attribute_infos[3].m_buffer_index == -1 ? -1 : mesh_guids[primitive_des.m_attribute_infos[3].m_buffer_index];
+					primitive_des.m_attribute_infos[4].m_buffer_index = primitive_des.m_attribute_infos[4].m_buffer_index == -1 ? -1 : mesh_guids[primitive_des.m_attribute_infos[4].m_buffer_index];
+					primitive_des.m_attribute_infos[5].m_buffer_index = primitive_des.m_attribute_infos[5].m_buffer_index == -1 ? -1 : mesh_guids[primitive_des.m_attribute_infos[5].m_buffer_index];
+					primitive_des.m_attribute_infos[6].m_buffer_index = primitive_des.m_attribute_infos[6].m_buffer_index == -1 ? -1 : mesh_guids[primitive_des.m_attribute_infos[6].m_buffer_index];
 					hash_combine(hash,
 						primitive_des.m_attribute_infos[0].m_buffer_index,
 						primitive_des.m_attribute_infos[1].m_buffer_index,
@@ -175,5 +187,34 @@ namespace Mage {
 		while (not m_render_scene->m_p_scene_delete_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_delete_deque->getNextProcess();
 		}
+	}
+
+	void RenderSystem::imgui_backend_vulkan_init() {
+		ImGui_ImplVulkan_InitInfo initInfo{};
+		initInfo.Instance = m_vulkan_rhi->getInstance();
+		initInfo.PhysicalDevice = m_vulkan_rhi->getPhysicalDevice();
+		initInfo.Device = m_vulkan_rhi->getDevice();
+		initInfo.QueueFamily = m_vulkan_rhi->getGraphicsQueueFamilyIndex();
+		initInfo.Queue = m_vulkan_rhi->getGraphicsQueue();
+		initInfo.PipelineCache = VK_NULL_HANDLE;
+		initInfo.DescriptorPool = m_vulkan_rhi->getDescriptorPool();
+		initInfo.Subpass = 0;
+		initInfo.MinImageCount = m_vulkan_rhi->getSwapchainSize();
+		initInfo.ImageCount = m_vulkan_rhi->getSwapchainSize();
+		initInfo.MSAASamples = VK_SAMPLE_COUNT_1_BIT;
+		initInfo.Allocator = VK_NULL_HANDLE;
+		initInfo.CheckVkResultFn = nullptr;
+		ImGui_ImplVulkan_Init(&initInfo, m_render_pass->m_render_pass);
+	}
+
+	void RenderSystem::imgui_backend_uploadfonts() {
+		VkCommandBuffer imgui_cmd_buffer = m_vulkan_rhi->recordCommandsTemporarily();
+
+		ImGui_ImplVulkan_CreateFontsTexture(imgui_cmd_buffer);
+
+		m_vulkan_rhi->submitCommandsTemporarily(imgui_cmd_buffer);
+		vkDeviceWaitIdle(m_vulkan_rhi->getDevice());
+
+		ImGui_ImplVulkan_DestroyFontUploadObjects();
 	}
 }

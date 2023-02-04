@@ -1,4 +1,5 @@
 #include"engine_core/render_engine/render_passes/ForwardRenderPass.h"
+#include"engine_core/render_engine/render_passes/UIPass.h"
 
 #include"engine_core/render_engine/renderer/vulkanInfo.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
@@ -7,8 +8,10 @@
 #include"engine_core/render_engine/render_macro.h"
 #include"engine_core/render_engine/render_mesh.h"
 #include"engine_core/render_engine/render_resource.h"
-#include"engine_core/render_engine/render_scene.h"
 #include"engine_core/render_engine/render_camera.h"
+#include"engine_core/render_engine/render_scene.h"
+#include"engine_core/render_engine/render_system.h"
+
 
 #include"core/math/math.h"
 
@@ -97,7 +100,7 @@ namespace Mage {
 				VkWriteDescriptorSet writes[2] = { VulkanInfo::aboutVkWriteDescriptorSet() };
 				for (int j{ 0 }; j < 2; ++j) {
 					buffer_info[j] = VulkanInfo::aboutVkDescriptorBufferInfo();
-					buffer_info[j].buffer = m_render_resource->m_global_updated_buffer.m_buffers[i];
+					buffer_info[j].buffer = m_render_system->getRenderResource()->m_global_updated_buffer.m_buffers[i];
 					buffer_info[j].offset = 0;
 
 					writes[j] = VulkanInfo::aboutVkWriteDescriptorSet();
@@ -145,7 +148,6 @@ namespace Mage {
 			m_attachments.m_attachment_descriptions[1].finalLayout		= VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 		}
 
-		m_p_subpasses.resize(1);
 		VkSubpassDescription directional_lighting_subpass_desc = VulkanInfo::aboutVkSubpassDescription();
 		{
 			directional_lighting_subpass_desc.pipelineBindPoint			= VK_PIPELINE_BIND_POINT_GRAPHICS;
@@ -207,15 +209,38 @@ namespace Mage {
 	}
 
 	void ForwardRenderPass::setupSubPasses() {
-		m_p_subpasses.resize(1);
-		for (int i{ 0 }; i < m_p_subpasses.size(); ++i) {
-			m_p_subpasses[i] = std::make_shared<ForwardRenderSubpass>();
-			ForwardRenderSubpassCreateInfo subpass_create_info{};
-			subpass_create_info.m_render_pass = this;
-			subpass_create_info.m_vulkan_rhi = m_vulkan_rhi;
-			subpass_create_info.m_layouts_indices = { 0, 1 };
-			m_p_subpasses[i]->initialize(&subpass_create_info);
+		m_p_subpasses.resize(2);
+
+		m_p_subpasses[subpass_type_forward] = std::make_shared<ForwardRenderSubpass>();
+		ForwardRenderSubpassCreateInfo forward_create_info{};
+		forward_create_info.info_render_pass = this;
+		forward_create_info.info_vulkan_rhi = m_vulkan_rhi;
+		forward_create_info.info_layout_indices = { 0, 1 };
+		m_p_subpasses[subpass_type_forward]->initialize(&forward_create_info);
+
+		m_p_subpasses[subpass_type_ui] = std::make_shared<UISubpass>();
+		UISubpassCreateInfo ui_create_info{};
+		ui_create_info.info_render_pass = this;
+		ui_create_info.info_vulkan_rhi = m_vulkan_rhi;
+
+		m_p_subpasses[subpass_type_ui]->initialize(&ui_create_info);
+		//TODO:...
+	}
+
+	void ForwardRenderPass::recreateAfterRHI() {
+		//clean
+		//TODO:attachments clean
+		for (auto subpass : m_p_subpasses) {
+			subpass->clean();
 		}
+		vkDestroyRenderPass(m_vulkan_rhi->getDevice(), m_render_pass, nullptr);
+		for (auto& framebuffer : m_framebuffers) {
+			vkDestroyFramebuffer(m_vulkan_rhi->getDevice(), framebuffer, nullptr);
+		}		
+
+		setupRenderPass();
+		setupSubPasses();
+		setupFramebuffers();
 	}
 
 	//TODO::现在我们只有一个subpass，所以直接调用subpass的draw即可,资源都在scene和resource类中拿。
@@ -232,7 +257,7 @@ namespace Mage {
 		pass_begin_info.pClearValues = clears;
 		vkCmdBeginRenderPass(m_vulkan_rhi->getCurrentCommandBuffer(), &pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
-		m_p_subpasses[0]->draw();
+		m_p_subpasses[subpass_type_forward]->draw();
 	}
 
 	//subpass
@@ -240,9 +265,8 @@ namespace Mage {
 		Subpass::initialize(create_info);
 
 		ForwardRenderSubpassCreateInfo* this_create_info = reinterpret_cast<ForwardRenderSubpassCreateInfo*>(create_info);
-		//setupDescriptorSetLayouts(this_create_info->m_layouts_indices);
-		//setupDescriptorSets(this_create_info->m_set_indices);
-		setupPipeline(this_create_info->m_layouts_indices);
+
+		setupPipeline(this_create_info->info_layout_indices);
 	}
 
 	void ForwardRenderSubpass::setupPipeline(const std::vector<int>& indices) {
@@ -383,16 +407,23 @@ namespace Mage {
 		}
 	}
 
+	void ForwardRenderSubpass::clean() {
+		vkDestroyPipelineLayout(m_vulkan_rhi->getDevice(), m_pipeline_layout, nullptr);
+		vkDestroyPipeline(m_vulkan_rhi->getDevice(), m_pipeline, nullptr);
+	}
+
 	//TODO:vertex input state 应该是dynamic的
 	void ForwardRenderSubpass::draw() {
-		VkBuffer current_global_buffer_wait_for_update = p_m_render_pass->m_render_resource->m_global_updated_buffer.m_buffers[m_vulkan_rhi->getCurrentFrameIndex()];
-		void* map_pointer = p_m_render_pass->m_render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
-		RenderCamera* camera = p_m_render_pass->m_render_camera;
+		auto render_resource	= p_m_render_pass->m_render_system->getRenderResource();
+		auto render_camera		= p_m_render_pass->m_render_system->getRenderCamera();
+		auto render_scene		= p_m_render_pass->m_render_system->getRenderScene();
+		VkBuffer current_global_buffer_wait_for_update = render_resource->m_global_updated_buffer.m_buffers[m_vulkan_rhi->getCurrentFrameIndex()];
+		void* map_pointer = render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
 
 		//buffer,materials, submeshes
 		std::map<GUID64, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;
 		//batch recognizing
-		for (VkRenderModel& model : p_m_render_pass->m_render_scene->m_render_models) {
+		for (VkRenderModel& model : render_scene->m_render_models) {
 			auto& buffer_batch = model_batch[model.m_mesh_combined_guid64];
 			auto& material_batch = buffer_batch[model.m_material_guid64];
 			auto& mesh_batch = material_batch[model.m_model_guid32];
@@ -413,8 +444,8 @@ namespace Mage {
 
 		int begin_offset{ 0 };
 		GlobalBufferPerFrameData perframe_data{};
-		perframe_data.m_camera_view_matrix = glm::mat4(p_m_render_pass->m_render_camera->getViewMatrix());
-		perframe_data.m_camera_perspective_matrix = glm::mat4(p_m_render_pass->m_render_camera->getPerspectiveMatrix());
+		perframe_data.m_camera_view_matrix = glm::mat4(render_camera->getViewMatrix());
+		perframe_data.m_camera_perspective_matrix = glm::mat4(render_camera->getPerspectiveMatrix());
 
 		*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 		uint32_t offset = begin_offset;
@@ -431,7 +462,7 @@ namespace Mage {
 				vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(), 
 					VK_PIPELINE_BIND_POINT_GRAPHICS, 
 					m_pipeline_layout, 1, 1, 
-					&p_m_render_pass->m_render_resource->m_guid_material_map[material_guid].m_descriptor_set, 
+					&render_resource->m_guid_material_map[material_guid].m_descriptor_set, 
 					0, nullptr);
 				//DONE
 
@@ -451,7 +482,7 @@ namespace Mage {
 						if (get_offset_from(mark_mesh, index) != 0xffffffff) {
 							auto offset = get_offset_from(mark_mesh, index);
 							offsets[index] = offset;
-							buffers[index] = p_m_render_pass->m_render_resource->m_guid_buffer_map[
+							buffers[index] = render_resource->m_guid_buffer_map[
 								mark_mesh->m_mesh_description.m_attribute_infos[index].m_buffer_index].m_bi_data;
 						}
 						++index;
@@ -461,7 +492,7 @@ namespace Mage {
 					auto& index_offset_info = mark_mesh->m_mesh_description.m_attribute_infos[6];
 					//TODO:VK_INDEX_TYPE_UINT8_EXT
 					VkIndexType index_type = (index_offset_info.m_stride * 8) == 32 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
-					VkBuffer index_buffer = p_m_render_pass->m_render_resource->m_guid_buffer_map[
+					VkBuffer index_buffer = render_resource->m_guid_buffer_map[
 						mark_mesh->m_mesh_description.m_attribute_infos[6].m_buffer_index].m_bi_data;
 					vkCmdBindIndexBuffer(m_vulkan_rhi->getCurrentCommandBuffer(), index_buffer, index_offset_info.m_offset, index_type);
 					//DONE

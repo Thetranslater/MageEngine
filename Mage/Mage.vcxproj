@@ -118,7 +118,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Mage\engine\core;E:\Mage\3rdparty;E:\Tools\Vulkan\Include;E:\Mage\editor;E:\Mage\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Mage\3rdparty\imgui-master;E:\Mage\engine\core;E:\Mage\3rdparty;E:\Tools\Vulkan\Include;E:\Mage\editor;E:\Mage\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -137,7 +137,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Mage\engine\core;E:\Tools\Vulkan\Include;E:\Mage\engine;E:\Mage\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Mage\3rdparty\imgui-master;E:\Mage\engine\core;E:\Tools\Vulkan\Include;E:\Mage\engine;E:\Mage\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -176,6 +176,7 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_camera.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_pass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.cpp" />
+    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\UIPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_scene.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\render_subpass.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="..\editor\context\editor_global_context.h" />
     <ClInclude Include="..\editor\editor.h" />
     <ClInclude Include="..\editor\input\editor_input.h" />
+    <ClInclude Include="..\editor\ui\editor_ui.h" />
     <ClInclude Include="..\engine\asset\object_asset.h" />
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h" />
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h" />
@@ -231,6 +233,7 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_model.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_pass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.h" />
+    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\UIPass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_resource.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_scene.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_subpass.h" />
@@ -248,6 +251,11 @@
     <ClInclude Include="..\engine\engine_core\scaffold\scene.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\world.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\3rdparty\imgui-master\ImGUI\ImGUI.vcxproj">
+      <Project>{ece61864-96ff-45aa-82aa-74574bff5fe4}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

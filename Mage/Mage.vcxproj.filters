@@ -82,6 +82,9 @@
     <Filter Include="Mage\editor\input">
       <UniqueIdentifier>{fb746f51-e5fa-45a0-b852-7a8e7776f745}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\editor\ui">
+      <UniqueIdentifier>{aca145cf-d686-4d19-a23f-169635a1fa46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -203,6 +206,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Mage\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\UIPass.cpp">
+      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,6 +379,12 @@
     </ClInclude>
     <ClInclude Include="..\editor\input\editor_input.h">
       <Filter>Mage\editor\input</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\editor_ui.h">
+      <Filter>Mage\editor\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\UIPass.h">
+      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -180,7 +180,8 @@ namespace Mage {
 
 		VkDescriptorImageInfo binding_base_color = VulkanInfo::aboutVkDescriptorImageInfo();
 		binding_base_color.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		binding_base_color.imageView = m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_texture_view;
+		binding_base_color.imageView = 
+			std::get<1>(material).m_base_color_texture_index == -1 ? VK_NULL_HANDLE : m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_texture_view;
 		VkWriteDescriptorSet material_write_binding_0 = VulkanInfo::aboutVkWriteDescriptorSet();
 		material_write_binding_0.dstSet = render_material.m_descriptor_set;
 		material_write_binding_0.dstBinding = 0;
@@ -189,7 +190,8 @@ namespace Mage {
 
 		VkDescriptorImageInfo binding_normal = VulkanInfo::aboutVkDescriptorImageInfo();
 		binding_normal = binding_base_color;
-		binding_normal.imageView = m_guid_texture_map[std::get<1>(material).m_normal_texture_index].m_texture_view;
+		binding_normal.imageView = 
+			std::get<1>(material).m_normal_texture_index == -1? VK_NULL_HANDLE : m_guid_texture_map[std::get<1>(material).m_normal_texture_index].m_texture_view;
 		VkWriteDescriptorSet material_write_binding_1 = VulkanInfo::aboutVkWriteDescriptorSet();
 		material_write_binding_1 = material_write_binding_0;
 		material_write_binding_1.dstBinding = 1;
@@ -197,7 +199,8 @@ namespace Mage {
 
 		VkDescriptorImageInfo binding_metallic_roughness = VulkanInfo::aboutVkDescriptorImageInfo();
 		binding_metallic_roughness = binding_base_color;
-		binding_metallic_roughness.imageView = m_guid_texture_map[std::get<1>(material).m_metallic_roughness_texture_index].m_texture_view;
+		binding_metallic_roughness.imageView = 
+			std::get<1>(material).m_metallic_roughness_texture_index == -1? VK_NULL_HANDLE : m_guid_texture_map[std::get<1>(material).m_metallic_roughness_texture_index].m_texture_view;
 		VkWriteDescriptorSet material_write_binding_2 = VulkanInfo::aboutVkWriteDescriptorSet();
 		material_write_binding_2 = material_write_binding_0;
 		material_write_binding_2.dstBinding = 2;

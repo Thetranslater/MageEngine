@@ -42,58 +42,62 @@ namespace Mage {
 		~VulkanRHI();
 
 		void initialize(std::shared_ptr<WindowSystem>);
-		void prepareContext() { m_command_buffer = m_command_buffers[m_current_frame_index]; }
+		inline void prepareContext() { m_command_buffer = m_command_buffers[m_current_frame_index]; }
 
 		VkCommandBuffer recordCommandsTemporarily();
 		void submitCommandsTemporarily(VkCommandBuffer);
 
 		void waitForFences();
 
-		void prepareVulkanRHIBeforeRender();
+		bool prepareVulkanRHIBeforeRender(std::function<void()> pass_recreate);;
 		void prepareVulkanRHIAfterRender();
 
-		VkCommandBuffer getCurrentCommandBuffer() { return m_command_buffer; }
-		uint32_t getCurrentFrameIndex() { return m_current_frame_index; }
+		inline VkCommandBuffer getCurrentCommandBuffer() { return m_command_buffer; }
+		inline uint32_t getCurrentFrameIndex() { return m_current_frame_index; }
+
+		//instance
+		inline VkInstance getInstance() { return m_instance; }
 
 		//queue
-		VkQueue getGraphicsQueue() { return m_graphics_queue; }
-		VkQueue getPresentQueue() { return m_present_queue; }
+		inline VkQueue getGraphicsQueue() { return m_graphics_queue; }
+		inline VkQueue getPresentQueue() { return m_present_queue; }
+		inline uint32_t getGraphicsQueueFamilyIndex() { return m_queue_indices.m_graphics_family.value(); }
 
 		//device
-		VkDevice getDevice() { return m_device; }
-		VkPhysicalDevice getPhysicalDevice() { return m_physical_device; }
-		VkPhysicalDeviceMemoryProperties getPhysicalDeviceMemoryProperties() { return m_physical_device_memory_properties; }
-		VkPhysicalDeviceFeatures getDeviceSupportFeatures() { return m_physical_device_supported_features; }
-		VkPhysicalDeviceProperties getDeviceProperties() { return m_physical_device_properties; }
+		inline VkDevice getDevice() { return m_device; }
+		inline VkPhysicalDevice getPhysicalDevice() { return m_physical_device; }
+		inline VkPhysicalDeviceMemoryProperties getPhysicalDeviceMemoryProperties() { return m_physical_device_memory_properties; }
+		inline VkPhysicalDeviceFeatures getDeviceSupportFeatures() { return m_physical_device_supported_features; }
+		inline VkPhysicalDeviceProperties getDeviceProperties() { return m_physical_device_properties; }
 		
 		//swapchain
-		VkSwapchainKHR getSwapchain() { return m_swapchain; }
-		uint32_t getSwapchainSize() { return m_swapchain_size; }
-		uint32_t getSwapchainIndex() { return m_swapchain_image_index; }
-		VkExtent2D getSwapchainExtent() { return m_swapchain_extent; }
-		VkPresentModeKHR getSwapchainPresentMode() { return m_swapchain_present_mode; }
-		VkImageView getSwapchainImageView(uint32_t idx) { return m_swapchain_image_views[idx]; }
-		VkSurfaceFormatKHR getSwapchainSurfaceFormat() { return m_swapchain_surface_format; }
-		std::vector<VkImageView>& getSwapchainImageViews() { return m_swapchain_image_views; }
+		inline VkSwapchainKHR getSwapchain() { return m_swapchain; }
+		inline uint32_t getSwapchainSize() { return m_swapchain_size; }
+		inline uint32_t getSwapchainIndex() { return m_swapchain_image_index; }
+		inline VkExtent2D getSwapchainExtent() { return m_swapchain_extent; }
+		inline VkPresentModeKHR getSwapchainPresentMode() { return m_swapchain_present_mode; }
+		inline VkImageView getSwapchainImageView(uint32_t idx) { return m_swapchain_image_views[idx]; }
+		inline VkSurfaceFormatKHR getSwapchainSurfaceFormat() { return m_swapchain_surface_format; }
+		inline std::vector<VkImageView>& getSwapchainImageViews() { return m_swapchain_image_views; }
 
 		//depth
-		VkImageView getDepthImageView() { return m_depth_image_view; }
-		VkFormat getDepthImageFormat() { return m_depth_format; }
+		inline VkImageView getDepthImageView() { return m_depth_image_view; }
+		inline VkFormat getDepthImageFormat() { return m_depth_format; }
 
 		//descriptor pool
-		VkDescriptorPool getDescriptorPool() { return m_descriptor_pool; }
+		inline VkDescriptorPool getDescriptorPool() { return m_descriptor_pool; }
 
 		//sync
-		std::vector<VkFence>& getFences() { return m_fences; }
-		VkFence getFence(uint32_t idx) { return m_fences[idx]; }
-		std::vector<VkSemaphore>& getPresentSemaphores() { return m_present_semaphores; }
-		VkSemaphore getPresentSemaphore(uint32_t idx) { return m_present_semaphores[idx]; }
+		inline std::vector<VkFence>& getFences() { return m_fences; }
+		inline VkFence getFence(uint32_t idx) { return m_fences[idx]; }
+		inline std::vector<VkSemaphore>& getPresentSemaphores() { return m_present_semaphores; }
+		inline VkSemaphore getPresentSemaphore(uint32_t idx) { return m_present_semaphores[idx]; }
 		//TODO: nead more specific name
-		std::vector<VkSemaphore>& getSemaphores() { return m_semaphores; }
-		VkSemaphore getSemaphore(uint32_t idx) { return m_semaphores[idx]; }
+		inline 	std::vector<VkSemaphore>& getSemaphores() { return m_semaphores; }
+		inline VkSemaphore getSemaphore(uint32_t idx) { return m_semaphores[idx]; }
 
 		//others
-		static const uint32_t getMaxFramesNumber() { return m_max_frames; }
+		inline static const uint32_t getMaxFramesNumber() { return m_max_frames; }
 	private:
 		//initialize step functions
 		void createInstance();
@@ -108,6 +112,10 @@ namespace Mage {
 		void createCommandBuffers();
 		void createDescriptorPool();
 		void createSynchronizationPrimitives();
+
+		void recreateSwapchain(std::function<void()> pass_recreate);
+
+		void clearupSwapchainRelated();
 
 		//
 		VkResult createDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
