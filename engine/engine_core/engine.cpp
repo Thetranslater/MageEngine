@@ -21,6 +21,10 @@ namespace Mage {
 		engine_global_context.startEngine();
 	}
 
+	void MageEngine::postInitialize() {
+		engine_global_context.m_render_system->postSetup();
+	}
+
 	void MageEngine::logicalTick(float delta) {
 		//engine_global_context.m_input_system->tick();
 

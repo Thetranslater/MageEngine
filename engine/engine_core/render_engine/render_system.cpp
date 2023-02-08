@@ -1,5 +1,6 @@
-#include"imgui-master/imgui.h"
-#include"imgui-master/backends/imgui_impl_vulkan.h"
+#include"imgui-docking/imgui.h"
+#include"imgui-docking/backends/imgui_impl_vulkan.h"
+#include"imgui-docking/backends/imgui_impl_glfw.h"
 
 #include"core/macro.h"
 #include"core/hash.h"
@@ -39,19 +40,16 @@ namespace Mage {
 
 		m_render_resource = std::make_shared<RenderResource>();
 		m_render_resource->initialize(m_vulkan_rhi.get());
+	}
 
+	void RenderSystem::postSetup() {
 		m_render_pass = std::make_shared<ForwardRenderPass>();
 		RenderPassCreateInfo create_info{};
-		create_info.render_global_resource = m_render_resource.get();
-		create_info.render_scene = m_render_scene.get();
-		create_info.render_camera = m_render_camera.get();
+		create_info.info_render_system = this;
 		m_render_pass->initialize(&create_info);
 	}
 
 	void RenderSystem::initializeUIBackend() {
-		ImGui::CreateContext();
-		ImGui::StyleColorsDark();
-
 		imgui_backend_vulkan_init();
 		imgui_backend_uploadfonts();
 	}
@@ -187,9 +185,18 @@ namespace Mage {
 		while (not m_render_scene->m_p_scene_delete_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_delete_deque->getNextProcess();
 		}
+
+		//camera
+		m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
+		m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
+		m_render_camera->setFov(m_pending_data->m_camera.m_pending_fov);
+		m_render_camera->setAspect(m_pending_data->m_camera.m_pending_aspect);
+		m_render_camera->setzNear(m_pending_data->m_camera.m_pending_znear);
+		m_render_camera->setzFar(m_pending_data->m_camera.m_pending_zfar);
 	}
 
 	void RenderSystem::imgui_backend_vulkan_init() {
+		ImGui_ImplGlfw_InitForVulkan(engine_global_context.m_window_system->getGLFWWindow(), true);
 		ImGui_ImplVulkan_InitInfo initInfo{};
 		initInfo.Instance = m_vulkan_rhi->getInstance();
 		initInfo.PhysicalDevice = m_vulkan_rhi->getPhysicalDevice();

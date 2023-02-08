@@ -27,7 +27,7 @@ namespace Mage {
 	}
 
 	void VulkanRHI::initialize(std::shared_ptr<WindowSystem> window_system) {
-		m_window = window_system->getWindow();
+		m_window = window_system->getGLFWWindow();
 
 		createInstance();
 

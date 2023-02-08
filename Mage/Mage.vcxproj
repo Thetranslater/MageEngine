@@ -118,7 +118,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Mage\3rdparty\imgui-master;E:\Mage\engine\core;E:\Mage\3rdparty;E:\Tools\Vulkan\Include;E:\Mage\editor;E:\Mage\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Mage\3rdparty\imgui-docking;E:\Mage\engine\core;E:\Mage\3rdparty;E:\Tools\Vulkan\Include;E:\Mage\editor;E:\Mage\engine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -153,6 +153,7 @@
     <ClCompile Include="..\editor\context\editor_global_context.cpp" />
     <ClCompile Include="..\editor\editor.cpp" />
     <ClCompile Include="..\editor\input\editor_input.cpp" />
+    <ClCompile Include="..\editor\ui\editor_ui.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
@@ -253,8 +254,8 @@
     <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\3rdparty\imgui-master\ImGUI\ImGUI.vcxproj">
-      <Project>{ece61864-96ff-45aa-82aa-74574bff5fe4}</Project>
+    <ProjectReference Include="..\3rdparty\imgui-docking\IMGUI\IMGUI.vcxproj">
+      <Project>{4b701f91-ac0a-4028-beb3-5425f54c8770}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

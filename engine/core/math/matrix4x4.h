@@ -122,9 +122,9 @@ namespace Mage {
 
 		//make a transformation matrix through "postion rotation and the scale"
 		void SetTRS(const Vector3& pos, const Quaternion& q, const Vector3& s) {
-			float dx = q.x + q.x;//2x
-			float dy = q.y + q.y;//2y
-			float dz = q.z + q.z;//2z
+			float dx  = q.x + q.x;//2x
+			float dy  = q.y + q.y;//2y
+			float dz  = q.z + q.z;//2z
 			float dxw = dx * q.w;//2xw
 			float dyw = dy * q.w;//2yw
 			float dzw = dz * q.w;//2zw

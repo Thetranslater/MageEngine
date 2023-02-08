@@ -24,7 +24,7 @@ namespace Mage {
 		void pollEvents();
 		bool shouldClose();
 		void setInputMode(int,int);
-		GLFWwindow* getWindow();
+		GLFWwindow* getGLFWWindow();
 		std::array<int, 2> getWindowSize();
 
 		using OnResetFunc		= std::function<void()>;

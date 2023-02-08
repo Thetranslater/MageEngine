@@ -12,6 +12,8 @@
 #include"engine_core/render_engine/render_scene.h"
 #include"engine_core/render_engine/render_system.h"
 
+#include"context/editor_global_context.h"
+
 
 #include"core/math/math.h"
 
@@ -222,6 +224,7 @@ namespace Mage {
 		UISubpassCreateInfo ui_create_info{};
 		ui_create_info.info_render_pass = this;
 		ui_create_info.info_vulkan_rhi = m_vulkan_rhi;
+		ui_create_info.info_editor_ui = editor_global_context.m_editor_ui.get();
 
 		m_p_subpasses[subpass_type_ui]->initialize(&ui_create_info);
 		//TODO:...
@@ -258,6 +261,9 @@ namespace Mage {
 		vkCmdBeginRenderPass(m_vulkan_rhi->getCurrentCommandBuffer(), &pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
 		m_p_subpasses[subpass_type_forward]->draw();
+		m_p_subpasses[subpass_type_ui]->draw();
+
+		vkCmdEndRenderPass(m_vulkan_rhi->getCurrentCommandBuffer());
 	}
 
 	//subpass
@@ -414,6 +420,7 @@ namespace Mage {
 
 	//TODO:vertex input state 应该是dynamic的
 	void ForwardRenderSubpass::draw() {
+		auto render_pending		= p_m_render_pass->m_render_system->getPendingData();
 		auto render_resource	= p_m_render_pass->m_render_system->getRenderResource();
 		auto render_camera		= p_m_render_pass->m_render_system->getRenderCamera();
 		auto render_scene		= p_m_render_pass->m_render_system->getRenderScene();
@@ -433,13 +440,19 @@ namespace Mage {
 
 		vkCmdBindPipeline(m_vulkan_rhi->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 		VkViewport binding_viewport = VulkanInfo::aboutVkViewport();
-		binding_viewport.x = 0.f; binding_viewport.y = 0.f;
-		binding_viewport.width = m_vulkan_rhi->getSwapchainExtent().width; binding_viewport.height = m_vulkan_rhi->getSwapchainExtent().height;
-		binding_viewport.minDepth = 0.f; binding_viewport.maxDepth = 1.f;
+		binding_viewport.x			= render_pending->m_editor.viewport_x;
+		binding_viewport.y			= render_pending->m_editor.viewport_y;
+		binding_viewport.width		= render_pending->m_editor.viewport_width;
+		binding_viewport.height		= render_pending->m_editor.viewport_height;
+		binding_viewport.minDepth	= 0.f; 
+		binding_viewport.maxDepth	= 1.f;
 		vkCmdSetViewport(m_vulkan_rhi->getCurrentCommandBuffer(), 0, 1, &binding_viewport);
 		VkRect2D binding_scissor = VulkanInfo::aboutVkRect2D();
-		binding_scissor.offset = { 0,0 };
-		binding_scissor.extent = m_vulkan_rhi->getSwapchainExtent();
+		binding_scissor.offset.x		= std::max(render_pending->m_editor.viewport_x, 0.f);
+		binding_scissor.offset.y		= std::max(render_pending->m_editor.viewport_y, 0.f);
+		binding_scissor.extent.width	= render_pending->m_editor.viewport_width;
+		binding_scissor.extent.height	= render_pending->m_editor.viewport_height;
+		//binding_scissor.extent = m_vulkan_rhi->getSwapchainExtent();
 		vkCmdSetScissor(m_vulkan_rhi->getCurrentCommandBuffer(), 0, 1, &binding_scissor);
 
 		int begin_offset{ 0 };
@@ -536,7 +549,5 @@ namespace Mage {
 				}
 			}
 		}
-
-		vkCmdEndRenderPass(m_vulkan_rhi->getCurrentCommandBuffer());
 	}
 }

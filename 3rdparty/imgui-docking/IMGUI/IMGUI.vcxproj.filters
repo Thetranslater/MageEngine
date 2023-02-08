@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{4e567ca2-445c-4dce-958a-92857474ec56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\backends">
+      <UniqueIdentifier>{188a1ec3-766d-4210-af7f-3a1d4f86b76a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\imconfig.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imgui_internal.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imstb_rectpack.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imstb_textedit.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\imstb_truetype.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\backends\imgui_impl_glfw.h">
+      <Filter>source\backends</Filter>
+    </ClInclude>
+    <ClInclude Include="..\backends\imgui_impl_vulkan.h">
+      <Filter>source\backends</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\imgui.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui_demo.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui_draw.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui_tables.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\imgui_widgets.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\backends\imgui_impl_glfw.cpp">
+      <Filter>source\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\backends\imgui_impl_vulkan.cpp">
+      <Filter>source\backends</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

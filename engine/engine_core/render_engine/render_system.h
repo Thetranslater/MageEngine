@@ -24,10 +24,10 @@ namespace Mage {
 	};
 
 	struct RenderPendingEditor {
-		uint32_t viewport_width;
-		uint32_t viewport_height;
-		double viewport_x;
-		double viewport_y;
+		float viewport_width;
+		float viewport_height;
+		float viewport_x;
+		float viewport_y;
 	};
 
 	struct RenderPendingData {
@@ -41,6 +41,7 @@ namespace Mage {
 		~RenderSystem() {};
 
 		void initialize(std::shared_ptr<WindowSystem> window_system);
+		void postSetup();
 		void tick();
 		void preprocess();//渲染前处理，主要负责资源检查和加载
 		//TODO:initializeUI-vulkan backend

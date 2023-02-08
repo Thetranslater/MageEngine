@@ -1,3 +1,5 @@
+#include"imgui-docking/imgui.h"
+
 #include"editor.h"
 #include"input/editor_input.h"
 #include"context/editor_global_context.h"
@@ -12,6 +14,8 @@ namespace Mage {
 		m_engine = engine;
 
 		editor_global_context.initialize(engine_global_context);
+
+		m_engine->postInitialize();
 
 		initializeUI();
 	}
@@ -37,6 +41,12 @@ namespace Mage {
 	}
 
 	void MageEditor::initializeUI() {
+		ImGui::CreateContext();
+		ImGui::StyleColorsDark();
+
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
 		editor_global_context.m_render_system.lock()->initializeUIBackend();
 	}
 }

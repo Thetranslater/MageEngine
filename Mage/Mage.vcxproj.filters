@@ -210,6 +210,9 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_passes\UIPass.cpp">
       <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
     </ClCompile>
+    <ClCompile Include="..\editor\ui\editor_ui.cpp">
+      <Filter>Mage\editor\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">

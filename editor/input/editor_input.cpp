@@ -30,22 +30,26 @@ namespace Mage {
 	}
 	//TODO::update camera rotation
 	void EditorInput::tick(float delta) {
+		auto camera = editor_global_context.m_render_system.lock()->getRenderCamera();
+		auto camera_pending = editor_global_context.m_render_system.lock()->getPendingData();
+		Quaternion camera_new_rotation{ camera->rotation() };
+		Vector3 camera_new_position{ camera->position() };
+
 		m_cursor_pos_x = m_cursor_callback_pos_x;
 		m_cursor_pos_y = m_cursor_callback_pos_y;
 		//camera rotation
 		if (engine_global_context.m_input_system->GetMouseButton(1)) {
-			std::shared_ptr<RenderCamera> camera = editor_global_context.m_render_system.lock()->getRenderCamera();
 			//camera rotation
 			float angular_velocity = 90.f / editor_global_context.m_window_system.lock()->getWindowSize()[0];
 			float delta_yaw = -m_cursor_delta_x * angular_velocity;
 			float delta_pitch = m_cursor_delta_y * angular_velocity;
 
-			camera->rotate(delta_yaw, delta_pitch);
+			camera_new_rotation = Quaternion::AngleAxis(delta_yaw, RenderCamera::UP) * camera->rotation() * Quaternion::AngleAxis(delta_pitch, RenderCamera::LEFT);
+
 
 			Vector3 l = camera->left();
 			Vector3 f = camera->forward();
 			Vector3 u = camera->up();
-			//Vector3 cu = Vector3::Cross(f, l);
 			//camera movement
 			constexpr float camera_speed_detail_mode = 0.005f;
 			Vector3 direction{ Vector3::zero };
@@ -66,11 +70,17 @@ namespace Mage {
 			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::LeftShift) or engine_global_context.m_input_system->GetKeyDown(KeyCode::RightShift)) {
 				direction *= 2;
 			}
-			camera->move(direction);
+			camera_new_position += direction;
 		}
 
 		m_cursor_delta_x = 0.f;
 		m_cursor_delta_y = 0.f;
+
+		camera_pending->m_camera.m_pending_position = camera_new_position;
+		camera_pending->m_camera.m_pending_rotation = camera_new_rotation;
+		camera_pending->m_camera.m_pending_fov = camera->fov();
+		camera_pending->m_camera.m_pending_znear = camera->zNear();
+		camera_pending->m_camera.m_pending_zfar = camera->zFar();
 	}
 
 	//TODO

@@ -28,8 +28,6 @@ namespace Mage {
 	* frame index负责跟swapchain无关的索引，只要保证该帧内的资源可用即可。
 	* swapchain index负责让外部framebuffer能够索引到输出的image。
 	*/
-
-	//TODO：recreate swapchain……
 	class VulkanRHI {
 	public:
 
@@ -117,59 +115,58 @@ namespace Mage {
 
 		void clearupSwapchainRelated();
 
-		//
 		VkResult createDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);
 	private:
-		GLFWwindow*			m_window;
-		VkInstance			m_instance;
+		STATIC_DATA GLFWwindow*			m_window;
+		STATIC_DATA VkInstance			m_instance;
 
-		VkSurfaceKHR		m_surface;
+		STATIC_DATA VkSurfaceKHR		m_surface;
 
 		//runtime context
-		VkCommandBuffer m_command_buffer;
+		DYNAMIC_DATA VkCommandBuffer m_command_buffer;
 
 		//device relatives
-		VkPhysicalDevice	m_physical_device;
-		VkDevice			m_device;
-		QueueFamilyIndices  m_queue_indices;
-		VkQueue				m_graphics_queue; //DONT DESTROY EXPLICITLY
-		VkQueue				m_present_queue;  //DONT DESTROY EXPLICITLY
-		VkPhysicalDeviceProperties			m_physical_device_properties;
-		VkPhysicalDeviceMemoryProperties	m_physical_device_memory_properties;
-		VkPhysicalDeviceFeatures			m_physical_device_supported_features;
-		VkPhysicalDeviceFeatures			m_physical_device_required_features;
-		VkPhysicalDeviceLimits				m_physical_device_limits;
+		STATIC_DATA VkPhysicalDevice	m_physical_device;
+		STATIC_DATA VkDevice			m_device;
+		STATIC_DATA QueueFamilyIndices  m_queue_indices;
+		STATIC_DATA VkQueue				m_graphics_queue; //DONT DESTROY EXPLICITLY
+		STATIC_DATA VkQueue				m_present_queue;  //DONT DESTROY EXPLICITLY
+		STATIC_DATA VkPhysicalDeviceProperties			m_physical_device_properties;
+		STATIC_DATA VkPhysicalDeviceMemoryProperties	m_physical_device_memory_properties;
+		STATIC_DATA VkPhysicalDeviceFeatures			m_physical_device_supported_features;
+		STATIC_DATA VkPhysicalDeviceFeatures			m_physical_device_required_features;
+		STATIC_DATA VkPhysicalDeviceLimits				m_physical_device_limits;
 
 		//swapchain relatives
-		uint32_t					m_swapchain_image_index;
-		uint32_t					m_swapchain_size;
-		VkSwapchainKHR				m_swapchain{ VK_NULL_HANDLE };
-		VkSurfaceFormatKHR			m_swapchain_surface_format;
-		VkExtent2D					m_swapchain_extent;
-		VkPresentModeKHR			m_swapchain_present_mode;
-		std::vector<VkImage>		m_swapchain_images;
-		std::vector<VkImageView>	m_swapchain_image_views;
+		DYNAMIC_DATA uint32_t					m_swapchain_image_index;
+		DYNAMIC_DATA uint32_t					m_swapchain_size;
+		DYNAMIC_DATA VkSwapchainKHR				m_swapchain{ VK_NULL_HANDLE };
+		DYNAMIC_DATA VkSurfaceFormatKHR			m_swapchain_surface_format;
+		DYNAMIC_DATA VkExtent2D					m_swapchain_extent;
+		DYNAMIC_DATA VkPresentModeKHR			m_swapchain_present_mode;
+		DYNAMIC_DATA std::vector<VkImage>		m_swapchain_images;
+		DYNAMIC_DATA std::vector<VkImageView>	m_swapchain_image_views;
 
 		//depth buffer relatives
-		VkFormat m_depth_format;
-		VkImage m_depth_image;
-		VkImageView m_depth_image_view;
-		VkDeviceMemory m_depth_image_memory;
+		DYNAMIC_DATA VkFormat m_depth_format;
+		DYNAMIC_DATA VkImage m_depth_image;
+		DYNAMIC_DATA VkImageView m_depth_image_view;
+		DYNAMIC_DATA VkDeviceMemory m_depth_image_memory;
 
-		uint8_t m_current_frame_index{ 0 };
-		static uint32_t const m_max_frames{ 3 };
+		DYNAMIC_DATA uint8_t m_current_frame_index{ 0 };
+		STATIC_DATA  static uint32_t const m_max_frames{ 3 };
 
 		//command buffers relatives
-		std::array<VkCommandPool, 2> m_command_pools; //graphics and transient
-		std::vector<VkCommandBuffer> m_command_buffers;
+		STATIC_DATA std::array<VkCommandPool, 2> m_command_pools; //graphics and transient
+		STATIC_DATA std::vector<VkCommandBuffer> m_command_buffers;
 
 		//descriptor pool
-		VkDescriptorPool m_descriptor_pool;
+		STATIC_DATA VkDescriptorPool m_descriptor_pool;
 
 		//synchronization relatives
-		std::vector<VkFence> m_fences;
-		std::vector<VkSemaphore> m_semaphores;
-		std::vector<VkSemaphore> m_present_semaphores;
+		STATIC_DATA std::vector<VkFence> m_fences;
+		STATIC_DATA std::vector<VkSemaphore> m_semaphores;
+		STATIC_DATA std::vector<VkSemaphore> m_present_semaphores;
 
 		VkDebugUtilsMessengerEXT m_debugMessenger;
 	};

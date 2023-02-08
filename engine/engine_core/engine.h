@@ -7,6 +7,8 @@ namespace Mage {
 		MageEngine() = default;
 
 		void startEngine();
+		//post-initialization after finish initializing editor
+		void postInitialize();
 		void shutdownEngine();
 
 		bool tick(float delta);

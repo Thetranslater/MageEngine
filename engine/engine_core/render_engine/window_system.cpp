@@ -49,7 +49,7 @@ namespace Mage {
 		return glfwWindowShouldClose(m_window);
 	}
 
-	GLFWwindow* WindowSystem::getWindow() {
+	GLFWwindow* WindowSystem::getGLFWWindow() {
 		return m_window;
 	}
 
