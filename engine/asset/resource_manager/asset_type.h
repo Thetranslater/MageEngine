@@ -268,7 +268,7 @@ namespace Mage {
 		std::vector<Image> m_images;
 
 		//TODO:µÈ´ýÉ¾³ý
-		GUID32 m_go_id;
+		ID m_go_id;
 	private:
 		//for mesh
 		void processNode(const std::vector<Node>& nodes, int curr_index, const Matrix4x4& parent_matrix, const std::function<void(const int&, const Matrix4x4&)>& process_func);

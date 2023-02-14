@@ -398,7 +398,7 @@ namespace Mage {
 		
 		//TODO:process transform matrixs that attached to specific mesh
 	}
-	//TODO:重新写一遍，根据现有的增加的image结构
+
 	VkRenderModelInfo Model::getVkRenderModelInfo() {
 		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
 

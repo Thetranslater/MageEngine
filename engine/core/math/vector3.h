@@ -218,8 +218,10 @@ namespace Mage {
 
 		operator glm::vec3() { return glm::vec3(x, y, z); }
 		operator glm::vec3() const { return glm::vec3(x, y, z); }
-		//TODO:
-		friend Vector3 operator==(const Vector3& lhs, const Vector3& rhs);
+
+		friend bool operator==(const Vector3& lhs, const Vector3& rhs) {
+			return lhs.x == rhs.x && lhs.y == rhs.y && lhs.z == rhs.z;
+		}
 
 		//static properties
 		static const Vector3 back;

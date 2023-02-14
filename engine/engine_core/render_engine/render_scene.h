@@ -30,8 +30,8 @@ namespace Mage {
 
 		GUIDGenerator<std::variant<VkRenderMeshURI, RawMeshData>>&		getMeshGUIDGenerator();
 		GUIDGenerator<std::variant<VkRenderImageURI, RawImageData>>&	getImageGUIDGenerator();
-		GUIDGenerator<VkRenderPartMesh, GUID64>&						getPartMeshGUIDGenerator();
-		GUIDGenerator<VkRenderMaterialDescription, GUID64>&				getMaterialGUIDGenerator();
+		GUIDGenerator<VkRenderPartMesh>&						getPartMeshGUIDGenerator();
+		GUIDGenerator<VkRenderMaterialDescription>&				getMaterialGUIDGenerator();
 
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_load_deque;
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_delete_deque;
@@ -40,7 +40,7 @@ namespace Mage {
 		//guid generator
 		GUIDGenerator<std::variant<VkRenderMeshURI, RawMeshData>>		m_mesh_guid_generator;
 		GUIDGenerator<std::variant<VkRenderImageURI, RawImageData>>	m_image_guid_generator;
-		GUIDGenerator<VkRenderPartMesh, GUID64>						m_part_mesh_guid_generator;
-		GUIDGenerator<VkRenderMaterialDescription, GUID64>	m_material_guid_generator;
+		GUIDGenerator<VkRenderPartMesh>						m_part_mesh_guid_generator;
+		GUIDGenerator<VkRenderMaterialDescription>	m_material_guid_generator;
 	};
 }

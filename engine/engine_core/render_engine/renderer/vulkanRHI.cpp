@@ -92,11 +92,10 @@ namespace Mage {
 
 	bool VulkanRHI::prepareVulkanRHIBeforeRender(std::function<void()> pass_recreate) {
 		VkResult acquire_result = vkAcquireNextImageKHR(m_device, m_swapchain, UINT64_MAX, m_semaphores[m_current_frame_index], VK_NULL_HANDLE, &m_swapchain_image_index);
-		//TODO acquire_result for recreate swapchain
 
 		if (acquire_result == VK_ERROR_OUT_OF_DATE_KHR) {
 			recreateSwapchain(pass_recreate);
-			return true;//TODO:是否会造成死锁
+			return true;
 		}
 
 

@@ -25,19 +25,19 @@ namespace Mage {
 		}
 	}
 
-	bool RenderResource::hasMesh(const GUID32& guid) {
+	bool RenderResource::hasMesh(const ID& guid) {
 		return m_guid_buffer_map.find(guid) != m_guid_buffer_map.end();
 	}
 
-	bool RenderResource::hasTexture(const GUID32& guid) {
+	bool RenderResource::hasTexture(const ID& guid) {
 		return m_guid_texture_map.find(guid) != m_guid_texture_map.end();
 	}
 
-	bool RenderResource::hasMaterial(const GUID64& guid) {
+	bool RenderResource::hasMaterial(const ID& guid) {
 		return m_guid_material_map.find(guid) != m_guid_material_map.end();
 	}
 
-	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, GUID32& guid, IO_Buffer& buffer) {
+	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, ID& guid, IO_Buffer& buffer) {
 		if (hasMesh(guid)) {
 			buffer = m_guid_buffer_map[guid];
 			return true;
@@ -60,7 +60,7 @@ namespace Mage {
 		return true;
 	}
 
-	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, GUID32& guid, IO_Texture& texture) {
+	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, ID& guid, IO_Texture& texture) {
 		if (hasTexture(guid)) {
 			texture = m_guid_texture_map[guid];
 			return true;
@@ -133,7 +133,7 @@ namespace Mage {
 		return true;
 	}
 
-	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, GUID64& guid, IO_Material& material) {
+	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, ID& guid, IO_Material& material) {
 		if (hasMaterial(guid)) {
 			material = m_guid_material_map[guid];
 			return true;

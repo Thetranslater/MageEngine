@@ -17,6 +17,8 @@ namespace Mage {
 
 		void setName(const std::string& new_name) { name = new_name; }
 		std::string getName() { return name; }
+
+		std::shared_ptr<Scene> getCurrentScene() const;
 	private:
 		void loadSceneAsset(const std::string& url);
 

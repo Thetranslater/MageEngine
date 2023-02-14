@@ -1,3 +1,5 @@
+#include"core/macro.h"
+
 #include"engine_core/input/key_family.h"
 #include"engine_core/input/input_system.h"
 

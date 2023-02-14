@@ -14,11 +14,11 @@ namespace Mage {
 		return m_image_guid_generator;
 	}
 
-	GUIDGenerator<VkRenderPartMesh, GUID64>& RenderScene::getPartMeshGUIDGenerator() {
+	GUIDGenerator<VkRenderPartMesh>& RenderScene::getPartMeshGUIDGenerator() {
 		return m_part_mesh_guid_generator;
 	}
 
-	GUIDGenerator<VkRenderMaterialDescription, GUID64>& RenderScene::getMaterialGUIDGenerator() {
+	GUIDGenerator<VkRenderMaterialDescription>& RenderScene::getMaterialGUIDGenerator() {
 		return m_material_guid_generator;
 	}
 }

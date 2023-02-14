@@ -428,7 +428,7 @@ namespace Mage {
 		void* map_pointer = render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
 
 		//buffer,materials, submeshes
-		std::map<GUID64, std::map<GUID64, std::map<GUID32, std::vector<VkRenderModel*>>>> model_batch;
+		std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderModel*>>>> model_batch;
 		//batch recognizing
 		for (VkRenderModel& model : render_scene->m_render_models) {
 			auto& buffer_batch = model_batch[model.m_mesh_combined_guid64];

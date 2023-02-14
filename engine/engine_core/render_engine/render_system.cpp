@@ -33,7 +33,7 @@ namespace Mage {
 		m_render_camera->setPosition(1.f, 0.f, -2.f);
 		m_render_camera->setRotation(Quaternion::FromToRotation(Vector3{ 0.f,0.f,1.f }, Vector3{ -1.f,0.f,2.f }));
 		m_render_camera->setFov(90.f);
-		m_render_camera->setzNear(0.1f);
+		m_render_camera->setzNear(0.01f);
 		m_render_camera->setzFar(1000.f);
 		m_render_camera->setAspect(float(m_vulkan_rhi->getSwapchainExtent().width) / m_vulkan_rhi->getSwapchainExtent().height);
 
@@ -80,9 +80,9 @@ namespace Mage {
 		//load job
 		while (not m_render_scene->m_p_scene_load_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_load_deque->getNextProcess();
-			std::vector<GUID32> mesh_guids(process_job.m_mesh_info.m_infos.size(), invalid_guid32);
-			std::vector<GUID32> image_guids(process_job.m_images_info.m_infos.size(), invalid_guid32);
-			std::vector<GUID64> material_guids(process_job.m_materials_info.m_infos.size(), invalid_guid64);
+			std::vector<ID> mesh_guids(process_job.m_mesh_info.m_infos.size(), invalid_id);
+			std::vector<ID> image_guids(process_job.m_images_info.m_infos.size(), invalid_id);
+			std::vector<ID> material_guids(process_job.m_materials_info.m_infos.size(), invalid_id);
 
 			//process mesh infos
 			auto& mesh_infos = process_job.m_mesh_info.m_infos;
@@ -149,7 +149,7 @@ namespace Mage {
 			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
 			for (uint32_t i{ 0 }; i < process_job.m_mesh_info.m_transfer_mesh_descriptions.size();++i) {
 				auto& primitive_info = process_job.m_mesh_info.m_transfer_mesh_descriptions[i];
-				auto mesh_guid_combined = [&mesh_guids](VkRenderMeshDescription& primitive_des)->GUID64 {
+				auto mesh_guid_combined = [&mesh_guids](VkRenderMeshDescription& primitive_des)->ID {
 					size_t hash{ 0u };
 					primitive_des.m_attribute_infos[0].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[0].m_buffer_index];
 					primitive_des.m_attribute_infos[1].m_buffer_index = mesh_guids[primitive_des.m_attribute_infos[1].m_buffer_index];

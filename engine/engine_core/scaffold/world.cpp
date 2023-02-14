@@ -56,4 +56,8 @@ namespace Mage {
 
 		is_any_scene_loaded = true;
 	}
+
+	std::shared_ptr<Scene> World::getCurrentScene() const {
+		return current_scene.lock();
+	}
 }

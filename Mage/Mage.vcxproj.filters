@@ -85,6 +85,18 @@
     <Filter Include="Mage\editor\ui">
       <UniqueIdentifier>{aca145cf-d686-4d19-a23f-169635a1fa46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\engine\engine_core\event">
+      <UniqueIdentifier>{483101a4-4f5a-4c53-8735-bb787cc39e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\function\id_allocator">
+      <UniqueIdentifier>{d76fbabe-f932-4fe3-a70d-5a92c52d7a69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\editor\ui\windows">
+      <UniqueIdentifier>{06ab48f5-9105-4650-99b2-44efd4630a4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\editor\ui\widgets">
+      <UniqueIdentifier>{9a2cb166-1650-40e7-a50b-330a98eca546}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -186,9 +198,6 @@
     <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp">
       <Filter>Mage\engine\engine_core\scaffold\components\mesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\engine_core\scaffold\game_object_id_allocator.cpp">
-      <Filter>Mage\engine\engine_core\scaffold</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\engine_core\render_engine\render_camera.cpp">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
     </ClCompile>
@@ -212,6 +221,15 @@
     </ClCompile>
     <ClCompile Include="..\editor\ui\editor_ui.cpp">
       <Filter>Mage\editor\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\function\id_allocator\id_allocator.cpp">
+      <Filter>Mage\engine\engine_core\function\id_allocator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\windows\dock.cpp">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\windows\hierachy.cpp">
+      <Filter>Mage\editor\ui\windows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -311,9 +329,6 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_model.h">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_guid.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\core\hash.h">
       <Filter>Mage\engine\core</Filter>
     </ClInclude>
@@ -342,9 +357,6 @@
       <Filter>Mage\engine\engine_core\scaffold</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\game_object.h">
-      <Filter>Mage\engine\engine_core\scaffold</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\scaffold\game_object_id_allocator.h">
       <Filter>Mage\engine\engine_core\scaffold</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\scene.h">
@@ -388,6 +400,36 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\render_engine\render_passes\UIPass.h">
       <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\container.h">
+      <Filter>Mage\editor\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widget.h">
+      <Filter>Mage\editor\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\window.h">
+      <Filter>Mage\editor\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\event\event.h">
+      <Filter>Mage\engine\engine_core\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\function\id_allocator\id_allocator.h">
+      <Filter>Mage\engine\engine_core\function\id_allocator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\windows\hierachy.h">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\windows\dock.h">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\windows\inspector.h">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\windows\viewer.h">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\treenode.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

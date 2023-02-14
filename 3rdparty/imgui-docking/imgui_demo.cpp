@@ -3087,7 +3087,11 @@ static void ShowDemoWindowLayout()
                     }
                     else
                     {
-                        ImGui::Text("Item %d", item);
+                        if (ImGui::TreeNode((void*)(intptr_t)(item), "Node %d", item)) {
+                            ImGui::Text("Item %d", item);
+                            ImGui::TreePop();
+                        }
+                       // ImGui::Text("Item %d", item);
                     }
                 }
             }
@@ -3539,8 +3543,10 @@ static void ShowDemoWindowPopups()
             ImGui::Text("Value = %.3f <-- (1) right-click this text", value);
             if (ImGui::BeginPopupContextItem("my popup"))
             {
-                if (ImGui::Selectable("Set to zero")) value = 0.0f;
-                if (ImGui::Selectable("Set to PI")) value = 3.1415f;
+                if (ImGui::Selectable("Set to zero"))
+                    value = 0.0f;
+                if (ImGui::Selectable("Set to PI"))
+                    value = 3.1415f;
                 ImGui::SetNextItemWidth(-FLT_MIN);
                 ImGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f);
                 ImGui::EndPopup();

@@ -14,6 +14,8 @@ namespace Mage {
 
 		void tick(float delta);
 
+		std::shared_ptr<World> getCurrentWorld() const;
+
 	private:
 		void loadWorldAsset(const std::string& url);
 

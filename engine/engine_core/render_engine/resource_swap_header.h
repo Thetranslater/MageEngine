@@ -8,12 +8,13 @@
 
 #include"asset/resource_manager/asset_type.h"
 
-#include"engine_core/render_engine/render_guid.h"
-
 #include"core/hash.h"
 #include"core/macro.h"
 
 namespace Mage {
+
+	using ID = uint64_t;
+
 	//每一个description对应一个primitive
 	struct VkRenderMeshAttributeDescription {
 		STATIC_DATA int m_buffer_index{-1};
@@ -127,8 +128,8 @@ namespace Mage {
 	};
 
 	struct VkRenderPartMesh {
-		GUID64 m_mesh_guid;
-		GUID64 m_part_index;
+		ID m_mesh_guid;
+		ID m_part_index;
 
 		bool operator==(const VkRenderPartMesh& rh) const {
 			return m_mesh_guid == rh.m_mesh_guid && m_part_index == rh.m_part_index;

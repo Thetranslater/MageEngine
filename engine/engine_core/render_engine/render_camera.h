@@ -21,7 +21,6 @@ namespace Mage {
 		inline Vector3 forward() { return m_rotation * FORWARD; }
 		inline Vector3 left() { return m_rotation * LEFT; }
 
-		//TODO:检验正确性
 		//radians
 		void rotate(float delte_yaw, float delta_pitch);
 		void move(const Vector3& delta);

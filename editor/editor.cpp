@@ -44,8 +44,22 @@ namespace Mage {
 		ImGui::CreateContext();
 		ImGui::StyleColorsDark();
 
+		//set imgui io
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		//set imgui style
+		ImGuiStyle& style = ImGui::GetStyle();
+		style.WindowBorderSize = 0;
+		style.ChildBorderSize = 0;
+
+		style.WindowPadding = ImVec2{ 0,0 };
+		style.FramePadding = ImVec2{ 5,4 };
+		style.ItemSpacing = ImVec2{ 8,5 };
+		style.IndentSpacing = 20;
+
+		style.FrameRounding = 4;
+
+		style.WindowMenuButtonPosition = ImGuiDir_None;
 
 		editor_global_context.m_render_system.lock()->initializeUIBackend();
 	}

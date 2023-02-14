@@ -10,7 +10,7 @@
 
 #include<core/hash.h>
 
-#include"engine_core/render_engine/render_guid.h"
+#include"engine_core/function/id_allocator/id_allocator.h"
 #include"engine_core/render_engine/render_macro.h"
 
 namespace Mage {
@@ -74,24 +74,23 @@ namespace Mage {
 	struct VkRenderMaterialDescription;
 	class RenderResource {
 	public:
-		using GUID32 = uint32_t;
 		using IO_Buffer = std::variant<VkRenderMesh, Buffer>;
 		using IO_Texture = std::variant<VkRenderTexture, Image>;
 		using IO_Material = std::variant<VkRenderMaterial, VkRenderMaterialDescription>;
 	public:
 		void initialize(VulkanRHI*);
 
-		bool hasMesh(const GUID32& guid);
-		bool hasTexture(const GUID32& guid);
-		bool hasMaterial(const GUID64& guid);
+		bool hasMesh(const ID& guid);
+		bool hasTexture(const ID& guid);
+		bool hasMaterial(const ID& guid);
 
-		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Buffer& param);
-		bool getOrCreateRenderResource(VulkanRHI*, GUID32& guid, IO_Texture& param);
-		bool getOrCreateRenderResource(VulkanRHI*, GUID64& guid, IO_Material& param);
+		bool getOrCreateRenderResource(VulkanRHI*, ID& guid, IO_Buffer& param);
+		bool getOrCreateRenderResource(VulkanRHI*, ID& guid, IO_Texture& param);
+		bool getOrCreateRenderResource(VulkanRHI*, ID& guid, IO_Material& param);
 	public:
-		std::map<GUID32, VkRenderMesh>		m_guid_buffer_map;
-		std::map<GUID32, VkRenderTexture>	m_guid_texture_map;
-		std::map<GUID64, VkRenderMaterial>	m_guid_material_map;
+		std::map<ID, VkRenderMesh>		m_guid_buffer_map;
+		std::map<ID, VkRenderTexture>	m_guid_texture_map;
+		std::map<ID, VkRenderMaterial>	m_guid_material_map;
 
 		//global resources
 		GlobalUpdatedBuffer m_global_updated_buffer;

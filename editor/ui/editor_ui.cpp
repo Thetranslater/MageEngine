@@ -17,7 +17,7 @@ namespace Mage {
 	}
 	//TODO:
 	void EditorUI::drawMenuUI() {
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
 		const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(main_viewport->WorkPos);
@@ -44,7 +44,26 @@ namespace Mage {
 		ImGui::End();
 	}
 	//TODO:
-	void EditorUI::drawHierachyUI() {}
+	void EditorUI::drawHierachyUI() {
+		ImGuiWindowFlags hierachy_flags = ImGuiWindowFlags_NoCollapse;
+
+		if (!ImGui::Begin("HierachyWindow", nullptr, hierachy_flags)) {
+			ImGui::End();
+			return;
+		}
+
+		ImGui::BeginGroup();
+
+		for (int i{ 0 }; i < 10; ++i) {
+			if (ImGui::TreeNode((void*)(intptr_t)i, "Game Object %d", i)) {
+				ImGui::TreePop();
+			}
+		}
+
+		ImGui::EndGroup();
+
+		ImGui::End();
+	}
 	//TODO:
 	void EditorUI::drawDisplayUI() {
 		ImGuiWindowFlags display_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
@@ -70,7 +89,25 @@ namespace Mage {
 		ImGui::End();
 	}
 	//TODO:
-	void EditorUI::drawInspectorUI() {}
+	void EditorUI::drawInspectorUI() {
+		ImGuiWindowFlags inspector_flags = ImGuiWindowFlags_NoCollapse;
+
+		if (!ImGui::Begin("InspectorWindow", nullptr, inspector_flags)) {
+			ImGui::End();
+			return;
+		}
+
+		ImGui::End();
+	}
 	//TODO:
-	void EditorUI::drawFileContentUI() {}
+	void EditorUI::drawFileContentUI() {
+		ImGuiWindowFlags file_content_flags = ImGuiWindowFlags_NoCollapse;
+
+		if (!ImGui::Begin("FileContentWindow", nullptr, file_content_flags)) {
+			ImGui::End();
+			return;
+		}
+
+		ImGui::End();
+	}
 }

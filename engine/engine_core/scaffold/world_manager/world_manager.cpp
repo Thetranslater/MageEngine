@@ -48,4 +48,8 @@ namespace Mage {
 
 		is_any_world_loaded = true;
 	}
+
+	std::shared_ptr<World> WorldManager::getCurrentWorld() const{
+		return current_world.lock();
+	}
 }
