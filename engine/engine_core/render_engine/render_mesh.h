@@ -5,6 +5,9 @@
 #include<array>
 
 namespace Mage {
+
+	//according to the requirements of gltf, set the vertex attributes to this.
+	//TODO:adding attributes
 	struct Vertex {
 		glm::vec3 position;
 		glm::vec3 normal;

@@ -20,6 +20,7 @@ namespace Reflection{
     TypeWrappersRegister::TransformComponent();
     TypeWrappersRegister::ObjectAsset();
     TypeWrappersRegister::SceneAsset();
+    TypeWrappersRegister::SceneNode();
     TypeWrappersRegister::MeshAsset();
     TypeWrappersRegister::Component();
     TypeWrappersRegister::WorldAsset();

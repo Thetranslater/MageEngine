@@ -2,10 +2,13 @@
 #include<unordered_map>
 #include<memory>
 
+#include<engine_core/event/event.h>
+
 #define MAGE_DEFAUT_WORLD "E:/Mage/engine/asset/data/world/default_world.json"
 
 namespace Mage {
 	class World;
+	class GameObject;
 	class WorldManager {
 	public:
 		WorldManager() = default;
@@ -16,6 +19,9 @@ namespace Mage {
 
 		std::shared_ptr<World> getCurrentWorld() const;
 
+
+		Event<GameObject&> create_transfer;
+		Event<GameObject&> destroy_transfer;
 	private:
 		void loadWorldAsset(const std::string& url);
 

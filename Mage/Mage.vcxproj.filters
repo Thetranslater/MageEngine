@@ -231,6 +231,18 @@
     <ClCompile Include="..\editor\ui\windows\hierachy.cpp">
       <Filter>Mage\editor\ui\windows</Filter>
     </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\treenode.cpp">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\windows\viewer.cpp">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\windows\inspector.cpp">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\checkbox.cpp">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -429,6 +441,21 @@
       <Filter>Mage\editor\ui\windows</Filter>
     </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\treenode.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\event\reference.h">
+      <Filter>Mage\engine\engine_core\event</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\group.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\window_manager.h">
+      <Filter>Mage\editor\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\checkbox.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\text.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,8 @@
 #include"asset/resource_manager/resource_manager.h"
 
-#include"engine_core/scaffold/world_manager/world_manager.h"
+#include"engine_core/scaffold/scene.h"
 #include"engine_core/scaffold/world.h"
+#include"engine_core/scaffold/world_manager/world_manager.h"
 #include"engine_core/function/global_context/global_context.h"
 
 namespace Mage {
@@ -24,6 +25,7 @@ namespace Mage {
 	void WorldManager::tick(float delta) {
 		if (not is_any_world_loaded) {
 			loadWorldAsset(current_load_world);
+			is_any_world_loaded = true;
 		}
 		std::shared_ptr<World> update_world = current_world.lock();
 		if (update_world != nullptr) {
@@ -45,8 +47,6 @@ namespace Mage {
 		worlds.insert(std::make_pair(url, current_default_world));
 
 		current_world = current_default_world;
-
-		is_any_world_loaded = true;
 	}
 
 	std::shared_ptr<World> WorldManager::getCurrentWorld() const{

@@ -6,6 +6,7 @@
 #endif
 
 namespace Mage {
+	//vulkan structure information doc
 	namespace VulkanInfo {
 #if VULKAN_INFO > -1
 

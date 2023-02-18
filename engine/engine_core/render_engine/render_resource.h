@@ -22,7 +22,6 @@ namespace Mage {
 		VkSampler m_sampler{ VK_NULL_HANDLE };//remove?
 	};
 
-	//for gltf
 	struct VkRenderMesh {
 		VkBuffer m_bi_data{ VK_NULL_HANDLE };
 		VkDeviceMemory m_bi_data_memory{ VK_NULL_HANDLE };
@@ -64,7 +63,6 @@ namespace Mage {
 	};
 
 	struct GlobalBufferPerDrawcallData {
-		//PerMeshVertexShaderData m_mesh_datas[MAGE_PERDRAWCALL_MAX_LIMIT];
 		PerMeshShaderData m_data[MAGE_PERDRAWCALL_MAX_LIMIT] ;
 	};
 
@@ -74,6 +72,7 @@ namespace Mage {
 	struct VkRenderMaterialDescription;
 	class RenderResource {
 	public:
+		//交互数据，可以同时作为输入和输出进行数据的存储和读取
 		using IO_Buffer = std::variant<VkRenderMesh, Buffer>;
 		using IO_Texture = std::variant<VkRenderTexture, Image>;
 		using IO_Material = std::variant<VkRenderMaterial, VkRenderMaterialDescription>;

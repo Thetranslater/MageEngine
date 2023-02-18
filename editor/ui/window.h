@@ -31,6 +31,8 @@ namespace Mage {
 		inline Vector2 getWindowPos() const { return position; }
 		inline Vector2 getWindowSize() const { return size; }
 
+		inline const std::string& getID() { return window_id; }
+
 		virtual void draw() {};
 	protected:
 		inline ImGuiWindowFlags _convert_config_to_imgui_() const {
@@ -46,6 +48,8 @@ namespace Mage {
 			if (configuration.no_collapse)					flags |= ImGuiWindowFlags_NoCollapse;
 			if (configuration.no_bring_to_front_on_focus)	flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 			if (configuration.has_menubar)					flags |= ImGuiWindowFlags_MenuBar;
+
+			return flags;
 		}
 
 		WindowConfig configuration{};

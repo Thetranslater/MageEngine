@@ -11,7 +11,7 @@ namespace Mage {
 	CLASS(MeshComponent : public Component, WhiteListFields) {
 		REFLECTION_BODY(MeshComponent)
 	public:
-		MeshComponent() { should_tick_in_editor = true; is_loaded = false; }
+		MeshComponent() { should_tick_in_editor = true; }
 		void tick(float delta) override;
 	private:
 		META(Enable)

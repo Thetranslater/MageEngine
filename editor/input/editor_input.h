@@ -4,6 +4,7 @@
 
 namespace Mage{
 	class WindowSystem;
+	//control the editor camera
 	class EditorInput {
 	public:
 		void initialize(std::shared_ptr<WindowSystem>);

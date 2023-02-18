@@ -5,6 +5,7 @@
 
 #include<engine_core/function/id_allocator/id_allocator.h>
 #include<engine_core/event/event.h>
+#include<engine_core/event/reference.h>
 
 namespace Mage {
 	class GameObject;
@@ -12,7 +13,7 @@ namespace Mage {
 	class ObjectAsset;
 	class Scene {
 	public:
-		Scene() = default;
+		Scene();
 		void load(SceneAsset& asset);
 		void tick(float delta);
 		void clear();
@@ -20,8 +21,8 @@ namespace Mage {
 		IDAllocator& getGOIDAllocator();
 
 		//event
-		Event<GameObject&> create_event;
-		Event<GameObject&> destroy_event;
+		Reference<Event<GameObject&>> create_event;
+		Reference<Event<GameObject&>> destroy_event;
 	private:
 		std::string asset_url;
 		std::string name;

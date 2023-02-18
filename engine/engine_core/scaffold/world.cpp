@@ -3,6 +3,7 @@
 
 #include"engine_core/scaffold/world.h"
 #include"engine_core/scaffold/scene.h"
+#include"engine_core/scaffold/world_manager/world_manager.h"
 #include"engine_core/function/global_context/global_context.h"
 
 
@@ -31,6 +32,7 @@ namespace Mage {
 	void World::tick(float delta) {
 		if (not is_any_scene_loaded) {
 			loadSceneAsset(current_loaded_scene);
+			is_any_scene_loaded = true;
 		}
 
 		std::shared_ptr<Scene> update_scene = current_scene.lock();
@@ -53,8 +55,6 @@ namespace Mage {
 		scenes[url] = current_default_scene;
 
 		current_scene = current_default_scene;
-
-		is_any_scene_loaded = true;
 	}
 
 	std::shared_ptr<Scene> World::getCurrentScene() const {

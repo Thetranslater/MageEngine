@@ -101,6 +101,7 @@ namespace Mage {
 			return rh.m_uri == m_uri;
 		}
 	};
+
 	//gltf的image允许以bufferview的形式给出图像数据
 	struct RawImageData {
 		STATIC_DATA std::string m_accessory; //同raw buffer data同理，不过这里有可能多个accessory对应同一份texture data，导致内存中存在相同实例。

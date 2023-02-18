@@ -19,15 +19,6 @@ namespace Mage {
 		std::vector<VkPresentModeKHR> present_modes;
 	};
 
-	/*
-	* VulkanRHI 负责作为硬件抽象接口（考虑是否将helper class作为友元？）。
-	* vulkan字段包含instance ，device，以及渲染过程中用来使用的command buffer。其中command pool被分成了两类，分别负责平常正常使用的和短暂存在的。
-	* 因为swapchain中包含多个image views，所以底部对应的信号量，command buffer，等都有一个对应，不过该对应并不需要完美的对应swap chain中的图像索引，
-	* 因为他们并不真正使用swapchain，而外部framebuffer需要在attachments中引用swapchain中的图像作为color attachment，所以他们需要swapchain中内部的索引。
-	* 这就是RHI中包含两个index字段的原因。
-	* frame index负责跟swapchain无关的索引，只要保证该帧内的资源可用即可。
-	* swapchain index负责让外部framebuffer能够索引到输出的image。
-	*/
 	class VulkanRHI {
 	public:
 
@@ -97,7 +88,7 @@ namespace Mage {
 		//others
 		inline static const uint32_t getMaxFramesNumber() { return m_max_frames; }
 	private:
-		//initialize step functions
+		//initialize functions
 		void createInstance();
 		void setupDebugMessenger();
 		void createSurface();
@@ -111,8 +102,8 @@ namespace Mage {
 		void createDescriptorPool();
 		void createSynchronizationPrimitives();
 
+		//swapchain recreation
 		void recreateSwapchain(std::function<void()> pass_recreate);
-
 		void clearupSwapchainRelated();
 
 		VkResult createDebugUtilsMessengerEXT(VkInstance, const VkDebugUtilsMessengerCreateInfoEXT*, const VkAllocationCallbacks*, VkDebugUtilsMessengerEXT*);

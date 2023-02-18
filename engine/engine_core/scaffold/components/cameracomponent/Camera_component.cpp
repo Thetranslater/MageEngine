@@ -20,7 +20,7 @@ namespace Mage {
 			constexpr float fast_speed = 1.f;
 
 			auto input_system = engine_global_context.m_input_system;
-			TransformComponent* transform = parent->GetComponent(TransformComponent);
+			TransformComponent* transform = game_object->GetComponent(TransformComponent);
 			if (transform == nullptr) {
 				MAGE_THROW(camera must need a transform component)
 			}

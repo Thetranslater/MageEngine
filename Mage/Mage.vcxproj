@@ -154,8 +154,12 @@
     <ClCompile Include="..\editor\editor.cpp" />
     <ClCompile Include="..\editor\input\editor_input.cpp" />
     <ClCompile Include="..\editor\ui\editor_ui.cpp" />
+    <ClCompile Include="..\editor\ui\widgets\checkbox.cpp" />
+    <ClCompile Include="..\editor\ui\widgets\treenode.cpp" />
     <ClCompile Include="..\editor\ui\windows\dock.cpp" />
     <ClCompile Include="..\editor\ui\windows\hierachy.cpp" />
+    <ClCompile Include="..\editor\ui\windows\inspector.cpp" />
+    <ClCompile Include="..\editor\ui\windows\viewer.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
@@ -202,12 +206,16 @@
     <ClInclude Include="..\editor\ui\container.h" />
     <ClInclude Include="..\editor\ui\editor_ui.h" />
     <ClInclude Include="..\editor\ui\widget.h" />
+    <ClInclude Include="..\editor\ui\widgets\checkbox.h" />
+    <ClInclude Include="..\editor\ui\widgets\group.h" />
+    <ClInclude Include="..\editor\ui\widgets\text.h" />
     <ClInclude Include="..\editor\ui\widgets\treenode.h" />
     <ClInclude Include="..\editor\ui\window.h" />
     <ClInclude Include="..\editor\ui\windows\dock.h" />
     <ClInclude Include="..\editor\ui\windows\hierachy.h" />
     <ClInclude Include="..\editor\ui\windows\inspector.h" />
     <ClInclude Include="..\editor\ui\windows\viewer.h" />
+    <ClInclude Include="..\editor\ui\window_manager.h" />
     <ClInclude Include="..\engine\asset\object_asset.h" />
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h" />
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h" />
@@ -230,6 +238,7 @@
     <ClInclude Include="..\engine\core\random.h" />
     <ClInclude Include="..\engine\engine_core\engine.h" />
     <ClInclude Include="..\engine\engine_core\event\event.h" />
+    <ClInclude Include="..\engine\engine_core\event\reference.h" />
     <ClInclude Include="..\engine\engine_core\function\global_context\global_context.h" />
     <ClInclude Include="..\engine\engine_core\function\id_allocator\id_allocator.h" />
     <ClInclude Include="..\engine\engine_core\input\input_system.h" />

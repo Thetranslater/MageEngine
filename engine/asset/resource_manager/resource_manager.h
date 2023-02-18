@@ -26,9 +26,8 @@ namespace Mage {
 
 		void setFsCallbacks(tinygltf::FsCallbacks& fscb) { fs = fscb; }
 
-		//改成模板函数,返回asset type
 		template<typename Asset>
-		bool loadAsset(const std::string& filename, Asset* out_model_data, std::string* err, std::string* warn, bool is_real_load = true) {
+		bool loadAsset(const std::string& filename, Asset* out_asset_data, std::string* err, std::string* warn, bool is_real_load = true) {
 			if (is_real_load) {
 				//filename must absolute
 				std::ifstream json_file(filename);
@@ -45,10 +44,24 @@ namespace Mage {
 					*err = std::move(local_err);
 					return false;
 				}
-				PSerializer::read(_json, *out_model_data);
+				PSerializer::read(_json, *out_asset_data);
 				return true;
 			}
 			return false;
+		}
+
+		template<typename Asset>
+		bool saveAsset(const std::string& filename, Asset& in_asset_data, std::string* err, std::string* warn) {
+			std::ofstream file{ filename };
+			if (not file) {
+				MAGE_THROW(failed to open json save file)
+			}
+			auto&& _json = PSerializer::write(in_asset_data);
+			std::string&& _json_data = _json.dump();
+			file << _json_data;
+			file.flush();
+
+			return true;
 		}
 
 		bool loadMageModel(const std::string& filename, Model* out_model, std::string* err, std::string* warn, bool is_real_load = true);

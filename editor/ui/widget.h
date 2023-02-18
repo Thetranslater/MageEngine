@@ -29,4 +29,6 @@ namespace Mage {
 		}
 		ID id;
 	};
+
+	inline IDAllocator Widget::widget_id_allocator;
 }

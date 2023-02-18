@@ -52,8 +52,7 @@ namespace Mage {
 		static VkShaderModule shaderModuleCreationHelper(VkDevice device, const std::string& filename);
 		static void imageViewCreationHelper(VulkanRHI* rhi, VkImage parent, VkFormat format, VkImageAspectFlags aspect, uint32_t mipmaplevel, VkImageView& view);
 
-		//move helper
-		//库中的模板函数声明和定义需要放在一起
+		//move(or copy) helper
 		template<typename Input>
 		static void moveDataFromVectorToBuffer(VulkanRHI* rhi, Input start, Input end, VkBuffer& buffer) {
 			size_t size{ 0 };

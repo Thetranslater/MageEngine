@@ -7,6 +7,7 @@ namespace Mage {
 	class EditorUI;
 	class WindowSystem;
 	class RenderSystem;
+	class WorldManager;
 	class MageEngineGlobalContext;
 	class MageEditorGlobalContext {
 	public:
@@ -15,6 +16,7 @@ namespace Mage {
 		
 		std::weak_ptr<WindowSystem> m_window_system;
 		std::weak_ptr<RenderSystem> m_render_system;
+		std::weak_ptr<WorldManager> m_world_manager;
 
 		void initialize(MageEngineGlobalContext& engine_context);
 	};

@@ -10,10 +10,12 @@ namespace Mage {
 	void MageEditorGlobalContext::initialize(MageEngineGlobalContext& engine_context) {
 		m_render_system = engine_context.m_render_system;
 		m_window_system = engine_context.m_window_system;
+		m_world_manager = engine_context.m_world_manager;
 
 		m_editor_input = std::make_shared<EditorInput>();
 		m_editor_input->initialize(engine_context.m_window_system);
 
 		m_editor_ui = std::make_shared<EditorUI>();
+		m_editor_ui->initialize();
 	}
 }

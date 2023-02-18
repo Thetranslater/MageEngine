@@ -4,6 +4,9 @@
 #include"core/math/matrix4x4.h"
 
 namespace Mage {
+	/*
+	* camera的坐标轴采取右手坐标系（左，上，前）
+	*/
 	class RenderCamera {
 	public:
 		RenderCamera() = default;

@@ -2,18 +2,62 @@
 #include"imgui-docking/imgui_internal.h"
 
 #include"ui/editor_ui.h"
+#include"ui/windows/dock.h"
+#include"ui/windows/hierachy.h"
+#include"ui/windows/viewer.h"
+#include"ui/windows/inspector.h"
 #include"context/editor_global_context.h"
 
 #include"engine_core/render_engine/render_system.h"
 
 
 namespace Mage {
+	void EditorUI::initialize() {
+		WindowConfig dock_config{};
+		dock_config.no_background = true;
+		dock_config.no_move = true;
+		dock_config.no_resize = true;
+		dock_config.no_close = true;
+		dock_config.no_bring_to_front_on_focus = true;
+		dock_config.is_dockspace = true;
+		dock_config.no_dock = true;
+		dock_config.no_titlebar = true;
+		dock_config.no_scroll = true;
+		dock_config.no_collapse = true;
+		dock_config.has_menubar = true;
+		dock_window = window_manager.createWindow<Dock>("Dock", dock_config);
+
+		//hierachy
+		WindowConfig hierachy_config{};
+		hierachy_config.no_collapse = true;
+		std::shared_ptr<Hierachy> hierachy_window = window_manager.createWindow<Hierachy>("Hierachy", hierachy_config);
+		dock_window->addWindow(hierachy_window);
+
+		//viewer
+		WindowConfig viewer_config{};
+		viewer_config.no_background = true;
+		viewer_config.has_menubar = true;
+		viewer_config.no_collapse = true;
+		viewer_config.no_scroll = true;
+		std::shared_ptr<Viewer> viewer_window = window_manager.createWindow<Viewer>("Viewer", viewer_config);
+		dock_window->addWindow(viewer_window);
+
+		//inspector
+		WindowConfig inspector_config{};
+		inspector_config.no_collapse = true;
+		std::shared_ptr<Inspector> inspector_window = window_manager.createWindow<Inspector>("Inspector", inspector_config);
+		hierachy_window->on_selected_event.subscribe(std::bind(&Inspector::OnSelected, inspector_window.get(), std::placeholders::_1));
+		dock_window->addWindow(inspector_window);
+
+	}
+
 	void EditorUI::drawUI() {
-		drawMenuUI();
-		drawHierachyUI();
-		drawDisplayUI();
-		drawInspectorUI();
-		drawFileContentUI();
+		dock_window->draw();
+		//drawMenuUI();
+		//drawHierachyUI();
+		//drawDisplayUI();
+		//drawInspectorUI();
+		//drawFileContentUI();
 	}
 	//TODO:
 	void EditorUI::drawMenuUI() {

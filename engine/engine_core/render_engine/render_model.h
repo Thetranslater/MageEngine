@@ -6,7 +6,7 @@
 #include<glm-master/glm/glm.hpp>
 
 namespace Mage {
-	//渲染数据信息，从CPU端传进，包含模型数据路径和贴图路径
+	//this is a bad name, a gltf model create a VkRenderModelInfo which including primitives.
 	struct VkRenderModelInfo {
 		ID m_go_id;//TODO
 		VkRenderMeshInfo m_mesh_info{};
@@ -14,7 +14,7 @@ namespace Mage {
 		VkRenderMaterialInfo m_materials_info{};
 	};
 
-	//TODO:model 代表着一个渲染实体，用GUID索引其mesh和material数据
+	//A model represent a render primitive, a gameobject always including multiple primitive. 
 	struct VkRenderModel {
 		ID m_model_guid32;
 

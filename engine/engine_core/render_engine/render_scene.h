@@ -19,7 +19,7 @@ namespace Mage {
 		std::deque<T> m_process_deque;
 	};
 
-	//render scene作为CPU和GPU资源通信的接口，在CPU侧代表渲染资源，实际的渲染数据存储到render resource中
+	//render scene管理需要渲染的render model,作为渲染资源的一部分上下文,处理cpu和gpu资源交换。
 	class RenderScene {
 	public:
 		//TODO:light

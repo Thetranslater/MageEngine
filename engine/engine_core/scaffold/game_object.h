@@ -11,6 +11,9 @@ namespace Mage {
 	class ObjectAsset;
 	class GameObject {
 	public:
+		GameObject();
+		GameObject(const std::string& name);
+
 		GameObjectID getInstanceID() const { return id; }
 		void setInstanceID(GameObjectID guid) { id = guid; }
 		const std::string& name() const { return go_name; }
@@ -37,7 +40,7 @@ namespace Mage {
 		GameObjectID id{ invalid_id };
 		std::string go_name;
 
+		//all objects must require a transform(components[0] == TransformComponent)
 		std::vector<Reflection::ReflectionPtr<Component>> components;
 	};
-
 }

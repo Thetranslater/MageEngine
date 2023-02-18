@@ -93,10 +93,52 @@ namespace Mage{
         return instance;
     }
     template<>
+    PJson PSerializer::write(const SceneNode& instance){
+        PJson::object  ret_context;
+        
+        ret_context.insert_or_assign("parent", PSerializer::write(instance.parent));
+        PJson::array children_json;
+        for (auto& item : instance.children){
+            children_json.emplace_back(PSerializer::write(item));
+        }
+        ret_context.insert_or_assign("children",children_json);
+        
+        return  PJson(ret_context);
+    }
+    template<>
+    SceneNode& PSerializer::read(const PJson& json_context, SceneNode& instance){
+        assert(json_context.is_object());
+        
+        if(!json_context["parent"].is_null()){
+            PSerializer::read(json_context["parent"], instance.parent);
+        }
+        if(!json_context["children"].is_null()){
+            assert(json_context["children"].is_array());
+            PJson::array array_children = json_context["children"].array_items();
+            instance.children.resize(array_children.size());
+            for (size_t index=0; index < array_children.size();++index){
+                PSerializer::read(array_children[index], instance.children[index]);
+            }
+        }
+        return instance;
+    }
+    template<>
     PJson PSerializer::write(const SceneAsset& instance){
         PJson::object  ret_context;
         
         ret_context.insert_or_assign("name", PSerializer::write(instance.name));
+        PJson::array roots_json;
+        for (auto& item : instance.roots){
+            roots_json.emplace_back(PSerializer::write(item));
+        }
+        ret_context.insert_or_assign("roots",roots_json);
+        
+        PJson::array nodes_json;
+        for (auto& item : instance.nodes){
+            nodes_json.emplace_back(PSerializer::write(item));
+        }
+        ret_context.insert_or_assign("nodes",nodes_json);
+        
         PJson::array objects_json;
         for (auto& item : instance.objects){
             objects_json.emplace_back(PSerializer::write(item));
@@ -111,6 +153,22 @@ namespace Mage{
         
         if(!json_context["name"].is_null()){
             PSerializer::read(json_context["name"], instance.name);
+        }
+        if(!json_context["roots"].is_null()){
+            assert(json_context["roots"].is_array());
+            PJson::array array_roots = json_context["roots"].array_items();
+            instance.roots.resize(array_roots.size());
+            for (size_t index=0; index < array_roots.size();++index){
+                PSerializer::read(array_roots[index], instance.roots[index]);
+            }
+        }
+        if(!json_context["nodes"].is_null()){
+            assert(json_context["nodes"].is_array());
+            PJson::array array_nodes = json_context["nodes"].array_items();
+            instance.nodes.resize(array_nodes.size());
+            for (size_t index=0; index < array_nodes.size();++index){
+                PSerializer::read(array_nodes[index], instance.nodes[index]);
+            }
         }
         if(!json_context["objects"].is_null()){
             assert(json_context["objects"].is_array());
