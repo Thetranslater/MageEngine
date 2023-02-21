@@ -35,7 +35,7 @@ namespace Mage {
 
 		virtual void draw() {};
 	protected:
-		inline ImGuiWindowFlags _convert_config_to_imgui_() const {
+		inline ImGuiWindowFlags _convert_config_to_imgui() const {
 			ImGuiWindowFlags flags = ImGuiWindowFlags_None;
 
 			if (configuration.no_resize)					flags |= ImGuiWindowFlags_NoResize;
@@ -50,6 +50,14 @@ namespace Mage {
 			if (configuration.has_menubar)					flags |= ImGuiWindowFlags_MenuBar;
 
 			return flags;
+		}
+
+		//TODO
+		inline void _update() {
+			ImVec2 p = ImGui::GetWindowPos();
+			position = { p.x,p.y };
+			ImVec2 s = ImGui::GetWindowSize();
+			size = { s.x,s.y };
 		}
 
 		WindowConfig configuration{};

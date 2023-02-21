@@ -243,6 +243,9 @@
     <ClCompile Include="..\editor\ui\widgets\checkbox.cpp">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\input_text.cpp">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -456,6 +459,12 @@
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\text.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\input_text.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\sameline.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
   </ItemGroup>

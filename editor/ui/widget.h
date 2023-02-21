@@ -1,8 +1,11 @@
 #pragma once
 
 #include<stdexcept>
+#include<memory>
 
 #include<engine_core/function/id_allocator/id_allocator.h>
+
+#define CREATE_WIDGET(wType, ...)	std::make_shared<wType>(__VA_ARGS__)
 
 namespace Mage {
 

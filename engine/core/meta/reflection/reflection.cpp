@@ -313,4 +313,4 @@ namespace Mage
             return *this;
         }
     } // namespace Reflection
-} // namespace Piccolo
+} // namespace Mage

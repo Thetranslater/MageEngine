@@ -20,10 +20,10 @@ int main(int argc, char* argv[])
 
         result = parse("E:/Mage/engine/precompile.json",
                        "E:/Mage/engine/parser_header.h", 
-                       "E:/Mage/engine",
+                       "E:/Mage/engine/core",
                        "*",
                        "Mage",
-                       "0");
+                       "1");
 
         auto duration_time = std::chrono::system_clock::now() - start_time;
         std::cout << "Completed in " << std::chrono::duration_cast<std::chrono::milliseconds>(duration_time).count()

@@ -7,25 +7,22 @@
 namespace Mage {
 
 	void Viewer::draw() {
-		ImGuiWindowFlags flags = _convert_config_to_imgui_();
+		ImGuiWindowFlags flags = _convert_config_to_imgui();
 
 		if (!ImGui::Begin(window_id.c_str(), configuration.no_close ? nullptr : &is_close, flags)) {
 			ImGui::End();
 			return;
 		}
 
-		ImVec2 p = ImGui::GetWindowPos();
-		position = { p.x,p.y };
-		ImVec2 s = ImGui::GetWindowSize();
-		size = { s.x,s.y };
+		_update();
 
 		ImGui::End();
 
 		auto ui_pending = editor_global_context.m_render_system.lock()->getPendingData();
-		ui_pending->m_editor.viewport_x = p.x;
-		ui_pending->m_editor.viewport_y = p.y;
-		ui_pending->m_editor.viewport_width = s.x;
-		ui_pending->m_editor.viewport_height = s.y;
-		ui_pending->m_camera.m_pending_aspect = s.x / s.y;
+		ui_pending->m_editor.viewport_x = position.x;
+		ui_pending->m_editor.viewport_y = position.y;
+		ui_pending->m_editor.viewport_width = size.x;
+		ui_pending->m_editor.viewport_height = size.y;
+		ui_pending->m_camera.m_pending_aspect = size.x / size.y;
 	}
 }

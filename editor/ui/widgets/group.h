@@ -10,12 +10,12 @@ namespace Mage {
 	public:
 		Group() = default;
 		template<typename W, typename ...WidgetT>
-		Group(W&& w, WidgetT&&... ws) : Group(ws...) {
-			W& ref_w = w;
-			widgets.emplace_back(std::addressof(ref_w));
+		Group(W&& w, WidgetT&&... ws) : Group{ws...} {
+			widgets.emplace_back(w);
 		}
 
 		void draw() override {
+			ImGui::Indent(10.f);
 			ImGui::BeginGroup();
 
 			for (const auto& widget : widgets) {

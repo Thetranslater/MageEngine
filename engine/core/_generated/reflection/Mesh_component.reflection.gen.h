@@ -27,8 +27,8 @@ namespace TypeFieldReflectionOparator{
         }
         // fields
         static const char* getFieldName_mesh(){ return "mesh";}
-        static const char* getFieldTypeName_mesh(){ return "Mage::MeshAsset";}
-        static void set_mesh(void* instance, void* field_value){ static_cast<MeshComponent*>(instance)->mesh = *static_cast<Mage::MeshAsset*>(field_value);}
+        static const char* getFieldTypeName_mesh(){ return "MeshAsset";}
+        static void set_mesh(void* instance, void* field_value){ static_cast<MeshComponent*>(instance)->mesh = *static_cast<MeshAsset*>(field_value);}
         static void* get_mesh(void* instance){ return static_cast<void*>(&(static_cast<MeshComponent*>(instance)->mesh));}
         static bool isArray_mesh(){ return false; }
     };

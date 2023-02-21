@@ -155,6 +155,7 @@
     <ClCompile Include="..\editor\input\editor_input.cpp" />
     <ClCompile Include="..\editor\ui\editor_ui.cpp" />
     <ClCompile Include="..\editor\ui\widgets\checkbox.cpp" />
+    <ClCompile Include="..\editor\ui\widgets\input_text.cpp" />
     <ClCompile Include="..\editor\ui\widgets\treenode.cpp" />
     <ClCompile Include="..\editor\ui\windows\dock.cpp" />
     <ClCompile Include="..\editor\ui\windows\hierachy.cpp" />
@@ -208,6 +209,8 @@
     <ClInclude Include="..\editor\ui\widget.h" />
     <ClInclude Include="..\editor\ui\widgets\checkbox.h" />
     <ClInclude Include="..\editor\ui\widgets\group.h" />
+    <ClInclude Include="..\editor\ui\widgets\input_text.h" />
+    <ClInclude Include="..\editor\ui\widgets\sameline.h" />
     <ClInclude Include="..\editor\ui\widgets\text.h" />
     <ClInclude Include="..\editor\ui\widgets\treenode.h" />
     <ClInclude Include="..\editor\ui\window.h" />

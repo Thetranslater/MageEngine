@@ -4,7 +4,7 @@
 
 namespace Mage {
 	void Dock::draw() {
-		ImGuiWindowFlags flags = _convert_config_to_imgui_();
+		ImGuiWindowFlags flags = _convert_config_to_imgui();
 
 		if (configuration.is_dockspace) {
 			ImGuiViewport* viewport_ptr = ImGui::GetMainViewport();
@@ -36,14 +36,7 @@ namespace Mage {
 			ImGui::EndMenuBar();
 		}
 
-		//TODO: update state
-		ImVec2 pos = ImGui::GetWindowPos();
-		position[0] = pos.x;
-		position[1] = pos.y;
-
-		ImVec2 sz = ImGui::GetWindowSize();
-		size[0] = sz.x;
-		size[1] = sz.y;
+		_update();
 
 		for (const auto& widget_ptr : widgets) {
 			widget_ptr->draw();

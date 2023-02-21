@@ -4,7 +4,7 @@
 
 namespace Mage {
 	void CheckBox::draw() {
-		if (ImGui::Checkbox(label_id.c_str(), &value)) {
+		if (ImGui::Checkbox(lable_id.c_str(), &value)) {
 			changed_event.invoke(value);
 		}
 	}

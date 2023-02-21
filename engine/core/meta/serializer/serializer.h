@@ -166,4 +166,5 @@ namespace Mage
 
     //
     ////////////////////////////////////
-} // namespace Piccolo
+} // namespace Mage
+

@@ -27,18 +27,18 @@ namespace TypeFieldReflectionOparator{
         }
         // fields
         static const char* getFieldName_position(){ return "position";}
-        static const char* getFieldTypeName_position(){ return "Mage::Vector3";}
-        static void set_position(void* instance, void* field_value){ static_cast<TransformComponent*>(instance)->position = *static_cast<Mage::Vector3*>(field_value);}
+        static const char* getFieldTypeName_position(){ return "Vector3";}
+        static void set_position(void* instance, void* field_value){ static_cast<TransformComponent*>(instance)->position = *static_cast<Vector3*>(field_value);}
         static void* get_position(void* instance){ return static_cast<void*>(&(static_cast<TransformComponent*>(instance)->position));}
         static bool isArray_position(){ return false; }
         static const char* getFieldName_rotation(){ return "rotation";}
-        static const char* getFieldTypeName_rotation(){ return "Mage::Quaternion";}
-        static void set_rotation(void* instance, void* field_value){ static_cast<TransformComponent*>(instance)->rotation = *static_cast<Mage::Quaternion*>(field_value);}
+        static const char* getFieldTypeName_rotation(){ return "Quaternion";}
+        static void set_rotation(void* instance, void* field_value){ static_cast<TransformComponent*>(instance)->rotation = *static_cast<Quaternion*>(field_value);}
         static void* get_rotation(void* instance){ return static_cast<void*>(&(static_cast<TransformComponent*>(instance)->rotation));}
         static bool isArray_rotation(){ return false; }
         static const char* getFieldName_scale(){ return "scale";}
-        static const char* getFieldTypeName_scale(){ return "Mage::Vector3";}
-        static void set_scale(void* instance, void* field_value){ static_cast<TransformComponent*>(instance)->scale = *static_cast<Mage::Vector3*>(field_value);}
+        static const char* getFieldTypeName_scale(){ return "Vector3";}
+        static void set_scale(void* instance, void* field_value){ static_cast<TransformComponent*>(instance)->scale = *static_cast<Vector3*>(field_value);}
         static void* get_scale(void* instance){ return static_cast<void*>(&(static_cast<TransformComponent*>(instance)->scale));}
         static bool isArray_scale(){ return false; }
     };

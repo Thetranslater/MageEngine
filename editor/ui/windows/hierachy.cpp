@@ -60,7 +60,7 @@ namespace Mage {
 
 	void Hierachy::draw() {
 		if (not is_close) {
-			ImGuiWindowFlags flags = _convert_config_to_imgui_();
+			ImGuiWindowFlags flags = _convert_config_to_imgui();
 
 			if (!ImGui::Begin(window_id.c_str(), configuration.no_close ? nullptr : &is_close, flags)) {
 				ImGui::End();
@@ -75,10 +75,7 @@ namespace Mage {
 
 			ImGui::EndGroup();
 
-			ImVec2 p = ImGui::GetWindowPos();
-			position = Vector2{ p.x, p.y };
-			ImVec2 s = ImGui::GetWindowSize();
-			size = Vector2{ s.x,s.y };
+			_update();
 
 			ImGui::End();
 		}
