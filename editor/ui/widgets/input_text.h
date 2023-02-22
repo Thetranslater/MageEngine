@@ -5,27 +5,26 @@
 
 #include<imgui-docking/imgui.h>
 
-#include<ui/widget.h>
+#include<ui/widgets/widget.h>
 
 #include<engine_core/event/event.h>
 
 namespace Mage {
 
-	class InputText : public Widget {
+	class InputText : public LableIDWidget, public Bindable<std::string> {
 	public:
-		InputText() :data{ 64 }, lable_id{"##" + std::to_string(id)} {}
-		InputText(const std::string& l) : data{64}, lable_id{ l  + "##" + std::to_string(id)} {}
+		InputText() :data{ 64 } {}
+		InputText(const std::string& l) : data{64} {}
 
 		void draw() override;
 
 		void setContent(const std::string& content);
 
-		void setResizeCallback(const std::function<int(ImGuiInputTextCallbackData*)>& func) { resize = func; }
-		void setFilterCallback(const std::function<int(ImGuiInputTextCallbackData*)>& func) { filter = func; }
+		void setResizeCallback(const std::function<int(ImGuiInputTextCallbackData*)>& func) { resize = func; has_callback_resize = true; }
+		void setFilterCallback(const std::function<int(ImGuiInputTextCallbackData*)>& func) { filter = func; has_callback_filter = true; }
 	private:
 		int _callback(ImGuiInputTextCallbackData* data);
 
-		std::string lable_id;
 		std::vector<char> data;
 		std::function<int(ImGuiInputTextCallbackData*)> resize;
 		std::function<int(ImGuiInputTextCallbackData*)> filter;

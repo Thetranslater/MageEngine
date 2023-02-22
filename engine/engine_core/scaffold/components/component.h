@@ -1,6 +1,11 @@
 #pragma once
 
+#include<memory>
+
 #include"core/meta/reflection/reflection.h"
+
+#include"ui/widgets/widget.h"
+#include"ui/widgets/treenode.h"
 
 namespace Mage {
 	class GameObject;
@@ -19,5 +24,7 @@ namespace Mage {
 		void SetGameObject(GameObject* parent_obj) { game_object = parent_obj; }
 
 		virtual void tick(float delta) {}
+
+		//virtual std::shared_ptr<Widget> InspectUI() { return CREATE_WIDGET(TreeNode); }
 	};
 }

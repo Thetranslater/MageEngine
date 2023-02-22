@@ -11,6 +11,7 @@ namespace Mage {
 		if (is_open_on_arrow)			flags |= ImGuiTreeNodeFlags_OpenOnArrow;
 		if (is_open_on_double_click)	flags |= ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		if (is_selected)				flags |= ImGuiTreeNodeFlags_Selected;
+		if (is_span_full_width) 		flags |= ImGuiTreeNodeFlags_SpanFullWidth;
 
 		bool open = ImGui::TreeNodeEx((void*)(intptr_t)id, flags, label.c_str());
 

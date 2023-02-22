@@ -31,7 +31,12 @@ namespace Mage {
 		if (has_callback_resize)	flags |= ImGuiInputTextFlags_CallbackResize;
 		if (has_callback_filter)	flags |= ImGuiInputTextFlags_CallbackCharFilter;
 
-		std::vector<char> pre = data;
+		std::vector<char> pre{ data.begin(),data.end() };
+
+		if (hasBind()) {
+			std::copy(get().begin(), get().end(), data.begin());
+		}
+
 		if (has_callback_filter or has_callback_resize) {
 			//TODO:这个callback能否正常生成都是个问题，还没测试
 			ImGui::InputText(lable_id.c_str(), data.data(), data.size(), flags, *std::function<int(ImGuiInputTextCallbackData*)>{ std::bind(&InputText::_callback, this, std::placeholders::_1) }.target<ImGuiInputTextCallback>());
@@ -42,6 +47,11 @@ namespace Mage {
 
 		if (not std::equal(data.begin(), data.end(), pre.begin(), pre.end())) {
 			changed_event.invoke(std::string{ data.data() });
+		}
+
+		if (hasBind()) {
+			std::string str{ data.data() };
+			set(str);
 		}
 	}
 

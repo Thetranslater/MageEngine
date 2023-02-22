@@ -15,6 +15,8 @@ namespace Mage {
 
 		void tick(float delta) override;
 
+		//std::shared_ptr<Widget> InspectUI() override;
+
 		inline Vector3 Position() { return position; }
 		inline Quaternion Rotation() { return rotation; }
 		inline Vector3 Scale() { return scale; }

@@ -129,7 +129,6 @@ namespace Mage {
 	//use in degrees
 	//误差！假如我quaternion转成euler，再用该euler转会quaternion，赋值时会在10^{-8}处发生浮动
 	void Quaternion::SetEulerAngels(const Vector3& euler) {
-		//float helper = 0.5f * Mathf::Deg2Rad;
 		//helper
 		float cy = Mathf::Cos(euler.z * 0.5f * Mathf::Deg2Rad);
 		float sy = Mathf::Sin(euler.z * 0.5f * Mathf::Deg2Rad);

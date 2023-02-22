@@ -2,8 +2,8 @@
 
 #include<imgui-docking/imgui.h>
 
-#include<ui/widget.h>
-#include<ui/container.h>
+#include<ui/widgets/widget.h>
+#include<ui/widgets/container.h>
 
 namespace Mage {
 	class Group : public Widget, public Container{
@@ -15,7 +15,6 @@ namespace Mage {
 		}
 
 		void draw() override {
-			ImGui::Indent(10.f);
 			ImGui::BeginGroup();
 
 			for (const auto& widget : widgets) {

@@ -3,13 +3,15 @@
 #include<vector>
 #include<memory>
 
-#include<ui/widget.h>
+#include<ui/widgets/widget.h>
 
 namespace Mage {
 	class Container {
 	public:
-		void addWidget(std::shared_ptr<Widget>&& r_widget_ptr) {
+		ID addWidget(std::shared_ptr<Widget>&& r_widget_ptr) {
+			ID id = r_widget_ptr->getID();
 			widgets.emplace_back(std::move(r_widget_ptr));
+			return id;
 		}
 
 		void removeWidget(const ID widget_id) {

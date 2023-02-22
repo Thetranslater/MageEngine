@@ -1,7 +1,6 @@
 #pragma once
 
-
-#include<ui/window.h>
+#include<ui/windows/window.h>
 
 namespace Mage {
 	class Dock : public Window {

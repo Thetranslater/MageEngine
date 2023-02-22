@@ -90,9 +90,7 @@ parser_header.o: E:/Mage/engine/parser_header.h \
   E:\Tools\VS\ 2022\VC\Tools\MSVC\14.33.31629\include\cassert \
   C:\Program\ Files\ (x86)\Windows\ Kits\10\Include\10.0.19041.0\ucrt\assert.h \
   E:/Mage/engine/core/math/vector3.h glm-master/glm/vec3.hpp \
-  E:/Mage/engine\core/math/math.h \
-  E:\Tools\VS\ 2022\VC\Tools\MSVC\14.33.31629\include\algorithm \
-  E:/Mage/engine\core/meta/reflection/reflection.h \
+  core/math/math.h core/meta/reflection/reflection.h \
   E:/Mage/engine/engine_core/function/global_context/global_context.h \
   E:\Tools\VS\ 2022\VC\Tools\MSVC\14.33.31629\include\memory \
   E:/Mage/engine/asset/object_asset.h E:/Mage/engine/asset/scene_asset.h \
@@ -101,10 +99,10 @@ parser_header.o: E:/Mage/engine/parser_header.h \
   glm-master/glm/gtc/quaternion.hpp E:/Mage/engine/core/math/vector2.h \
   glm-master/glm/vec2.hpp \
   E:/Mage/engine/engine_core/scaffold/components/component.h \
+  ui/widgets/widget.h ui/widgets/treenode.h \
   E:/Mage/engine/engine_core/scaffold/components/transformcomponent/Transform_component.h \
   E:/Mage/engine/core/math/matrix4x4.h glm-master/glm/mat4x4.hpp \
-  E:/Mage/engine\core/math/vector3.h E:/Mage/engine\core/math/vector4.h \
-  glm-master/glm/vec4.hpp E:/Mage/engine\core/math/quaternion.h \
+  core/math/vector3.h core/math/vector4.h core/math/quaternion.h \
   E:/Mage/engine/engine_core/scaffold/components/meshcomponent/Mesh_component.h \
   E:/Mage/engine/engine_core/scaffold/components/meshcomponent/mesh_asset.h \
   E:/Mage/engine/engine_core/scaffold/components/meshcomponent/mesh_assset.h \

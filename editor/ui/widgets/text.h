@@ -2,22 +2,23 @@
 
 #include<imgui-docking/imgui.h>
 
-#include<ui/widget.h>
+#include<ui/widgets/widget.h>
 
 namespace Mage {
 	class Text : public Widget {
 	public:
-		Text(const std::string& l) : lable{ l } {}
+		Text(const std::string& l) : content{ l } {}
 
 		inline void draw() override {
-			ImGui::Text(lable.c_str());
+			ImGui::Text(content.c_str());
 		}
 
 		template<typename ...ty>
 		void draw(ty... args) {
-			ImGui::Text(lable.c_str(), args...);
+			ImGui::Text(format.c_str(), args...);
 		}
 	protected:
-		std::string lable;
+		std::string content;
+		std::string& format{ content };
 	};
 }

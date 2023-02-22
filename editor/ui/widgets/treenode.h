@@ -1,7 +1,7 @@
 #pragma once
 
-#include<ui/widget.h>
-#include<ui/container.h>
+#include<ui/widgets/widget.h>
+#include<ui/widgets/container.h>
 
 #include<engine_core/event/event.h>
 
@@ -21,6 +21,7 @@ namespace Mage {
 		bool is_open_on_arrow{ false };
 		bool is_open_on_double_click{ false };
 		bool is_selected{ false };
+		bool is_span_full_width{ false };
 
 		Event<> clicked_event;
 	};

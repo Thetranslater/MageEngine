@@ -4,15 +4,12 @@
 #include<memory>
 #include<string>
 
-#include<ui/window.h>
+#include<ui/windows/window.h>
 #include<engine_core/scaffold/game_object.h>
 
 #include<engine_core/function/id_allocator/id_allocator.h>
 
 namespace Mage {
-	class Window;
-	class GameObject;
-	struct WindowConfig;
 	class WindowManager {
 	public:
 		template<typename WindowT, typename condition = std::enable_if_t<std::is_base_of_v<Window, WindowT>>>

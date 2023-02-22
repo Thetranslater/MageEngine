@@ -97,6 +97,9 @@
     <Filter Include="Mage\editor\ui\widgets">
       <UniqueIdentifier>{9a2cb166-1650-40e7-a50b-330a98eca546}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\editor\ui\windows\window_manager">
+      <UniqueIdentifier>{f8dc12b6-8aff-4967-ae47-74ddadf93fee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -244,6 +247,9 @@
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\editor\ui\widgets\input_text.cpp">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\drag_float.cpp">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
@@ -416,15 +422,6 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_passes\UIPass.h">
       <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\ui\container.h">
-      <Filter>Mage\editor\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\editor\ui\widget.h">
-      <Filter>Mage\editor\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\editor\ui\window.h">
-      <Filter>Mage\editor\ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\engine_core\event\event.h">
       <Filter>Mage\engine\engine_core\event</Filter>
     </ClInclude>
@@ -452,9 +449,6 @@
     <ClInclude Include="..\editor\ui\widgets\group.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\ui\window_manager.h">
-      <Filter>Mage\editor\ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\checkbox.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
@@ -465,6 +459,24 @@
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\sameline.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\seperator.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\container.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\widget.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\windows\window_manager\window_manager.h">
+      <Filter>Mage\editor\ui\windows\window_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\windows\window.h">
+      <Filter>Mage\editor\ui\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\drag_float.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
   </ItemGroup>
