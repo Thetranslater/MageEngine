@@ -35,7 +35,7 @@ namespace Mage {
 		//components
 		auto component_ptr = selected.GetComponent(TransformComponent);
 
-		auto node_ptr = EditorUI::base_widget_creator["TreeNode"]("Transform", "TransformComponent", (void*)component_ptr);
+		auto node_ptr = EditorUI::base_widget_creator["TreeNode"]("TransformComponent", (void*)component_ptr);
 		widgets.emplace_back(node_ptr);
 
 	}

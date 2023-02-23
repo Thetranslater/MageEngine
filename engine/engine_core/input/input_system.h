@@ -48,7 +48,6 @@ namespace Mage {
 	class WindowSystem;
 	enum KeyCode;
 	enum InputMode;
-	//TODO:input manager key map
 	class InputSystem {
 	public:
 		void initialize(std::shared_ptr<WindowSystem>);

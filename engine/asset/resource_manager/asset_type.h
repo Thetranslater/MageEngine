@@ -54,7 +54,6 @@ namespace Mage {
 		MAGE_SAMPLER_ADDRESS_MODE_MIRROR_CLAMP_TO_EDGE,
 	};
 
-	//TODO:sampler
 	class Sampler{
 	public:
 		VkSampler asVulkanSampler(VulkanRHI* rhi, VkSamplerCreateInfo* optional_info = nullptr);

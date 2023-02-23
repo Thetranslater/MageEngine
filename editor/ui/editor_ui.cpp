@@ -15,6 +15,8 @@
 #include"ui/widgets/group.h"
 #include"ui/widgets/drag_float.h"
 #include"ui/widgets/text.h"
+#include"ui./widgets/checkbox.h"
+#include"ui/widgets/WFI/bindable.h"
 #include"context/editor_global_context.h"
 
 #include"engine_core/render_engine/render_system.h"
@@ -25,51 +27,58 @@ namespace Mage {
 
 	void EditorUI::initialize() {
 		//base widget creator initialize
-		base_widget_creator["TreeNode"] = [&](const std::string& lable, const std::string& type_name, void* instance) -> std::shared_ptr<Widget> {
+		base_widget_creator["TreeNode"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget> {
 			auto treenode = CREATE_WIDGET(TreeNode, lable);
 			treenode->is_open_on_arrow = true;
 			treenode->is_open_on_double_click = true;
 
-			Reflection::TypeMeta meta{ Reflection::TypeMeta::newMetaFromName(type_name) };
+			Reflection::TypeMeta meta{ Reflection::TypeMeta::newMetaFromName(lable) };
 			Reflection::FieldAccessor* fields;
 			int field_count = meta.getFieldsList(fields);
 			for (int i{ 0 }; i < field_count; ++i) {
-				treenode->addWidget(
-					base_widget_creator[fields[i].getFieldTypeName()](
-						fields[i].getFieldName(), 
-						fields[i].getFieldTypeName(), 
-						fields[i].get(instance)));
+				if (base_widget_creator.find(fields[i].getFieldTypeName()) != base_widget_creator.end()) {
+					treenode->addWidget(
+						base_widget_creator[fields[i].getFieldTypeName()](
+							fields[i].getFieldName(),
+							fields[i].get(instance)));
+				}
+				else {
+					treenode->addWidget(
+						base_widget_creator["TreeNode"](
+							fields[i].getFieldTypeName(),
+							fields[i].get(instance)));
+				}
 			}
 			delete[] fields;
 
 			return treenode;
 		};
-		base_widget_creator["Vector3"] = [&](const std::string& lable, const std::string& type_name, void* instance) -> std::shared_ptr<Widget> {
+		base_widget_creator["Vector3"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget> {
 			auto group = CREATE_WIDGET(Group);
 
 			group->addWidget(CREATE_WIDGET(Text, lable));
 			group->addWidget(CREATE_WIDGET(SameLine));
-			Reflection::TypeMeta meta{ Reflection::TypeMeta::newMetaFromName(type_name) };
+			Reflection::TypeMeta meta{ Reflection::TypeMeta::newMetaFromName("Vector3")};
 			Reflection::FieldAccessor* fields{ nullptr };
 			int field_count = meta.getFieldsList(fields);
 			ID last_id{ invalid_widget_id };
 			for (int i{ 0 }; i < field_count; ++i) {
 				group->addWidget(
 					base_widget_creator["float"](
-						fields[i].getFieldName(), 
-						"float", 
+						fields[i].getFieldName(),  
 						fields[i].get(instance)));
 
 				last_id = group->addWidget(CREATE_WIDGET(SameLine));
 			}
 			group->removeWidget(last_id);
 
+			delete[] fields;
+
 			return group;
 		};
-		//TODO:quaternion ui creation
-		base_widget_creator["Quaternion"] = [&](const std::string& lable, const std::string& type_name, void* instance) -> std::shared_ptr<Widget>{
+		//TODO:不知道对不对
+		base_widget_creator["Quaternion"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget>{
 			auto group = CREATE_WIDGET(Group, CREATE_WIDGET(SameLine), CREATE_WIDGET(Text, lable));
-			Vector3 euler{ static_cast<Quaternion*>(instance)->ToEulerAngles() };
 			ID last_id{ invalid_widget_id };
 
 #define QuatFieldBind(field) \
@@ -85,7 +94,9 @@ namespace Mage {
 				angle.##field## = value; \
 				static_cast<Quaternion*>(in)->SetEulerAngels(angle); \
 			}; \
-			drag_##field##->bind(std::bind(getter_##field##, instance), std::bind(setter_##field##, instance, std::placeholders::_1)); \
+			auto bind_##field## = CREATE_WFI(Bindable<float>); \
+			bind_##field##->bind(std::bind(getter_##field##, instance), std::bind(setter_##field##, instance, std::placeholders::_1)); \
+			drag_##field##->addWFI(bind_##field##); \
 			group->addWidget(drag_##field##);\
 			last_id = group->addWidget(CREATE_WIDGET(SameLine));
 			
@@ -99,7 +110,7 @@ namespace Mage {
 
 			return group;
 		};
-		base_widget_creator["float"] = [&](const std::string& lable, const std::string& type_name, void* instance) -> std::shared_ptr<Widget>{
+		base_widget_creator["float"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget>{
 			auto group = CREATE_WIDGET(Group);
 			group->addWidget(CREATE_WIDGET(Text, lable));
 			group->addWidget(CREATE_WIDGET(SameLine));
@@ -108,11 +119,29 @@ namespace Mage {
 			drag->is_always_clamp = true;
 			auto getter = [](void* in) -> float { return *static_cast<float*>(in); };
 			auto setter = [](void* in, float& value) {*static_cast<float*>(in) = value; };
-			drag->bind(std::bind(getter, instance), std::bind(setter, instance, std::placeholders::_1));
+			auto bind_wfi = CREATE_WFI(Bindable<float>);
+			bind_wfi->bind(std::bind(getter, instance), std::bind(setter, instance, std::placeholders::_1));
+			drag->addWFI(bind_wfi);
 
 			group->addWidget(drag);
 
 			return group;
+		};
+		base_widget_creator["bool"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget> {
+			auto group = CREATE_WIDGET(Group, CREATE_WIDGET(SameLine), CREATE_WIDGET(Text, lable));
+
+			auto checkbox = CREATE_WIDGET(CheckBox);
+			auto getter = [](void* instance) -> bool {return *static_cast<bool*>(instance); };
+			auto setter = [](void* instance, bool& val) {*static_cast<bool*>(instance) = val; };
+			auto bind_wfi = CREATE_WFI(Bindable<bool>);
+			bind_wfi->bind(std::bind(getter, instance), std::bind(setter, instance, std::placeholders::_1));
+			checkbox->addWFI(bind_wfi);
+			group->addWidget(checkbox);
+
+			return group;
+		};
+		base_widget_creator["int"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget> {
+
 		};
 
 		WindowConfig dock_config{};
@@ -155,95 +184,6 @@ namespace Mage {
 
 	void EditorUI::drawUI() {
 		dock_window->draw();
-		//drawMenuUI();
-		//drawHierachyUI();
-		//drawDisplayUI();
-		//drawInspectorUI();
-		//drawFileContentUI();
-	}
-	//TODO:
-	void EditorUI::drawMenuUI() {
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBringToFrontOnFocus;
-
-		const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(main_viewport->WorkPos);
-		ImGui::SetNextWindowSize(main_viewport->WorkSize);
-		ImGui::SetNextWindowViewport(main_viewport->ID);
-
-		ImGui::Begin("Menu", nullptr, window_flags);
-
-		//default layout
-		ImGuiID main_id = ImGui::GetID("Main Space");
-		ImGui::DockSpace(main_id);
-
-		if (ImGui::BeginMenuBar()) {
-			if (ImGui::BeginMenu("File")) {
-				//file creation
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Asset")) {
-				//asset creation
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-		ImGui::End();
-	}
-	//TODO:
-	void EditorUI::drawHierachyUI() {
-		ImGuiWindowFlags hierachy_flags = ImGuiWindowFlags_NoCollapse;
-
-		if (!ImGui::Begin("HierachyWindow", nullptr, hierachy_flags)) {
-			ImGui::End();
-			return;
-		}
-
-		ImGui::BeginGroup();
-
-		for (int i{ 0 }; i < 10; ++i) {
-			if (ImGui::TreeNode((void*)(intptr_t)i, "Game Object %d", i)) {
-				ImGui::TreePop();
-			}
-		}
-
-		ImGui::EndGroup();
-
-		ImGui::End();
-	}
-	//TODO:
-	void EditorUI::drawDisplayUI() {
-		ImGuiWindowFlags display_flags = ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
-
-		if (!ImGui::Begin("DisplayWindow", nullptr, display_flags)) {
-			ImGui::End();
-			return;
-		}
-
-		//TODO:menu
-
-		ImVec2 display_position = ImGui::GetWindowPos();
-		ImVec2 display_size		= ImGui::GetWindowSize();
-
-		auto ui_pending = editor_global_context.m_render_system.lock()->getPendingData();
-		ui_pending->m_editor.viewport_x = display_position.x;
-		ui_pending->m_editor.viewport_y = display_position.y;
-		ui_pending->m_editor.viewport_width  = display_size.x;
-		ui_pending->m_editor.viewport_height = display_size.y;
-
-		ui_pending->m_camera.m_pending_aspect = display_size.x / display_size.y;
-
-		ImGui::End();
-	}
-	//TODO:
-	void EditorUI::drawInspectorUI() {
-		ImGuiWindowFlags inspector_flags = ImGuiWindowFlags_NoCollapse;
-
-		if (!ImGui::Begin("InspectorWindow", nullptr, inspector_flags)) {
-			ImGui::End();
-			return;
-		}
-
-		ImGui::End();
 	}
 	//TODO:
 	void EditorUI::drawFileContentUI() {

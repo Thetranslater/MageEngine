@@ -10,7 +10,7 @@ namespace Mage {
 	class Dock;
 	class WindowManager;
 	class EditorUI {
-		using CreateFunc = std::function<std::shared_ptr<Widget>(const std::string&, const std::string&, void*)>;
+		using CreateFunc = std::function<std::shared_ptr<Widget>(const std::string&, void*)>;
 	public:
 		void initialize();
 
@@ -18,11 +18,7 @@ namespace Mage {
 		//std::shared_ptr<Widget> creator(const std::string& lable, const std::string& typename, void* instance);
 		static std::unordered_map<std::string, CreateFunc> base_widget_creator;
 	private:
-		void drawMenuUI();
-		void drawHierachyUI();
 		void drawFileContentUI();
-		void drawInspectorUI();
-		void drawDisplayUI();
 	private:
 		WindowManager window_manager;
 

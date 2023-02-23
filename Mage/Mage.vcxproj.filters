@@ -100,6 +100,9 @@
     <Filter Include="Mage\editor\ui\windows\window_manager">
       <UniqueIdentifier>{f8dc12b6-8aff-4967-ae47-74ddadf93fee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\editor\ui\widgets\WFI">
+      <UniqueIdentifier>{99286f12-0de8-496e-9fb5-fa71e50fbe6d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -250,6 +253,15 @@
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClCompile>
     <ClCompile Include="..\editor\ui\widgets\drag_float.cpp">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\WFI\bindable.cpp">
+      <Filter>Mage\editor\ui\widgets\WFI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\WFI\resizable.cpp">
+      <Filter>Mage\editor\ui\widgets\WFI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\drag_int.cpp">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClCompile>
   </ItemGroup>
@@ -477,6 +489,18 @@
       <Filter>Mage\editor\ui\windows</Filter>
     </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\drag_float.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\WFI\wfi.h">
+      <Filter>Mage\editor\ui\widgets\WFI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\WFI\bindable.h">
+      <Filter>Mage\editor\ui\widgets\WFI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\WFI\resizable.h">
+      <Filter>Mage\editor\ui\widgets\WFI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\drag_int.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
   </ItemGroup>

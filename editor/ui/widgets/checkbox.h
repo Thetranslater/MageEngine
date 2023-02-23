@@ -2,20 +2,21 @@
 #include<string>
 
 #include<ui/widgets/widget.h>
+#include<ui/widgets/WFI/bindable.h>
 
 #include<engine_core/event/event.h>
 
 namespace Mage {
-	class CheckBox : public LableIDWidget, public Bindable<bool> {
+	class CheckBox : public DataWidget<bool> {
 	public:
-		CheckBox(bool v) : value{ v } {}
-		CheckBox(bool v, const std::string& l) : value{ v } {}
-
-		inline bool Value() { return value; }
+		CheckBox() = default;
+		CheckBox(bool v) : DataWidget{ v } {}
+		CheckBox(bool v, const std::string& l) : DataWidget{ v }, lable{ l } {}
+		CheckBox(const std::string& l) : lable{ l } {}
 
 		void draw() override;
 	protected:
-		bool value;
+		std::string lable;
 	public:
 		Event<bool> changed_event;
 	};

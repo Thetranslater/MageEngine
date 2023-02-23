@@ -54,7 +54,6 @@ namespace Mage {
 
 
 	protected:
-		//TODO:call back funtions
 		static void keyInterface(GLFWwindow* window, int key, int scancode, int action, int mods)
 		{
 			WindowSystem* app = (WindowSystem*)glfwGetWindowUserPointer(window);

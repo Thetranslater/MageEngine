@@ -8,11 +8,17 @@
 #include<memory>
 
 #include<core/meta/reflection/reflection.h>
+
+#include<ui/widgets/WFI/wfi.h>
+
 #include<engine_core/function/id_allocator/id_allocator.h>
 
 #define CREATE_WIDGET(wType, ...)	std::make_shared<wType>(__VA_ARGS__)
 
 namespace Mage {
+
+	template<typename T>
+	class Bindable;
 
 	const ID invalid_widget_id = INT64_MAX;
 
@@ -31,38 +37,38 @@ namespace Mage {
 
 		ID getID() const { return id; }
 
+		void addWFI(std::shared_ptr<WFI> wfi) { customized.emplace_back(wfi); }
+
 		static IDAllocator widget_id_allocator;
 	protected:
+		inline void _orderPreExecuteWFI() {
+			for (const auto& item : customized) {
+				item->preprocess();
+			}
+		}
+
+		inline void _invertPostExecuteWFI() {
+			for (auto riter = customized.rbegin(); riter != customized.rbegin(); ++riter) {
+				riter->operator->()->postprocess();
+			}
+		}
+
 		inline bool isValidID(ID _id) {
 			return _id != invalid_widget_id;
 		}
 		ID id;
+
+		std::vector<std::shared_ptr<WFI>> customized;
 	};
 
-	template<typename dataTy>
-	class Bindable {
-		using getter = std::function<dataTy(void)>;
-		using setter = std::function<void(dataTy&)>;
+	template<typename T>
+	class DataWidget : public Widget {
+		friend class Bindable<T>;
 	public:
-		Bindable() = default;
-		Bindable(const getter& get, const setter& set) : accessor{ std::make_pair(get,set) } {}
-
-		constexpr void bind(const getter& get, const setter& set) { accessor = std::make_pair(get, set); }
-
-		constexpr bool hasBind() { return accessor.has_value(); }
-		
-		constexpr dataTy get() { return accessor.value().first(); }
-		constexpr void set(dataTy& value) { accessor.value().second(value); }
+		DataWidget() = default;
+		DataWidget(const T& val) : value{ val } {}
 	protected:
-		std::optional<std::pair<getter, setter>> accessor;
-	};
-
-	class LableIDWidget : public Widget {
-	public:
-		LableIDWidget() : lable_id{ "##" + std::to_string(id) } {}
-		LableIDWidget(const std::string& lable) : lable_id{ lable + "##" + std::to_string(id) } {}
-	protected:
-		std::string lable_id;
+		T value{};
 	};
 
 	inline IDAllocator Widget::widget_id_allocator;

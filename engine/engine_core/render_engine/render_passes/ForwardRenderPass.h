@@ -3,8 +3,8 @@
 #include"engine_core/render_engine/render_subpass.h"
 
 namespace Mage {
-	struct ForwardRenderPassCreateInfo:public RenderPassCreateInfo{};
-	//TODO:Ìí¼Óuipass
+	struct ForwardRenderPassCreateInfo : public RenderPassCreateInfo{};
+
 	class ForwardRenderPass :public RenderPass {
 
 		enum SubpassType {

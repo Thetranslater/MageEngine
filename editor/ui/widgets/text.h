@@ -7,7 +7,7 @@
 namespace Mage {
 	class Text : public Widget {
 	public:
-		Text(const std::string& l) : content{ l } {}
+		Text(const std::string& cont_or_form) : content{ cont_or_form } {}
 
 		inline void draw() override {
 			ImGui::Text(content.c_str());
