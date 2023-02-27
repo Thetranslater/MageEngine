@@ -1,6 +1,8 @@
 #include"imgui-docking/imgui.h"
 #include"imgui-docking/imgui_internal.h"
 
+#include"core/math/quaternion.h"
+#include"core/math/vector3.h"
 #include"core/meta/reflection/reflection.h"
 
 #include"ui/editor_ui.h"
@@ -140,9 +142,9 @@ namespace Mage {
 
 			return group;
 		};
-		base_widget_creator["int"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget> {
+		//base_widget_creator["int"] = [&](const std::string& lable, void* instance) -> std::shared_ptr<Widget> {
 
-		};
+		//};
 
 		WindowConfig dock_config{};
 		dock_config.no_background = true;

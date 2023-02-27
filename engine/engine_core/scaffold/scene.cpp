@@ -8,6 +8,7 @@
 #include"engine_core/event/reference.h"
 #include"engine_core/scaffold/scene.h"
 #include"engine_core/scaffold/game_object.h"
+#include"engine_core/scaffold/components/component.h"
 #include"engine_core/scaffold/world_manager/world_manager.h"
 #include"engine_core/function/id_allocator/id_allocator.h"
 
@@ -56,9 +57,19 @@ namespace Mage {
 	}
 
 	void Scene::tick(float delta) {
+		//transform tick
 		for (auto& [goid, go] : objects) {
 			if (go != nullptr) {
-				go->tick(delta);
+				go->GetComponents().front()->tick(delta);
+			}
+		}
+
+		for (auto& [goid, go] : objects) {
+			if (go != nullptr) {
+				auto& components = go->GetComponents();
+				for (int i{ 1 }; i < components.size(); ++i) {
+					components[i]->tick(delta);
+				}
 			}
 		}
 	}

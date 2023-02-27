@@ -37,7 +37,7 @@ namespace Mage {
 
 		ID getID() const { return id; }
 
-		void addWFI(std::shared_ptr<WFI> wfi) { customized.emplace_back(wfi); }
+		void addWFI(std::shared_ptr<WFI> wfi) { wfi->setOwner(this); customized.emplace_back(wfi); }
 
 		static IDAllocator widget_id_allocator;
 	protected:

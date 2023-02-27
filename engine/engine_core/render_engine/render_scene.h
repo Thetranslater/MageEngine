@@ -7,6 +7,9 @@
 #include<deque>
 
 namespace Mage {
+	struct DirectionalLight;
+	struct PointLight;
+
 	template<typename T>
 	class SceneProcessDeque {
 		using process_type = T;
@@ -22,6 +25,7 @@ namespace Mage {
 	//render scene管理需要渲染的render model,作为渲染资源的一部分上下文,处理cpu和gpu资源交换。
 	class RenderScene {
 	public:
+		RenderScene();
 		//TODO:light
 		void initialize();
 
@@ -35,6 +39,9 @@ namespace Mage {
 
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_load_deque;
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_delete_deque;
+
+		std::reference_wrapper<std::vector<DirectionalLight>> m_directional_lights;
+		std::reference_wrapper<std::vector<PointLight>> m_point_lights;
 
 	private:
 		//guid generator

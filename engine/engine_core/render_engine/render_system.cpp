@@ -5,6 +5,7 @@
 #include"core/macro.h"
 #include"core/hash.h"
 
+#include"engine_core/render_engine/render_pending_data.h"
 #include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/renderer/vulkanRHI.h"
 #include"engine_core/render_engine/renderer/vulkanHelper.h"
@@ -30,11 +31,11 @@ namespace Mage {
 		m_render_scene->initialize();
 
 		m_render_camera = std::make_shared<RenderCamera>();
-		m_render_camera->setPosition(1.f, 0.f, -2.f);
-		m_render_camera->setRotation(Quaternion::FromToRotation(Vector3{ 0.f,0.f,1.f }, Vector3{ -1.f,0.f,2.f }));
+		m_render_camera->setPosition(0.f, 0.f, 0.f);
+		m_render_camera->setRotation(Quaternion::identity);
 		m_render_camera->setFov(90.f);
 		m_render_camera->setzNear(0.01f);
-		m_render_camera->setzFar(1000.f);
+		m_render_camera->setzFar(100.f);
 		m_render_camera->setAspect(float(m_vulkan_rhi->getSwapchainExtent().width) / m_vulkan_rhi->getSwapchainExtent().height);
 
 
@@ -130,14 +131,13 @@ namespace Mage {
 			//TODO:process material
 			for (int i{ 0 }; i < process_job.m_materials_info.m_infos.size(); ++i) {
 				auto& material = process_job.m_materials_info.m_infos[i];
-				VkRenderMaterialDescription raw_material;
-				raw_material.m_base_color_texture_index = material.m_base_color_texture_index == -1 ? -1 : image_guids[material.m_base_color_texture_index];
-				raw_material.m_metallic_roughness_texture_index = material.m_metallic_roughness_texture_index == -1? -1 : image_guids[material.m_metallic_roughness_texture_index];
-				raw_material.m_normal_texture_index = material.m_normal_texture_index == -1 ? -1 : image_guids[material.m_normal_texture_index];
+				material.m_base_color_texture_index = material.m_base_color_texture_index == -1 ? -1 : image_guids[material.m_base_color_texture_index];
+				material.m_metallic_roughness_texture_index = material.m_metallic_roughness_texture_index == -1? -1 : image_guids[material.m_metallic_roughness_texture_index];
+				material.m_normal_texture_index = material.m_normal_texture_index == -1 ? -1 : image_guids[material.m_normal_texture_index];
 
-				auto material_guid = m_render_scene->getMaterialGUIDGenerator().generateGUID(raw_material);
+				auto material_guid = m_render_scene->getMaterialGUIDGenerator().generateGUID(material);
 				if (not m_render_resource->hasMaterial(material_guid)) {
-					RenderResource::IO_Material material_creation_param = std::move(raw_material);
+					RenderResource::IO_Material material_creation_param = std::move(material);
 					bool create_ret = m_render_resource->getOrCreateRenderResource(m_vulkan_rhi.get(), material_guid, material_creation_param);
 					assert(create_ret);
 				}

@@ -10,6 +10,7 @@
 #include"engine_core/render_engine/render_resource.h"
 #include"engine_core/render_engine/render_camera.h"
 #include"engine_core/render_engine/render_scene.h"
+#include"engine_core/render_engine/render_pending_data.h"
 #include"engine_core/render_engine/render_system.h"
 
 #include"context/editor_global_context.h"
@@ -281,8 +282,8 @@ namespace Mage {
 		//TODO:shader stages
 		std::array<VkPipelineShaderStageCreateInfo, 2> stages;
 		
-		VkShaderModule vertex_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/forwardVERT.spv");
-		VkShaderModule frag_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/forwardFRAG.spv");
+		VkShaderModule vertex_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/forward_vert.spv");
+		VkShaderModule frag_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/forward_frag.spv");
 
 		stages[0]			= VulkanInfo::aboutVkPipelineShaderStageCreateInfo();
 		stages[0].stage		= VK_SHADER_STAGE_VERTEX_BIT;
@@ -369,9 +370,9 @@ namespace Mage {
 		//color blend
 		VkPipelineColorBlendAttachmentState blend_in_color_attachments = VulkanInfo::aboutVkPipelineColorBlendAttachmentState();
 		blend_in_color_attachments.blendEnable		= VK_FALSE;
-		blend_in_color_attachments.colorWriteMask	= VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-		blend_in_color_attachments.srcColorBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-		blend_in_color_attachments.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
+		blend_in_color_attachments.colorWriteMask	= VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
+		blend_in_color_attachments.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA; // Optional
+		blend_in_color_attachments.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA; // Optional	
 		blend_in_color_attachments.colorBlendOp = VK_BLEND_OP_ADD; // Optional
 		blend_in_color_attachments.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
 		blend_in_color_attachments.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
@@ -398,6 +399,12 @@ namespace Mage {
 		std::vector<VkDescriptorSetLayout> layouts(indices.size());
 		for (int i{ 0 }; i < indices.size(); ++i) layouts[i] = p_m_render_pass->m_descriptor_sets.layout_infos[indices[i]];
 		pipeline_layout_info.pSetLayouts = layouts.data();
+		VkPushConstantRange fragment_push_range = VulkanInfo::aboutVkPushConstantRange();
+		fragment_push_range.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+		fragment_push_range.offset = 0;
+		fragment_push_range.size = sizeof(PerMaterialPushConstant);
+		pipeline_layout_info.pushConstantRangeCount = 1;
+		pipeline_layout_info.pPushConstantRanges = &fragment_push_range;
 
 		if (VK_SUCCESS != vkCreatePipelineLayout(m_vulkan_rhi->getDevice(), &pipeline_layout_info, nullptr, &m_pipeline_layout)) {
 			MAGE_THROW(failed to create pipeline layout which in forward renderpass)
@@ -468,15 +475,18 @@ namespace Mage {
 		begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 
 		for (auto& [buffer_guid, material_batch] : model_batch) {
-			//auto& buffer = p_m_render_pass->m_render_resource->m_guid_buffer_map[buffer_guid];
 			for (auto& [material_guid, mesh_batch] : material_batch) {
-				//VkRenderModel* template_model = mesh_batch.begin()->second.front();
 				//bind materials
 				vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(), 
 					VK_PIPELINE_BIND_POINT_GRAPHICS, 
 					m_pipeline_layout, 1, 1, 
 					&render_resource->m_guid_material_map[material_guid].m_descriptor_set, 
 					0, nullptr);
+				vkCmdPushConstants(m_vulkan_rhi->getCurrentCommandBuffer(), 
+					m_pipeline_layout, 
+					VK_SHADER_STAGE_FRAGMENT_BIT, 
+					0, sizeof(PerMaterialPushConstant), 
+					&render_resource->m_guid_material_map[material_guid].m_push_constant);
 				//DONE
 
 				for (auto& [mesh_guid, same_meshes] : mesh_batch) {

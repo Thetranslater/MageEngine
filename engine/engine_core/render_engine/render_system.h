@@ -1,10 +1,6 @@
 #pragma once
 #include<memory>
 
-#include"core/math/vector3.h"
-#include"core/math/quaternion.h"
-#include"core/math/matrix4x4.h"
-
 namespace Mage {
 	class VulkanRHI;
 	class WindowSystem;
@@ -12,28 +8,7 @@ namespace Mage {
 	class RenderPass;
 	class RenderScene;
 	class RenderCamera;
-
-	struct RenderPendingCamera {
-		Vector3 m_pending_position;
-		Quaternion m_pending_rotation;
-
-		float m_pending_fov;
-		float m_pending_aspect;
-		float m_pending_znear;
-		float m_pending_zfar;
-	};
-
-	struct RenderPendingEditor {
-		float viewport_width;
-		float viewport_height;
-		float viewport_x;
-		float viewport_y;
-	};
-
-	struct RenderPendingData {
-		RenderPendingCamera m_camera;
-		RenderPendingEditor m_editor;
-	};
+	struct RenderPendingData;
 
 	class RenderSystem {
 	public:

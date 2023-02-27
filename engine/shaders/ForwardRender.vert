@@ -17,10 +17,26 @@ struct PerMeshShaderData{
     PerMeshFragmentShaderData fragment_data;
 };
 
+struct PerDirectionalLightData{
+    highp vec3 direction;
+    highp float intensity;
+    highp vec3 color;
+    highp float _unused_blank_1;
+};
+
+struct PerPointLightData{
+    highp vec3 position;
+    highp float intensity;
+    highp vec3 color;
+    highp float _unused_blan_1; //radius
+};
+
 layout(set = 0, binding = 0) readonly buffer per_frame_data
 {
     highp mat4 camera_view_matrix;
     highp mat4 camera_perspective_matrix;
+    PerDirectionalLightData directional_lights[8];
+    PerPointLightData point_lights[8];
 };
 
 layout(set = 0, binding = 1) readonly buffer GlobalBufferPerDrawcallData

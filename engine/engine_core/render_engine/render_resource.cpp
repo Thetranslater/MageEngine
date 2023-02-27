@@ -141,6 +141,8 @@ namespace Mage {
 
 		VkRenderMaterial render_material;
 		render_material.m_double_side = std::get<1>(material).m_double_side;
+		render_material.m_push_constant.m_alphaMode = static_cast<int>(std::get<1>(material).m_alpha_mode);
+		render_material.m_push_constant.m_alphaCutOff = std::get<1>(material).m_alpha_cut_off;
 
 		//TODO:Ôö¼Óocculusion texture
 		VkSampler base_color_sampler = std::get<1>(material).m_base_color_texture_sampler.asVulkanSampler(rhi);

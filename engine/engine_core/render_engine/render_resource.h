@@ -14,6 +14,11 @@
 #include"engine_core/render_engine/render_macro.h"
 
 namespace Mage {
+	//push constant
+	struct PerMaterialPushConstant {
+		int m_alphaMode{0};
+		float m_alphaCutOff{ 0.5f };
+	};
 
 	struct VkRenderTexture {
 		VkImage m_texture{VK_NULL_HANDLE};
@@ -30,6 +35,7 @@ namespace Mage {
 	struct VkRenderMaterial {
 		bool m_double_side{ false };
 		VkDescriptorSet m_descriptor_set;
+		PerMaterialPushConstant m_push_constant;
 	};
 
 	struct GlobalUpdatedBuffer {
@@ -37,11 +43,29 @@ namespace Mage {
 		std::vector<VkDeviceMemory> m_buffer_memories;
 		std::vector<void*> m_followed_camera_updated_data_pointers;
 	};
+	
+	struct PerDirectionalLightData {
+		glm::vec3 m_direction;
+		float m_intensity;
+		glm::vec3 m_color;
+		float _unused_blank_1;
+	};
 
+	struct PerPointLightData {
+		glm::vec3 m_position;
+		float m_intensity;
+		glm::vec3 m_color;
+		float _unused_blank_1; //radius
+	};
+
+	//per frame
 	struct GlobalBufferPerFrameData {
 		//camera data
 		glm::mat4 m_camera_view_matrix{};
 		glm::mat4 m_camera_perspective_matrix{};
+		//lights data
+		PerDirectionalLightData m_directional_lights[8];
+		PerPointLightData m_point_lights[8];
 	};
 
 	struct PerMeshVertexShaderData {
@@ -62,6 +86,7 @@ namespace Mage {
 		PerMeshFragmentShaderData m_fragment_data;
 	};
 
+	//per drawcall
 	struct GlobalBufferPerDrawcallData {
 		PerMeshShaderData m_data[MAGE_PERDRAWCALL_MAX_LIMIT] ;
 	};

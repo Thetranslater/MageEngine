@@ -88,7 +88,7 @@ namespace Mage {
 			float sqlength = rotation.x * rotation.x + rotation.y * rotation.y + rotation.z * rotation.z + rotation.w * rotation.w;
 			if (sqlength > 0.f) {
 				float reciprocal_sqlength = 1.f / sqlength;
-				return Quaternion(-rotation.x * reciprocal_sqlength, -rotation.y * reciprocal_sqlength, -rotation.z * reciprocal_sqlength, -rotation.w * reciprocal_sqlength);
+				return Quaternion(-rotation.x * reciprocal_sqlength, -rotation.y * reciprocal_sqlength, -rotation.z * reciprocal_sqlength, rotation.w * reciprocal_sqlength);
 			}
 			return Quaternion::zero;
 		}

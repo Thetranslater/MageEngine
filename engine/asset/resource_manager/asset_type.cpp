@@ -298,6 +298,9 @@ namespace Mage {
 
 	//Material
 	void Material::loadFromgLTF_Material(tinygltf::Material& material) {
+		m_alpha_mode = std::move(material.alphaMode);
+		m_alpha_cut_off = material.alphaCutoff;
+
 		m_emissive_factor[0] = (float)material.emissiveFactor[0];
 		m_emissive_factor[1] = (float)material.emissiveFactor[1];
 		m_emissive_factor[2] = (float)material.emissiveFactor[2];
@@ -450,6 +453,11 @@ namespace Mage {
 		materials_info.m_infos.resize(m_materials.size());
 		for (int i{ 0 }; i < materials_info.m_infos.size(); ++i) {
 			materials_info.m_infos[i].m_double_side = m_materials[i].m_double_side;
+			if (m_materials[i].m_alpha_mode[0] == 'O') materials_info.m_infos[i].m_alpha_mode = AlphaMode::MODE_OPAQUE;
+			else if (m_materials[i].m_alpha_mode[0] == 'M') materials_info.m_infos[i].m_alpha_mode = AlphaMode::MODE_MASK;
+			else materials_info.m_infos[i].m_alpha_mode = AlphaMode::MODE_BLEND;
+			materials_info.m_infos[i].m_alpha_cut_off = m_materials[i].m_alpha_cut_off;
+
 			materials_info.m_infos[i].m_base_color_texture_index = 
 				m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index == -1 ? 
 					-1 : m_textures[m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index].m_source;

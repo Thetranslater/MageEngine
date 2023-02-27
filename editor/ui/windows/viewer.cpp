@@ -1,6 +1,7 @@
 #include"ui/windows/viewer.h"
 #include"context/editor_global_context.h"
 
+#include"engine_core/render_engine/render_pending_data.h"
 #include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/render_resource.h"
 

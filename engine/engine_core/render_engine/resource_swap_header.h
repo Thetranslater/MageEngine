@@ -15,6 +15,12 @@ namespace Mage {
 
 	using ID = uint64_t;
 
+	enum AlphaMode {
+		MODE_OPAQUE,
+		MODE_MASK,
+		MODE_BLEND
+	};
+
 	//每一个description对应一个primitive
 	struct VkRenderMeshAttributeDescription {
 		STATIC_DATA int m_buffer_index{-1};
@@ -39,7 +45,11 @@ namespace Mage {
 	};
 
 	struct VkRenderMaterialDescription {
+		//TODO:下面的属性没有参与hash的生成，导致只要是textures相同，那么material就相同
 		STATIC_DATA bool m_double_side{ false };
+		STATIC_DATA AlphaMode m_alpha_mode{ AlphaMode::MODE_OPAQUE };
+		STATIC_DATA float m_alpha_cut_off{ 0.5f };
+
 		STATIC_DATA uint32_t m_base_color_texture_index{ 0xffffffff };
 		STATIC_DATA Sampler m_base_color_texture_sampler{};
 

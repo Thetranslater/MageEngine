@@ -196,6 +196,7 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_system.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\window_system.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.cpp" />
+    <ClCompile Include="..\engine\engine_core\scaffold\components\lightcomponent\Light_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\game_object.cpp" />
@@ -268,6 +269,7 @@
     <ClInclude Include="..\engine\engine_core\render_engine\render_pass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_passes\UIPass.h" />
+    <ClInclude Include="..\engine\engine_core\render_engine\render_pending_data.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_resource.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_scene.h" />
     <ClInclude Include="..\engine\engine_core\render_engine\render_subpass.h" />
@@ -277,6 +279,8 @@
     <ClInclude Include="..\engine\engine_core\render_engine\window_system.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\component.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\lightcomponent\Light_common.h" />
+    <ClInclude Include="..\engine\engine_core\scaffold\components\lightcomponent\Light_component.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\mesh_asset.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.h" />

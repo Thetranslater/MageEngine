@@ -365,10 +365,21 @@ namespace Mage {
 			return binding;
 		}
 
-		//TODO:push constant
+		/// <summary>
+		/// SPECIFY: offset, size, stageFlags.
+		/// </summary>
+		/// <param name="stageFlags	"> : specify the shader stage that use the push-constant data.</param>
+		/// <param name="offset		"> : the offset of the push constant data(most zero).</param>
+		/// <param name="size		"> : the size of the push-constant use.</param>
+		inline VkPushConstantRange aboutVkPushConstantRange() {
+			VkPushConstantRange push_constant{};
+			push_constant.offset = 0;
+			return push_constant;
+		}
+
 
 		/// <summary>
-		/// SPRCIFY:setLayoutCount, pSetLayouts.
+		/// SPECIFY:setLayoutCount, pSetLayouts.
 		/// OPTIONAL:pushConstantRangeCount, pPushConstantRanges.////
 		/// </summary>
 		/// <param name="setLayoutCount		">: the number of the descriptorSetLayout.</param>
