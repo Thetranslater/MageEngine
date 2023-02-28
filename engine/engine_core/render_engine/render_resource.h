@@ -63,9 +63,15 @@ namespace Mage {
 		//camera data
 		glm::mat4 m_camera_view_matrix{};
 		glm::mat4 m_camera_perspective_matrix{};
+		glm::vec3 m_camera_position{};
+		float _unused_blank_1;
 		//lights data
 		PerDirectionalLightData m_directional_lights[8];
 		PerPointLightData m_point_lights[8];
+		int m_directional_light_num;
+		int m_point_light_num;
+		int _unused_blank_2;
+		int _unused_blank_3;
 	};
 
 	struct PerMeshVertexShaderData {

@@ -37,7 +37,7 @@ namespace Mage {
 			VkDescriptorSetLayoutBinding global_perframe_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
 			global_perframe_layout_binding_Vertex.binding				= 0;
 			global_perframe_layout_binding_Vertex.descriptorType		= VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-			global_perframe_layout_binding_Vertex.stageFlags			= VK_SHADER_STAGE_VERTEX_BIT;
+			global_perframe_layout_binding_Vertex.stageFlags			= VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
 
 			VkDescriptorSetLayoutBinding global_perdrawcall_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
 			global_perdrawcall_layout_binding_Vertex.binding			= 1;
@@ -459,13 +459,27 @@ namespace Mage {
 		binding_scissor.offset.y		= std::max(render_pending->m_editor.viewport_y, 0.f);
 		binding_scissor.extent.width	= render_pending->m_editor.viewport_width;
 		binding_scissor.extent.height	= render_pending->m_editor.viewport_height;
-		//binding_scissor.extent = m_vulkan_rhi->getSwapchainExtent();
 		vkCmdSetScissor(m_vulkan_rhi->getCurrentCommandBuffer(), 0, 1, &binding_scissor);
 
+		//global data
 		int begin_offset{ 0 };
 		GlobalBufferPerFrameData perframe_data{};
 		perframe_data.m_camera_view_matrix = glm::mat4(render_camera->getViewMatrix());
 		perframe_data.m_camera_perspective_matrix = glm::mat4(render_camera->getPerspectiveMatrix());
+		perframe_data.m_camera_position = glm::vec3(render_camera->position());
+		//TODO:灯光最大值为8
+		perframe_data.m_directional_light_num = std::min(render_scene->m_directional_lights.get().size(), 8ull);
+		for (int i{ 0 }; i < perframe_data.m_directional_light_num; ++i) {
+			perframe_data.m_directional_lights[i].m_color = render_scene->m_directional_lights.get()[i].m_color;
+			perframe_data.m_directional_lights[i].m_direction = render_scene->m_directional_lights.get()[i].m_direction;
+			perframe_data.m_directional_lights[i].m_intensity = render_scene->m_directional_lights.get()[i].m_intensity;
+		}
+		perframe_data.m_point_light_num = std::min(render_scene->m_point_lights.get().size(), 8ull);
+		for (int i{ 0 }; i < perframe_data.m_point_light_num; ++i) {
+			perframe_data.m_point_lights[i].m_color = render_scene->m_point_lights.get()[i].m_color;
+			perframe_data.m_point_lights[i].m_position = render_scene->m_point_lights.get()[i].m_position;
+			perframe_data.m_point_lights[i].m_intensity = render_scene->m_point_lights.get()[i].m_intensity;
+		}
 
 		*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 		uint32_t offset = begin_offset;

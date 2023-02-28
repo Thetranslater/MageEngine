@@ -28,15 +28,21 @@ struct PerPointLightData{
     highp vec3 position;
     highp float intensity;
     highp vec3 color;
-    highp float _unused_blan_1; //radius
+    highp float _unused_blank_1; //radius
 };
 
 layout(set = 0, binding = 0) readonly buffer per_frame_data
 {
     highp mat4 camera_view_matrix;
     highp mat4 camera_perspective_matrix;
+    highp vec3 camera_positon;
+    highp float _unused_blank_1;
     PerDirectionalLightData directional_lights[8];
     PerPointLightData point_lights[8];
+    int directional_light_num;
+    int point_light_num;
+    int _unused_blank_2;
+    int _unused_blank_3;
 };
 
 layout(set = 0, binding = 1) readonly buffer GlobalBufferPerDrawcallData
@@ -56,9 +62,13 @@ layout(location = 3) out highp vec2 out_texcoord;
 layout(location = 4) out PerMeshFragmentShaderData out_frag_factors;
 
 void main(){
-    highp vec4 world = camera_perspective_matrix * camera_view_matrix * data[gl_InstanceIndex].vertex_data.matrix * vec4(in_position,1.f);
+    highp mat4 matrix4x4 = data[gl_InstanceIndex].vertex_data.matrix;
+    highp vec4 world = matrix4x4 * vec4(in_position,1.f);
+    highp mat3 to_world = mat3(matrix4x4[0].xyz, matrix4x4[1].xyz, matrix4x4[2].xyz);
     out_world_position = world.xyz;
+    out_world_normal = to_world * in_normal;
+    out_world_tangent = vec4(to_world * in_tangent.xyz, in_tangent.w);
     out_texcoord = in_texcoord;
     out_frag_factors = data[gl_InstanceIndex].fragment_data;
-    gl_Position = world;
+    gl_Position = camera_perspective_matrix * camera_view_matrix * world;
 }

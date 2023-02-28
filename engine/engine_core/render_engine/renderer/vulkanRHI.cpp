@@ -130,7 +130,8 @@ namespace Mage {
 		VkSemaphore signal_semaphores = m_present_semaphores[m_current_frame_index];
 		submit_info.pSignalSemaphores = &signal_semaphores;
 
-		if (VK_SUCCESS != vkQueueSubmit(m_graphics_queue, 1, &submit_info, m_fences[m_current_frame_index])) {
+		auto present_code = vkQueueSubmit(m_graphics_queue, 1, &submit_info, m_fences[m_current_frame_index]);
+		if (VK_SUCCESS != present_code) {
 			MAGE_THROW(failed to submit commands)
 		}
 

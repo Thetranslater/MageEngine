@@ -31,6 +31,8 @@ namespace Mage {
 
 		//render_model:代表一个抽象的渲染实例
 		std::vector<VkRenderModel> m_render_models;
+		std::reference_wrapper<std::vector<DirectionalLight>> m_directional_lights;
+		std::reference_wrapper<std::vector<PointLight>> m_point_lights;
 
 		GUIDGenerator<std::variant<VkRenderMeshURI, RawMeshData>>&		getMeshGUIDGenerator();
 		GUIDGenerator<std::variant<VkRenderImageURI, RawImageData>>&	getImageGUIDGenerator();
@@ -39,10 +41,6 @@ namespace Mage {
 
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_load_deque;
 		std::shared_ptr<SceneProcessDeque<VkRenderModelInfo>> m_p_scene_delete_deque;
-
-		std::reference_wrapper<std::vector<DirectionalLight>> m_directional_lights;
-		std::reference_wrapper<std::vector<PointLight>> m_point_lights;
-
 	private:
 		//guid generator
 		GUIDGenerator<std::variant<VkRenderMeshURI, RawMeshData>>		m_mesh_guid_generator;
