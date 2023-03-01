@@ -2,6 +2,18 @@
 
 #include"engine_core/scaffold/components/transformcomponent/Transform_component.h"
 
+#include"ui/widgets/table.h"
+#include"ui/widgets/treenode.h"
+#include"ui/widgets/text.h"
+#include"ui/widgets/sameline.h"
+#include"ui/widgets/drag_float.h"
+#include"ui/widgets/group.h"
+
+#include"ui/widgets/WFI/resizable.h"
+#include"ui/widgets/WFI/bindable.h"
+
+#include"ui/util.h"
+
 namespace Mage {
 	void TransformComponent::SetPosition(const Vector3& new_p) {
 		world_position = new_p;
@@ -105,5 +117,45 @@ namespace Mage {
 			}
 		}
 		write_type = TransformWriteType::NONE_WRITE;
+	}
+
+	std::shared_ptr<Widget> TransformComponent::Draw() {
+		auto node = CREATE_WIDGET(TreeNode, "Transform");
+
+		auto ui_table = std::make_shared<Table<3, 2>>();
+		ui_table->is_size_fixed_fit = true;
+
+		//position draw
+		{
+			auto position_resizable = CREATE_WFI(Resizable, 20.f);
+			auto position_text = CREATE_WIDGET(Text, "Position");
+			position_text->addWFI(position_resizable);
+			ui_table->operator[](0)[0] = position_text;
+
+			ui_table->operator[](0)[1] = Util::DrawVec3Widget(&position);
+		}
+
+		//quaternion draw
+		{
+			auto rotation_resizable = CREATE_WFI(Resizable, 20.f);
+			auto rotation_text = CREATE_WIDGET(Text, "Rotation");
+			rotation_text->addWFI(rotation_resizable);
+			ui_table->operator[](1)[0] = rotation_text;
+
+			ui_table->operator[](1)[1] = Util::DrawQuatWidget(&rotation);
+		}
+
+		//scale draw
+		{
+			auto scale_resizable = CREATE_WFI(Resizable, 20.f);
+			auto scale_text = CREATE_WIDGET(Text, "Scale");
+			scale_text->addWFI(scale_resizable);
+			ui_table->operator[](2)[0] = scale_text;
+
+			ui_table->operator[](2)[1] = Util::DrawVec3Widget(&scale);
+		}
+
+		node->addWidget(ui_table);
+		return node;
 	}
 }

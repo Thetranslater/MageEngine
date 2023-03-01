@@ -270,6 +270,12 @@
     <ClCompile Include="..\engine\engine_core\scaffold\components\lightcomponent\Light_component.cpp">
       <Filter>Mage\engine\engine_core\scaffold\components\light</Filter>
     </ClCompile>
+    <ClCompile Include="..\editor\ui\widgets\button.cpp">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\ui\util.cpp">
+      <Filter>Mage\editor\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -517,6 +523,15 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\render_engine\render_pending_data.h">
       <Filter>Mage\engine\engine_core\render_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\button.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\widgets\table.h">
+      <Filter>Mage\editor\ui\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\ui\util.h">
+      <Filter>Mage\editor\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,6 +25,6 @@ namespace Mage {
 
 		virtual void tick(float delta) {}
 
-		//virtual std::shared_ptr<Widget> Draw() { return CREATE_WIDGET(TreeNode); }
+		virtual std::shared_ptr<Widget> Draw() { return CREATE_WIDGET(TreeNode); }
 	};
 }

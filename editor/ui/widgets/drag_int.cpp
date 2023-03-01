@@ -12,12 +12,12 @@ namespace Mage {
 		if (is_always_clamp)	flags |= ImGuiSliderFlags_AlwaysClamp;
 		if (is_no_input)		flags |= ImGuiSliderFlags_NoInput;
 
-		_orderPreExecuteWFI();
+		_orderExecuteWFI();
 
 		if (ImGui::DragInt((lable + "##" + std::to_string(id)).c_str(), &value, speed, min, max, "%.2f", flags)) {
 			changed_event.invoke(value);
 		}
 
-		_invertPostExecuteWFI();
+		_invertExitWFI();
 	}
 }

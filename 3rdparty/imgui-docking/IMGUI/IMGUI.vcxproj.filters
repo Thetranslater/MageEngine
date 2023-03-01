@@ -7,6 +7,12 @@
     <Filter Include="source\backends">
       <UniqueIdentifier>{188a1ec3-766d-4210-af7f-3a1d4f86b76a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="source\misc">
+      <UniqueIdentifier>{78a18eb8-d0b4-498f-916e-b5f2a4d01e82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\misc\cpp">
+      <UniqueIdentifier>{c0b2419b-2787-44f0-a97d-8287b4ea036a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\imconfig.h">
@@ -55,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="..\backends\imgui_impl_vulkan.cpp">
       <Filter>source\backends</Filter>
+    </ClCompile>
+    <ClCompile Include="..\misc\cpp\imgui_stdlib.cpp">
+      <Filter>source\misc\cpp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

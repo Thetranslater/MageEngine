@@ -21,17 +21,14 @@ namespace Mage {
 
 		void setContent(const std::string& content);
 
-		void setResizeCallback(const std::function<int(ImGuiInputTextCallbackData*)>& func) { resize = func; has_callback_resize = true; }
 		void setFilterCallback(const std::function<int(ImGuiInputTextCallbackData*)>& func) { filter = func; has_callback_filter = true; }
 	private:
 		int _callback(ImGuiInputTextCallbackData* data);
 		//TODO:default callbacks implementation
-		int _default_resize(ImGuiInputTextCallbackData* data);
 		int _default_filter(ImGuiInputTextCallbackData* data);
 
 		std::string lable;
 
-		std::function<int(ImGuiInputTextCallbackData*)> resize;
 		std::function<int(ImGuiInputTextCallbackData*)> filter;
 	public:
 		bool is_decimal{ false };
@@ -40,7 +37,6 @@ namespace Mage {
 		bool is_uppercase{ false };
 		bool is_readonly{ false };
 		bool is_password{ false };
-		bool has_callback_resize{ false };
 		bool has_callback_filter{ false };
 
 		Event<std::string> changed_event;

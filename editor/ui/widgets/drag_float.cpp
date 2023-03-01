@@ -12,13 +12,12 @@ namespace Mage {
 		if (is_always_clamp)	flags |= ImGuiSliderFlags_AlwaysClamp;
 		if (is_no_input)		flags |= ImGuiSliderFlags_NoInput;
 
-		_orderPreExecuteWFI();
-		//TODO:怎么抽象组件的布局方法呢？
-		ImGui::SetNextItemWidth(60.f);
+		_orderExecuteWFI();
+
 		if (ImGui::DragFloat((lable + "##" + std::to_string(id)).c_str(), &value, speed, min, max, "%.2f", flags)) {
 			changed_event.invoke(value);
 		}
 
-		_invertPostExecuteWFI();
+		_invertExitWFI();
 	}
 }

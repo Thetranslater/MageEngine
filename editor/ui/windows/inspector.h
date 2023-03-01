@@ -10,7 +10,6 @@ namespace Mage {
 		Inspector(const std::string& id);
 		Inspector(const std::string& id, const WindowConfig& config);
 
-
 		void OnSelected(GameObject&);
 
 		void draw() override;

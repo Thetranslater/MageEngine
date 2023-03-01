@@ -154,6 +154,8 @@
     <ClCompile Include="..\editor\editor.cpp" />
     <ClCompile Include="..\editor\input\editor_input.cpp" />
     <ClCompile Include="..\editor\ui\editor_ui.cpp" />
+    <ClCompile Include="..\editor\ui\util.cpp" />
+    <ClCompile Include="..\editor\ui\widgets\button.cpp" />
     <ClCompile Include="..\editor\ui\widgets\checkbox.cpp" />
     <ClCompile Include="..\editor\ui\widgets\drag_float.cpp" />
     <ClCompile Include="..\editor\ui\widgets\drag_int.cpp" />
@@ -210,6 +212,8 @@
     <ClInclude Include="..\editor\editor.h" />
     <ClInclude Include="..\editor\input\editor_input.h" />
     <ClInclude Include="..\editor\ui\editor_ui.h" />
+    <ClInclude Include="..\editor\ui\util.h" />
+    <ClInclude Include="..\editor\ui\widgets\button.h" />
     <ClInclude Include="..\editor\ui\widgets\checkbox.h" />
     <ClInclude Include="..\editor\ui\widgets\container.h" />
     <ClInclude Include="..\editor\ui\widgets\drag_float.h" />
@@ -218,6 +222,7 @@
     <ClInclude Include="..\editor\ui\widgets\input_text.h" />
     <ClInclude Include="..\editor\ui\widgets\sameline.h" />
     <ClInclude Include="..\editor\ui\widgets\seperator.h" />
+    <ClInclude Include="..\editor\ui\widgets\table.h" />
     <ClInclude Include="..\editor\ui\widgets\text.h" />
     <ClInclude Include="..\editor\ui\widgets\treenode.h" />
     <ClInclude Include="..\editor\ui\widgets\WFI\bindable.h" />

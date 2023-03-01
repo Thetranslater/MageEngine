@@ -41,14 +41,14 @@ namespace Mage {
 
 		static IDAllocator widget_id_allocator;
 	protected:
-		inline void _orderPreExecuteWFI() {
+		inline void _orderExecuteWFI() {
 			for (const auto& item : customized) {
 				item->preprocess();
 			}
 		}
 
-		inline void _invertPostExecuteWFI() {
-			for (auto riter = customized.rbegin(); riter != customized.rbegin(); ++riter) {
+		inline void _invertExitWFI() {
+			for (auto riter = customized.rbegin(); riter != customized.rend(); ++riter) {
 				riter->operator->()->postprocess();
 			}
 		}

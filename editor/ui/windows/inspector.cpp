@@ -23,8 +23,17 @@ namespace Mage {
 		widgets.clear();
 
 		//header
+		auto name_bindable = CREATE_WFI(Bindable<std::string>);
+		auto getter = [](GameObject& go) -> std::string{
+			return go.name();
+		};
+		auto setter = [](GameObject& go, std::string& val) {
+			go.setName(val);
+		};
+		name_bindable->bind(std::bind(getter, selected), std::bind(setter, selected, std::placeholders::_1));
 		auto iText = CREATE_WIDGET(InputText);
-		iText->setContent(selected.name());
+		iText->addWFI(name_bindable);
+
 		auto header = CREATE_WIDGET(Group, iText, CREATE_WIDGET(SameLine, 0.f, 10.f), CREATE_WIDGET(CheckBox, true));
 
 		widgets.emplace_back(header);
@@ -33,11 +42,9 @@ namespace Mage {
 		widgets.emplace_back(CREATE_WIDGET(Seperator));
 
 		//components
-		auto component_ptr = selected.GetComponent(TransformComponent);
-
-		auto node_ptr = EditorUI::base_widget_creator["TreeNode"]("TransformComponent", (void*)component_ptr);
-		widgets.emplace_back(node_ptr);
-
+		for (auto component_ptr : selected.GetComponents()) {
+			widgets.emplace_back(component_ptr->Draw());
+		}
 	}
 
 	void Inspector::draw() {

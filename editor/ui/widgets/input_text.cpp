@@ -1,3 +1,6 @@
+#include<imgui-docking/imgui.h>
+#include<imgui-docking/misc/cpp/imgui_stdlib.h>
+
 #include"core/macro.h"
 
 #include"ui/widgets/input_text.h"
@@ -9,10 +12,7 @@ namespace Mage {
 		{
 		case ImGuiInputTextFlags_CallbackCharFilter:
 			res = filter(data);
-			break;
-		case ImGuiInputTextFlags_CallbackResize:
-			res = resize(data);
-			break;
+			break;;
 		default:
 			MAGE_THROW(none implement callback)
 		}
@@ -28,26 +28,25 @@ namespace Mage {
 		if (is_password)			flags |= ImGuiInputTextFlags_Password;
 		if (is_readonly)			flags |= ImGuiInputTextFlags_ReadOnly;
 		if (is_uppercase)			flags |= ImGuiInputTextFlags_CharsUppercase;
-		if (has_callback_resize)	flags |= ImGuiInputTextFlags_CallbackResize;
 		if (has_callback_filter)	flags |= ImGuiInputTextFlags_CallbackCharFilter;
 
 		std::vector<char> pre{ value.begin(),value.end() };
 
-		_orderPreExecuteWFI();
+		_orderExecuteWFI();
 
-		if (has_callback_filter or has_callback_resize) {
-			//TODO:这个callback能否正常生成都是个问题，还没测试
-			ImGui::InputText((lable + "##" + std::to_string(id)).c_str(), value.data(), value.size(), flags, *std::function<int(ImGuiInputTextCallbackData*)>{ std::bind(&InputText::_callback, this, std::placeholders::_1) }.target<ImGuiInputTextCallback>());
+		if (has_callback_filter) {
+			//TODO:chain callback
+			ImGui::InputText((lable + "##" + std::to_string(id)).c_str(), &value, flags);
 		}
 		else {
-			ImGui::InputText((lable + "##" + std::to_string(id)).c_str(), value.data(), value.size(), flags);
+			ImGui::InputText((lable + "##" + std::to_string(id)).c_str(), &value, flags);
 		}
 
 		if (not std::equal(value.begin(), value.end(), pre.begin(), pre.end())) {
 			changed_event.invoke(std::string{ value.data() });
 		}
 
-		_invertPostExecuteWFI();
+		_invertExitWFI();
 	}
 
 	void InputText::setContent(const std::string& content) {

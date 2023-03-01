@@ -4,12 +4,12 @@
 
 namespace Mage {
 	void CheckBox::draw() {
-		_orderPreExecuteWFI();
+		_orderExecuteWFI();
 
 		if (ImGui::Checkbox((lable + "##" + std::to_string(id)).c_str(), &value)) {
 			changed_event.invoke(value);
 		}
 
-		_invertPostExecuteWFI();
+		_invertExitWFI();
 	}
 }

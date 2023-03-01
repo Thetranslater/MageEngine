@@ -8,6 +8,9 @@ namespace Mage {
 	//Order requirement: Resizable must preprocess at the end.
 	class Resizable : public WFI {
 	public:
+		Resizable() = default;
+		Resizable(float w) : width{ w }, is_fixed{ true } {}
+
 		void preprocess() override;
 		void postprocess() override;
 

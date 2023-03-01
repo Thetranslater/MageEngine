@@ -55,7 +55,7 @@ layout(location = 0) out highp vec4 out_final_color;
 
 //function
 highp vec4 sRGB2Linear(highp vec4 srgb){
-    highp vec4 linr = vec4(pow(srgb.x, 2.2), pow(srgb.y, 2.2), pow(srgb.z, 2.2), srgb.w);
+    highp vec4 linr = vec4(pow(srgb.xyz,vec3(2.2)), srgb.w);
     return linr;
 }
 
@@ -133,11 +133,13 @@ void main(){
         highp vec3 L = normalize(vec3(1.f,1.f,2.f)); //-per_frame_data.directional_lights[i].direction;
         highp float NdotL = dot(N, L);
         if(NdotL > 0.f)
-            lo += BRDF(N, L, V, f0, BaseColor.xyz, pMetallic, pRoughness) * vec3(1.f,1.f,1.f) /*per_frame_data.directional_lights[i].color*/ * NdotL;
+            lo += BRDF(N, L, V, f0, BaseColor.xyz, pMetallic, pRoughness) * vec3(0.7,0.7,0.7) /*per_frame_data.directional_lights[i].color*/ * NdotL;
     //}
 
     highp float ambient = 0.3;
-    highp vec3 la = vec3(0.f);
-    la = BaseColor.xyz * ambient;
-    out_final_color = vec4(lo + la, BaseColor.w);
+    highp vec3 la = BaseColor.xyz * ambient;
+
+    highp vec3 result_color = lo + la;
+
+    out_final_color = vec4(result_color, BaseColor.a);
 }

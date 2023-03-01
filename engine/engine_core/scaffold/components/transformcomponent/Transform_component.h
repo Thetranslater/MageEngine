@@ -4,6 +4,8 @@
 #include"core/math/quaternion.h"
 #include"core/math/matrix4x4.h"
 
+#include"ui/widgets/widget.h"
+
 #include"engine_core/scaffold/components/component.h"
 
 namespace Mage {
@@ -21,7 +23,7 @@ namespace Mage {
 
 		void tick(float delta) override;
 
-		//std::shared_ptr<Widget> InspectUI() override;
+		std::shared_ptr<Widget> Draw() override;
 
 		inline Vector3		Position() { return world_position; }
 		inline Quaternion	Rotation() { return world_rotation; }

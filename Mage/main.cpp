@@ -9,11 +9,9 @@
 
 #else
 
-#include<core/math/vector3.h>
-#include<core/math/quaternion.h>
+#include"ui/util.h"
 
 #endif
-
 
  int main() {
 #if TEST == 0
@@ -26,27 +24,12 @@
 
 	editor->shutdown();
 #else 
-	using namespace Mage;
-	Vector3 from{ 1,1,1 };
-	Vector3 to{ -1,2,-1 };
-	Quaternion q1 = Quaternion::FromToRotation(from, to);
-	from = { 0,1,1 };
-	to = { 2,-1,-3 };
-	Quaternion q2 = Quaternion::FromToRotation(from, to);
-	Quaternion local = Quaternion::Inverse(q1) * q2;
-	local.Normalize();
+	 using namespace Mage;
 
-	Vector3 test{ 1,2,3 };
+	 std::string out;
+	 std::vector<std::pair<std::string, std::string>> types = { std::make_pair("Models", "*.gltf*") };
 
-	Vector3 res1 = q2 * test;
-	Vector3 res2 = q1 * test;
-
-	Vector3 axis;
-	float angle;
-	local.ToAngleAxis(angle, axis);
-	axis = q1 * axis;
-	local = Quaternion::AngleAxis(angle, axis);
-	res2 = local * res2;
+	 Mage::Util::OpenFileDialog(out, types);
 #endif //!TEST
 
 	return 0;

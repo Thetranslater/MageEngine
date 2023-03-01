@@ -13,6 +13,8 @@ namespace Mage {
 	public:
 		MeshComponent() { should_tick_in_editor = true; }
 		void tick(float delta) override;
+
+		std::shared_ptr<Widget> Draw() override;
 	private:
 		META(Enable)
 		MeshAsset mesh;
