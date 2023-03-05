@@ -1,4 +1,6 @@
 #pragma once
+#include<core/macro.h>
+
 #include<memory>
 
 namespace Mage {

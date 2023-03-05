@@ -1,5 +1,4 @@
 #pragma once
-
 #include<memory>
 
 #include<ui/windows/window_manager/window_manager.h>

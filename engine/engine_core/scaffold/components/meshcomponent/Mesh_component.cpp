@@ -1,6 +1,7 @@
 #include"asset/resource_manager/resource_manager.h"
 #include"asset/resource_manager/asset_type.h"
 
+#include"engine_core/scaffold/game_object.h"
 #include"engine_core/scaffold/components/meshcomponent/Mesh_component.h"
 #include"engine_core/render_engine/render_system.h"
 #include"engine_core/render_engine/render_scene.h"
@@ -30,6 +31,7 @@ namespace Mage{
 				bool load_res = loader->loadMageModel(mesh.gltf_model_url, &mage_model, &err, nullptr, false);
 				//mesh load(fake),将mesh数据填好打包给render scene
 				VkRenderModelInfo render_model = mage_model.getVkRenderModelInfo();
+				render_model.m_go_id = game_object->getInstanceID();
 				render_scene->m_p_scene_load_deque->push_back(render_model);
 				is_loaded = true;
 			}

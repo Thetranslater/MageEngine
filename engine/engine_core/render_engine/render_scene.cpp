@@ -13,6 +13,13 @@ namespace Mage {
 		m_p_scene_delete_deque = std::make_shared<SceneProcessDeque<VkRenderModelInfo>>();
 	}
 
+	VkRenderModel& RenderScene::getRenderModel(const ID request) {
+		if (m_render_models.find(request) == m_render_models.end()) {
+			MAGE_THROW(no such render model here)
+		}
+		return m_render_models[request];
+	}
+
 	GUIDGenerator<std::variant<VkRenderMeshURI, RawMeshData>>& RenderScene::getMeshGUIDGenerator() {
 		return m_mesh_guid_generator;
 	}

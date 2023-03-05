@@ -32,12 +32,12 @@ namespace Mage {
 	}
 
 	void TransformComponent::WritePosition(const Vector3& new_p) {
-		position_write_buffer = new_p;
+		position_write_buffer = new_p - world_position;
 		write_type = TransformWriteType::WORLD_WRITE;
 	}
 
 	void TransformComponent::WriteLocalPosition(const Vector3& new_p) {
-		position_write_buffer = new_p;
+		position_write_buffer = new_p - position;
 		write_type = TransformWriteType::LOCAL_WRITE;
 	}
 

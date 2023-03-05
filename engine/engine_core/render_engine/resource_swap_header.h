@@ -33,14 +33,18 @@ namespace Mage {
 	struct VkRenderMeshDescription {
 		//mesh
 		STATIC_DATA std::array<VkRenderMeshAttributeDescription, 7> m_attribute_infos{}; //6和vertex属性顺序对应, 7是indices
-		//material
+
+		//material factors
 		DYNAMIC_DATA float m_metallic_factor{ 1.f };
 		DYNAMIC_DATA float m_roughness_factor{ 1.f };
 		DYNAMIC_DATA glm::vec4 m_base_color_factor{ 1.f,1.f,1.f,1.f };
 
-		DYNAMIC_DATA int m_material_index{ -1 };
+		//ref guids
+		DYNAMIC_DATA ID m_material_index{ invalid_id };
+		DYNAMIC_DATA ID m_meshes_index{ invalid_id };
+		DYNAMIC_DATA ID m_submesh_index{ invalid_id };
 
-		//params
+		//params - glTF matrix
 		DYNAMIC_DATA glm::mat4x4 m_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
 	};
 

@@ -2,8 +2,10 @@
 #include<string>
 #include<vector>
 
-#include"engine_core/function/id_allocator/id_allocator.h"
 #include"core/meta/reflection/reflection.h"
+
+#include"engine_core/function/id_allocator/id_allocator.h"
+#include"engine_core/function/component_pool/component_handle.h"
 
 namespace Mage {
 	//base class of all game objects
@@ -23,13 +25,13 @@ namespace Mage {
 
 		virtual void tick(float delta);
 
-		std::vector<Reflection::ReflectionPtr<Component>>& GetComponents() { return components; }
+		std::vector<ComponentHandle>& GetComponents() { return components; }
 
 		template<typename component>
 		component* GetComponent(const std::string& component_type) {
 			for (auto& comp : components) {
-				if (comp.getTypeName() == component_type) {
-					return (component*)comp;
+				if (Reflection::ReflectionPtr<Component>{ comp }.getTypeName() == component_type) {
+					return (component*)comp.get();
 				}
 			}
 			return nullptr;
@@ -41,6 +43,6 @@ namespace Mage {
 		std::string go_name;
 
 		//all objects must require a transform(components[0] == TransformComponent)
-		std::vector<Reflection::ReflectionPtr<Component>> components;
+		std::vector<ComponentHandle> components;
 	};
 }

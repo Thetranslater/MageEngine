@@ -106,6 +106,9 @@
     <Filter Include="Mage\engine\engine_core\scaffold\components\light">
       <UniqueIdentifier>{6881c150-2c86-43ad-b0a3-514090e36e0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\engine\engine_core\function\component_pool">
+      <UniqueIdentifier>{a1e9116e-3b8c-4c58-a77f-c5e427126645}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -275,6 +278,12 @@
     </ClCompile>
     <ClCompile Include="..\editor\ui\util.cpp">
       <Filter>Mage\editor\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\function\component_pool\component_handle.cpp">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\function\component_pool\component_pool_base.cpp">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -532,6 +541,18 @@
     </ClInclude>
     <ClInclude Include="..\editor\ui\util.h">
       <Filter>Mage\editor\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\function\component_pool\component_pool_base.h">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\function\component_pool\component_buffer.h">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\function\component_pool\component_handle.h">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\function\component_pool\component_pool.h">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -29,8 +29,10 @@ namespace Mage {
 		//TODO:light
 		void initialize();
 
+		VkRenderModel& getRenderModel(const ID request);
+
 		//render_model:代表一个抽象的渲染实例
-		std::vector<VkRenderModel> m_render_models;
+		std::unordered_map<ID,VkRenderModel> m_render_models;
 		std::reference_wrapper<std::vector<DirectionalLight>> m_directional_lights;
 		std::reference_wrapper<std::vector<PointLight>> m_point_lights;
 

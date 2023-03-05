@@ -1,3 +1,5 @@
+#include"core/macro.h"
+
 #include"imgui-docking/imgui.h"
 
 #include"editor.h"

@@ -435,13 +435,15 @@ namespace Mage {
 		void* map_pointer = render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
 
 		//buffer,materials, submeshes
-		std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderModel*>>>> model_batch;
+		std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderMeshDescription*>>>> model_batch;
 		//batch recognizing
-		for (VkRenderModel& model : render_scene->m_render_models) {
-			auto& buffer_batch = model_batch[model.m_mesh_combined_guid64];
-			auto& material_batch = buffer_batch[model.m_material_guid64];
-			auto& mesh_batch = material_batch[model.m_model_guid32];
-			mesh_batch.emplace_back(&model);
+		for (auto& [go_id, model] : render_scene->m_render_models) {
+			for (auto& mesh : model.m_mesh_descriptions) {
+				auto& buffer_batch = model_batch[mesh.m_meshes_index];
+				auto& material_batch = buffer_batch[mesh.m_material_index];
+				auto& mesh_batch = material_batch[mesh.m_submesh_index];
+				mesh_batch.emplace_back(&mesh);
+			}
 		}
 		//DONE
 
@@ -505,11 +507,11 @@ namespace Mage {
 
 				for (auto& [mesh_guid, same_meshes] : mesh_batch) {
 					uint32_t total_drawcall_instances = same_meshes.size();
-					VkRenderModel* mark_mesh = same_meshes.front();
+					VkRenderMeshDescription* mark_mesh = same_meshes.front();
 					
 					//bind vertex and index buffer
-					auto get_offset_from = [](VkRenderModel* tmodel, int index)->uint32_t {
-						return tmodel->m_mesh_description.m_attribute_infos[index].m_offset;
+					auto get_offset_from = [](VkRenderMeshDescription* tmodel, int index)->uint32_t {
+						return tmodel->m_attribute_infos[index].m_offset;
 					};
 					VkBuffer buffers[MAGE_VERTEX_ATTRIBUTES_COUNT] = { VK_NULL_HANDLE };
 					std::array<VkDeviceSize, MAGE_VERTEX_ATTRIBUTES_COUNT> offsets = {0};
@@ -520,17 +522,17 @@ namespace Mage {
 							auto offset = get_offset_from(mark_mesh, index);
 							offsets[index] = offset;
 							buffers[index] = render_resource->m_guid_buffer_map[
-								mark_mesh->m_mesh_description.m_attribute_infos[index].m_buffer_index].m_bi_data;
+								mark_mesh->m_attribute_infos[index].m_buffer_index].m_bi_data;
 						}
 						++index;
 					}
 					vkCmdBindVertexBuffers(m_vulkan_rhi->getCurrentCommandBuffer(), 0, MAGE_VERTEX_ATTRIBUTES_COUNT, buffers, offsets.data());
 
-					auto& index_offset_info = mark_mesh->m_mesh_description.m_attribute_infos[6];
+					auto& index_offset_info = mark_mesh->m_attribute_infos[6];
 					//TODO:VK_INDEX_TYPE_UINT8_EXT
 					VkIndexType index_type = (index_offset_info.m_stride * 8) == 32 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
 					VkBuffer index_buffer = render_resource->m_guid_buffer_map[
-						mark_mesh->m_mesh_description.m_attribute_infos[6].m_buffer_index].m_bi_data;
+						mark_mesh->m_attribute_infos[6].m_buffer_index].m_bi_data;
 					vkCmdBindIndexBuffer(m_vulkan_rhi->getCurrentCommandBuffer(), index_buffer, index_offset_info.m_offset, index_type);
 					//DONE
 
@@ -548,13 +550,13 @@ namespace Mage {
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
 						for (int j{ 0 }; j < current_instance_counts; ++j) {
 							drawcall_begin->m_data[j].m_vertex_data.m_matrix =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_matrix;
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_matrix;
 							drawcall_begin->m_data[j].m_fragment_data.m_base_color_factor =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_base_color_factor;
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_base_color_factor;
 							drawcall_begin->m_data[j].m_fragment_data.m_metallic_factor =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_metallic_factor;
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_metallic_factor;
 							drawcall_begin->m_data[j].m_fragment_data.m_roughness_factor =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_mesh_description.m_roughness_factor;
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_roughness_factor;
 						}
 						begin_offset = perdrawcall_begin + sizeof(GlobalBufferPerDrawcallData);
 						begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);

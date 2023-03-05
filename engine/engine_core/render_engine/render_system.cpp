@@ -147,6 +147,7 @@ namespace Mage {
 
 			//create render models
 			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
+			VkRenderModel model(process_job.m_mesh_info.m_transfer_mesh_descriptions.size());
 			for (uint32_t i{ 0 }; i < process_job.m_mesh_info.m_transfer_mesh_descriptions.size();++i) {
 				auto& primitive_info = process_job.m_mesh_info.m_transfer_mesh_descriptions[i];
 				auto mesh_guid_combined = [&mesh_guids](VkRenderMeshDescription& primitive_des)->ID {
@@ -168,16 +169,13 @@ namespace Mage {
 						primitive_des.m_attribute_infos[6].m_buffer_index);
 					return hash;
 				};
-				VkRenderModel model;
-				model.m_mesh_combined_guid64 = mesh_guid_combined(primitive_info);
-				auto part_mesh_guid = part_mesh_generator.generateGUID({ model.m_mesh_combined_guid64,i });
+				primitive_info.m_meshes_index = mesh_guid_combined(primitive_info);
+				primitive_info.m_submesh_index = part_mesh_generator.generateGUID({ primitive_info.m_meshes_index,i });
+				primitive_info.m_material_index = material_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_material_index];
 
-				model.m_mesh_description = std::move(process_job.m_mesh_info.m_transfer_mesh_descriptions[i]);
-				model.m_model_guid32 = part_mesh_guid;
-				model.m_material_guid64 = material_guids[process_job.m_mesh_info.m_transfer_mesh_descriptions[i].m_material_index];
-
-				m_render_scene->m_render_models.emplace_back(model);
+				model.m_mesh_descriptions[i] = std::move(process_job.m_mesh_info.m_transfer_mesh_descriptions[i]);
 			}
+			m_render_scene->m_render_models[process_job.m_go_id] = std::move(model);
 
 		}
 
