@@ -1,6 +1,7 @@
 #include"ui/editor_ui.h"
 
 #include"engine_core/scaffold/components/transformcomponent/Transform_component.h"
+#include"engine_core/util/util_editor_ui.h"
 
 #include"ui/widgets/table.h"
 #include"ui/widgets/treenode.h"
@@ -11,8 +12,6 @@
 
 #include"ui/widgets/WFI/resizable.h"
 #include"ui/widgets/WFI/bindable.h"
-
-#include"ui/util.h"
 
 namespace Mage {
 	void TransformComponent::SetPosition(const Vector3& new_p) {

@@ -4,11 +4,12 @@
 
 #include"engine_core/scaffold/game_object.h"
 #include"engine_core/scaffold/components/transformcomponent/Transform_component.h"
+#include"engine_core/util/util_global_context.h"
 
 namespace Mage {
 	GameObject::GameObject() {
-		auto transform = MAGE_REFLECTION_NEW(TransformComponent);
-		components.emplace_back(transform);
+		auto transform = Util::MakeComponent("TransformComponent");
+		components.emplace_back(std::move(transform));
 	}
 
 	GameObject::GameObject(const std::string& name) :GameObject() {
@@ -18,10 +19,24 @@ namespace Mage {
 	void GameObject::load(ObjectAsset& asset) {
 		go_name = asset.name;
 
-		components = std::move(asset.components);
+		//TODO:reflection_ptr -> componenthandler. Call allocation from component pool;
+		components.resize(asset.components.size());
+		for (int i{ 0 }; i < asset.components.size(); ++i) {
+			const std::string type{ asset.components[i].getTypeName() };
+			Reflection::TypeMeta meta{ Reflection::TypeMeta::newMetaFromName(type) };
+			Reflection::FieldAccessor* accessors;
+			int fields_count = meta.getFieldsList(accessors);
+
+			components[i] = Util::MakeComponent(type);
+			for (int j{ 0 }; j < fields_count; ++j) {
+				accessors->set(components[i], accessors->get(asset.components[i].getPtr()));
+			}
+		}
+
+		asset.components.clear();
+
 		for (auto& comp : components) {
-			Component* raw_component = comp.getPtr();
-			raw_component->SetGameObject(this);
+			comp->SetGameObject(this);
 		}
 	}
 

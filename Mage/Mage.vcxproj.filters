@@ -109,6 +109,9 @@
     <Filter Include="Mage\engine\engine_core\function\component_pool">
       <UniqueIdentifier>{a1e9116e-3b8c-4c58-a77f-c5e427126645}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mage\engine\engine_core\util">
+      <UniqueIdentifier>{15fedd0e-e365-4df9-b636-c869619da357}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\engine\core\math\math.cpp">
@@ -276,13 +279,16 @@
     <ClCompile Include="..\editor\ui\widgets\button.cpp">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\editor\ui\util.cpp">
-      <Filter>Mage\editor\ui</Filter>
+    <ClCompile Include="..\engine\engine_core\util\util_editor_ui.cpp">
+      <Filter>Mage\engine\engine_core\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\util\util_global_context.cpp">
+      <Filter>Mage\engine\engine_core\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\scaffold\components\component.cpp">
+      <Filter>Mage\engine\engine_core\scaffold\components</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\function\component_pool\component_handle.cpp">
-      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\function\component_pool\component_pool_base.cpp">
       <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClCompile>
   </ItemGroup>
@@ -539,19 +545,22 @@
     <ClInclude Include="..\editor\ui\widgets\table.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\editor\ui\util.h">
-      <Filter>Mage\editor\ui</Filter>
+    <ClInclude Include="..\engine\engine_core\function\component_pool\component_buffer.h">
+      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\function\component_pool\component_pool_base.h">
       <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\function\component_pool\component_buffer.h">
+    <ClInclude Include="..\engine\engine_core\function\component_pool\component_pool.h">
       <Filter>Mage\engine\engine_core\function\component_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\util\util_editor_ui.h">
+      <Filter>Mage\engine\engine_core\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\util\util_global_context.h">
+      <Filter>Mage\engine\engine_core\util</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\function\component_pool\component_handle.h">
-      <Filter>Mage\engine\engine_core\function\component_pool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\function\component_pool\component_pool.h">
       <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,16 +1,18 @@
 #pragma once
 #include<memory>
 
+#include<core/meta/reflection/reflection.h>
+
+#include<engine_core/scaffold/components/transformcomponent/Transform_component.h>
+
 #include<engine_core/function/component_pool/component_pool.h>
 
 namespace Mage {
-	class Component;
 	class RenderSystem;
 	class WindowSystem;
 	class InputSystem;
 	class ResourceManager;
 	class WorldManager;
-	class TransformComponent;
 
 	class MageEngineGlobalContext {
 	public:

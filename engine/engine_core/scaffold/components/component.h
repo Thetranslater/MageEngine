@@ -4,11 +4,10 @@
 
 #include"core/meta/reflection/reflection.h"
 
-#include"ui/widgets/widget.h"
-#include"ui/widgets/treenode.h"
-
 namespace Mage {
 	class GameObject;
+	class Widget;
+
 	REFLECTION_TYPE(Component)
 	//base class of all components
 	CLASS(Component, WhiteListFields) {
@@ -25,6 +24,6 @@ namespace Mage {
 
 		virtual void tick(float delta) {}
 
-		virtual std::shared_ptr<Widget> Draw() { return CREATE_WIDGET(TreeNode); }
+		virtual std::shared_ptr<Widget> Draw();
 	};
 }

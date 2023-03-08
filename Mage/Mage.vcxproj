@@ -155,7 +155,6 @@
     <ClCompile Include="..\editor\editor.cpp" />
     <ClCompile Include="..\editor\input\editor_input.cpp" />
     <ClCompile Include="..\editor\ui\editor_ui.cpp" />
-    <ClCompile Include="..\editor\ui\util.cpp" />
     <ClCompile Include="..\editor\ui\widgets\button.cpp" />
     <ClCompile Include="..\editor\ui\widgets\checkbox.cpp" />
     <ClCompile Include="..\editor\ui\widgets\drag_float.cpp" />
@@ -184,7 +183,6 @@
     <ClCompile Include="..\engine\core\random.cpp" />
     <ClCompile Include="..\engine\engine_core\engine.cpp" />
     <ClCompile Include="..\engine\engine_core\function\component_pool\component_handle.cpp" />
-    <ClCompile Include="..\engine\engine_core\function\component_pool\component_pool_base.cpp" />
     <ClCompile Include="..\engine\engine_core\function\global_context\global_context.cpp" />
     <ClCompile Include="..\engine\engine_core\function\id_allocator\id_allocator.cpp" />
     <ClCompile Include="..\engine\engine_core\input\input_system.cpp" />
@@ -201,6 +199,7 @@
     <ClCompile Include="..\engine\engine_core\render_engine\render_system.cpp" />
     <ClCompile Include="..\engine\engine_core\render_engine\window_system.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.cpp" />
+    <ClCompile Include="..\engine\engine_core\scaffold\components\component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\lightcomponent\Light_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\components\transformcomponent\Transform_component.cpp" />
@@ -208,6 +207,8 @@
     <ClCompile Include="..\engine\engine_core\scaffold\scene.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\world.cpp" />
     <ClCompile Include="..\engine\engine_core\scaffold\world_manager\world_manager.cpp" />
+    <ClCompile Include="..\engine\engine_core\util\util_editor_ui.cpp" />
+    <ClCompile Include="..\engine\engine_core\util\util_global_context.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -215,7 +216,6 @@
     <ClInclude Include="..\editor\editor.h" />
     <ClInclude Include="..\editor\input\editor_input.h" />
     <ClInclude Include="..\editor\ui\editor_ui.h" />
-    <ClInclude Include="..\editor\ui\util.h" />
     <ClInclude Include="..\editor\ui\widgets\button.h" />
     <ClInclude Include="..\editor\ui\widgets\checkbox.h" />
     <ClInclude Include="..\editor\ui\widgets\container.h" />
@@ -300,6 +300,8 @@
     <ClInclude Include="..\engine\engine_core\scaffold\scene.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\world.h" />
     <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h" />
+    <ClInclude Include="..\engine\engine_core\util\util_editor_ui.h" />
+    <ClInclude Include="..\engine\engine_core\util\util_global_context.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3rdparty\imgui-docking\IMGUI\IMGUI.vcxproj">

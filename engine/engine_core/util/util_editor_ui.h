@@ -34,7 +34,7 @@ namespace Mage {
 			CHECK(CoInitialize(NULL));
 
 			IFileDialog* fd_ptr{ NULL };
-			auto res = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd_ptr));
+			CHECK(CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd_ptr)));
 			COMDLG_FILTERSPEC* _types = new COMDLG_FILTERSPEC[types.size()];
 			for (int i{ 0 }; i < types.size(); ++i) {
 				_types[i].pszName = convert[i].first.c_str();
