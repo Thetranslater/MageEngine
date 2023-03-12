@@ -1,6 +1,6 @@
 #pragma once
-#include"engine_core/render_engine/render_pass.h"
-#include"engine_core/render_engine/render_subpass.h"
+#include"engine_core/render_system/render_pass.h"
+#include"engine_core/render_system/render_subpass.h"
 
 namespace Mage {
 	struct ForwardRenderPassCreateInfo : public RenderPassCreateInfo{};

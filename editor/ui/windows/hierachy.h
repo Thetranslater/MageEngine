@@ -3,7 +3,7 @@
 
 #include<ui/windows/window.h>
 
-#include<engine_core/event/event.h>
+#include<engine_core/function/event/event.h>
 
 namespace Mage {
 	class GameObject;

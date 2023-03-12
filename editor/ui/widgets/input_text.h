@@ -8,7 +8,7 @@
 #include<ui/widgets/widget.h>
 #include<ui/widgets/WFI/bindable.h>
 
-#include<engine_core/event/event.h>
+#include<engine_core/function/event/event.h>
 
 namespace Mage {
 	//TODO:感觉会有问题，当输入大于当前string的size时会重新分配内存，到时候会发生什么，我不知道（我似乎应该给callback函数一个默认实现，以免出现意外情况）

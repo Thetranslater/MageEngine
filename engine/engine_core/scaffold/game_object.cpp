@@ -7,10 +7,7 @@
 #include"engine_core/util/util_global_context.h"
 
 namespace Mage {
-	GameObject::GameObject() {
-		auto transform = Util::MakeComponent("TransformComponent");
-		components.emplace_back(std::move(transform));
-	}
+	GameObject::GameObject() {}
 
 	GameObject::GameObject(const std::string& name) :GameObject() {
 		go_name = name;
@@ -38,11 +35,23 @@ namespace Mage {
 		for (auto& comp : components) {
 			comp->SetGameObject(this);
 		}
+
+		is_dirty = true;
 	}
 
 	void GameObject::tick(float delta) {
 		for (auto& comp : components) {
 			comp->tick(delta);
 		}
+	}
+
+	void GameObject::PushComponent(const ComponentHandler& handler) {
+		components.emplace_back(handler);
+		is_dirty = true;
+	}
+
+	void GameObject::PushComponent(ComponentHandler&& handler) {
+		components.emplace_back(std::move(handler));
+		is_dirty = true;
 	}
 }

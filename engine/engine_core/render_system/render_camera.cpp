@@ -1,4 +1,4 @@
-#include"engine_core/render_engine/render_camera.h"
+#include"engine_core/render_system/render_camera.h"
 
 namespace Mage {
 	const Vector3 RenderCamera::LEFT = { 1.f,0.f,0.f };

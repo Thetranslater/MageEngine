@@ -35,15 +35,15 @@ namespace Mage {
 		//attention: Because SetXXX function directly sets the properties of the transform, it may cause inconsistency.
 		// Please use WriteXXX when you have the consistency requirement.
 		//TODO:setÂß¼­ÖØĞ´
-		void SetPosition(const Vector3& new_p);
-		void SetRotation(const Quaternion& new_q);
-		void SetScale(const Vector3& new_s);
-		void SetLocalPosition(const Vector3& new_p);
-		void SetLocalRotation(const Quaternion& new_q);
-		void SetLocalScale(const Vector3& new_s);
+private:void SetPosition(const Vector3& new_p);
+private:void SetRotation(const Quaternion& new_q);
+private:void SetScale(const Vector3& new_s);
+private:void SetLocalPosition(const Vector3& new_p);
+private:void SetLocalRotation(const Quaternion& new_q);
+private:void SetLocalScale(const Vector3& new_s);
 
 		//TODO:writeÂß¼­ÖØĞ´
-		void WritePosition(const Vector3& new_p);
+public: void WritePosition(const Vector3& new_p);
 		void WriteRotation(const Quaternion& new_q);
 		void WriteScale(const Vector3& new_s);
 		void WriteLocalPosition(const Vector3& new_p);
@@ -54,7 +54,7 @@ namespace Mage {
 		inline Matrix4x4 worldToLocalMatrix() { Matrix4x4 ret; Matrix4x4::Inverse3DAffine(Matrix4x4::TRS(world_position, world_rotation, world_scale), ret); return ret; }
 
 		inline TransformComponent* GetParent() { return parent; }
-		inline void SetParent(TransformComponent* p_transform) { parent = p_transform; }
+		inline void SetParent(TransformComponent* p_transform) { parent = p_transform; p_transform->GetChildren().emplace_back(this); }
 
 		inline TransformComponent* GetChild(int index) { return children.at(index); }
 		inline std::vector<TransformComponent*>& GetChildren() { return children; }

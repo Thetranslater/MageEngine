@@ -21,10 +21,15 @@ namespace Mage {
 		void setInstanceID(GameObjectID guid) { id = guid; }
 		const std::string& name() const { return go_name; }
 		void setName(const std::string& new_name) { go_name = new_name; }
+		bool isDirty() const { return is_dirty; }
+		void setDirty() { is_dirty = true; }
 
 		virtual void load(ObjectAsset& asset);
 
 		virtual void tick(float delta);
+
+		void PushComponent(const ComponentHandler& handler);
+		void PushComponent(ComponentHandler&& handler);
 
 		std::vector<ComponentHandler>& GetComponents() { return components; }
 
@@ -42,6 +47,7 @@ namespace Mage {
 	private:
 		GameObjectID id{ invalid_id };
 		std::string go_name;
+		bool is_dirty{ false };
 
 		//all objects must require a transform(components[0] == TransformComponent)
 		std::vector<ComponentHandler> components;

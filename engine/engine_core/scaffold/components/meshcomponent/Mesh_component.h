@@ -12,9 +12,12 @@ namespace Mage {
 		REFLECTION_BODY(MeshComponent)
 	public:
 		MeshComponent() { should_tick_in_editor = true; }
-		void tick(float delta) override;
+		//void tick(float delta) override;
 
 		std::shared_ptr<Widget> Draw() override;
+		bool IsLoad() const { return is_loaded; }
+		void SetLoad() { is_loaded = true; }
+		MeshAsset& Asset() { return mesh; }
 	private:
 		META(Enable)
 		MeshAsset mesh;

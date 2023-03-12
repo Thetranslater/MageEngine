@@ -62,7 +62,7 @@ namespace Mage {
 		friend class ComponentPool<Ty, Te>;
 	public:
 		ComponentHandle() = default;
-		ComponentHandle(int i, ComponentPoolBase* p) : index{ i }, pool{ p } {}
+		ComponentHandle(int i, ComponentPoolBase* p) : ComponentHandler(i, p) {}
 		ComponentHandle(const ComponentHandler& copy) : index{ copy.index }, pool{ copy.pool } {}
 		ComponentHandle(ComponentHandler&& move) : index{ move.index }, pool{ move.pool } { move.index = NULL_HANDLE; move.pool = nullptr; }
 		ComponentHandle(const ComponentHandle& copy) : index{ copy.index }, pool{ copy.pool } {}
@@ -103,7 +103,7 @@ namespace Mage {
 			return ComponentHandler{ index, pool };
 		}
 
-		explicit operator Reflection::ReflectionPtr<Ty>() const {
+		operator Reflection::ReflectionPtr<Ty>() const {
 			Component* instance{ pool->handleAccess(this) };
 			return Reflection::ReflectionPtr<Ty>{instance->getTypeName(), instance};
 		}
@@ -118,6 +118,7 @@ namespace Mage {
 			return *static_cast<Ty*>(pool->handleAccess(this));
 		}
 		bool operator==(const ComponentHandle& r) const { return r.index == index and r.pool == pool; }
+		bool operator!=(const ComponentHandle& r) const { return !(r.index == index && r.pool == pool); }
 
 		ComponentHandle operator++(int) { ComponentHandle ret{ index, pool }; ++index; return ret; }
 		ComponentHandle& operator++() { ++index; return *this; }

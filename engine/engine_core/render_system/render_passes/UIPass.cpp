@@ -4,8 +4,8 @@
 
 #include"ui/editor_ui.h"
 
-#include"engine_core/render_engine/renderer/vulkanRHI.h"
-#include"engine_core/render_engine/render_passes/UIPass.h"
+#include"engine_core/render_system/renderer/vulkanRHI.h"
+#include"engine_core/render_system/render_passes/UIPass.h"
 
 namespace Mage {
 	void UISubpass::initialize(SubpassCreateInfo* create_info) {

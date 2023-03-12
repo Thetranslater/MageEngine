@@ -3,7 +3,7 @@
 #include<ui/widgets/widget.h>
 #include<ui/widgets/WFI/bindable.h>
 
-#include<engine_core/event/event.h>
+#include<engine_core/function/event/event.h>
 
 namespace Mage {
 	class DragFloat : public DataWidget<float> {
@@ -16,7 +16,7 @@ namespace Mage {
 	protected:
 		std::string lable;
 
-		float min{FLT_MIN};
+		float min{-FLT_MAX};
 		float max{FLT_MAX};
 		float speed{0.1f};
 	public:

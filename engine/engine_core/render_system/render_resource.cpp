@@ -1,8 +1,8 @@
-#include<engine_core/render_engine/render_resource.h>
-#include<engine_core/render_engine/renderer/vulkanInfo.h>
-#include<engine_core/render_engine/renderer/vulkanRHI.h>
-#include<engine_core/render_engine/renderer/vulkanHelper.h>
-#include<engine_core/render_engine/resource_swap_header.h>
+#include<engine_core/render_system/render_resource.h>
+#include<engine_core/render_system/renderer/vulkanInfo.h>
+#include<engine_core/render_system/renderer/vulkanRHI.h>
+#include<engine_core/render_system/renderer/vulkanHelper.h>
+#include<engine_core/render_system/resource_swap_header.h>
 
 namespace Mage {
 	void RenderResource::initialize(VulkanRHI* rhi) {

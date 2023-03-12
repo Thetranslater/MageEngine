@@ -2,7 +2,7 @@
 
 #include<ui/widgets/widget.h>
 
-#include<engine_core/event/event.h>
+#include<engine_core/function/event/event.h>
 
 namespace Mage {
 	class DragInt : DataWidget<int> {

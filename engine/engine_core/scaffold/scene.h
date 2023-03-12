@@ -4,8 +4,8 @@
 #include<memory>
 
 #include<engine_core/function/id_allocator/id_allocator.h>
-#include<engine_core/event/event.h>
-#include<engine_core/event/reference.h>
+#include<engine_core/function/event/event.h>
+#include<engine_core/function/event/reference.h>
 
 namespace Mage {
 	class GameObject;
@@ -19,6 +19,8 @@ namespace Mage {
 		void clear();
 		GameObjectID createGameObeject(ObjectAsset& resource);
 		IDAllocator& getGOIDAllocator();
+		std::weak_ptr<GameObject> getGameObject(GameObjectID id);
+		const std::vector<GameObjectID>& getConstRoots() const;
 
 		//event
 		Reference<Event<GameObject&>> create_event;
@@ -29,5 +31,6 @@ namespace Mage {
 		std::unordered_map<GameObjectID, std::shared_ptr<GameObject>> objects;
 
 		IDAllocator goid_allocator;
+		std::vector<GameObjectID> roots;
 	};
 }

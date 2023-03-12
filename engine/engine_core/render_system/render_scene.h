@@ -1,8 +1,8 @@
 #pragma once
 
-#include<engine_core/render_engine/render_guid_generator.h>
-#include<engine_core/render_engine/render_model.h>
-#include<engine_core/render_engine/resource_swap_header.h>
+#include<engine_core/render_system/render_guid_generator.h>
+#include<engine_core/render_system/render_model.h>
+#include<engine_core/render_system/resource_swap_header.h>
 
 #include<deque>
 

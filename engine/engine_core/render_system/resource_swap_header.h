@@ -30,7 +30,7 @@ namespace Mage {
 		STATIC_DATA int m_count{-1};
 	};
 
-	struct VkRenderMeshDescription {
+	struct	VkRenderMeshDescription {
 		//mesh
 		STATIC_DATA std::array<VkRenderMeshAttributeDescription, 7> m_attribute_infos{}; //6和vertex属性顺序对应, 7是indices
 

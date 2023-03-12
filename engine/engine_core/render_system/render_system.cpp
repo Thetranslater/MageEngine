@@ -5,15 +5,14 @@
 #include"core/macro.h"
 #include"core/hash.h"
 
-#include"engine_core/render_engine/render_pending_data.h"
-#include"engine_core/render_engine/render_system.h"
-#include"engine_core/render_engine/renderer/vulkanRHI.h"
-#include"engine_core/render_engine/renderer/vulkanHelper.h"
-#include"engine_core/render_engine/render_passes/ForwardRenderPass.h"
-#include"engine_core/render_engine/render_scene.h"
-#include"engine_core/render_engine/render_resource.h"
-#include"engine_core/render_engine/render_camera.h"
-#include"engine_core/function/global_context/global_context.h"
+#include"engine_core/render_system/render_pending_data.h"
+#include"engine_core/render_system/render_system.h"
+#include"engine_core/render_system/renderer/vulkanRHI.h"
+#include"engine_core/render_system/renderer/vulkanHelper.h"
+#include"engine_core/render_system/render_passes/ForwardRenderPass.h"
+#include"engine_core/render_system/render_scene.h"
+#include"engine_core/render_system/render_resource.h"
+#include"engine_core/render_system/render_camera.h"
 
 #include"asset/resource_manager/resource_manager.h"
 #include"asset/resource_manager/asset_type.h"
@@ -57,7 +56,11 @@ namespace Mage {
 
 
 	void RenderSystem::tick() {
-		preprocess();
+		processMeshComponent();
+
+		processRenderResource();
+
+		processRenderPendingData();
 
 		m_vulkan_rhi->prepareContext();
 
@@ -73,7 +76,23 @@ namespace Mage {
 		m_vulkan_rhi->prepareVulkanRHIAfterRender();
 	}
 
-	void RenderSystem::preprocess() {
+	void RenderSystem::processMeshComponent() {
+		auto render_scene = engine_global_context.m_render_system->getRenderScene();
+		auto mesh_component_pool = engine_global_context.m_mesh_component_pool;
+		for (auto iter{ mesh_component_pool->begin() }; iter != mesh_component_pool->end(); ++iter) {
+			if (iter->GetGameObject()->isDirty()) {
+				meshSibling_tuples[(MeshComponent*)iter].transform = iter->GetGameObject()->GetComponent(TransformComponent);
+			}
+			if (!iter->IsLoad()) {
+				VkRenderModelInfo info{ getRenderModelInfoFromComponent(iter) };
+				info.m_transform = meshSibling_tuples[(MeshComponent*)iter].transform->localToWorldMatrix();
+
+				render_scene->m_p_scene_load_deque->push_back(info);
+			}
+		}
+	}
+
+	void RenderSystem::processRenderResource() {
 		//资源的检查需要从一个工作队列中处理，队列存储这所有当前帧需要加载的mesh数据。该队列存储在渲染场景类中
 		std::shared_ptr<ResourceManager> resource_manager = engine_global_context.m_resource_manager;
 		assert(resource_manager);
@@ -183,7 +202,9 @@ namespace Mage {
 		while (not m_render_scene->m_p_scene_delete_deque->empty()) {
 			auto process_job = m_render_scene->m_p_scene_delete_deque->getNextProcess();
 		}
+	}
 
+	void RenderSystem::processRenderPendingData() {
 		//camera
 		m_render_camera->setPosition(m_pending_data->m_camera.m_pending_position);
 		m_render_camera->setRotation(m_pending_data->m_camera.m_pending_rotation);
@@ -221,5 +242,20 @@ namespace Mage {
 		vkDeviceWaitIdle(m_vulkan_rhi->getDevice());
 
 		ImGui_ImplVulkan_DestroyFontUploadObjects();
+	}
+
+	VkRenderModelInfo RenderSystem::getRenderModelInfoFromComponent(ComponentHandle<MeshComponent>& handle) {
+		auto render_scene = engine_global_context.m_render_system->getRenderScene();
+		auto loader = engine_global_context.m_resource_manager;
+
+		Model mage_model;
+		std::string err;
+		bool load_res = loader->loadMageModel(handle->Asset().gltf_model_url, &mage_model, &err, nullptr, false);
+		//mesh load(fake),将mesh数据填好打包给render scene
+		VkRenderModelInfo info = mage_model.getVkRenderModelInfo();
+		info.m_go_id = handle->GetGameObject()->getInstanceID();
+
+		handle->SetLoad();
+		return info;
 	}
 }

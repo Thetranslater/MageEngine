@@ -10,7 +10,7 @@
 #include<core/math/vector3.h>
 #include<core/math/vector4.h>
 
-#include<engine_core/render_engine/render_resource.h>
+#include<engine_core/render_system/render_resource.h>
 
 /*
 * 目前已经更改完tinygltf头文件相关内容，实现了buffer数据和image数据延迟加载，目前只加载存储数据文件的相对路径，加载功能延迟到后面组件更新（tick()）功能中

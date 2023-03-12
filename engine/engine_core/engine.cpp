@@ -1,13 +1,14 @@
 #include"engine_core/function/global_context/global_context.h"
-#include"engine_core/render_engine/render_resource.h"
+#include"engine_core/render_system/render_resource.h"
 #include"engine_core/engine.h"
 
-#include"engine_core/render_engine/render_system.h"
-#include"engine_core/render_engine/window_system.h"
-#include"engine_core/render_engine/render_scene.h"
+#include"engine_core/render_system/render_system.h"
+#include"engine_core/render_system/window_system.h"
+#include"engine_core/render_system/render_scene.h"
 #include"engine_core/input/key_family.h"
 #include"engine_core/input/input_system.h"
 #include"engine_core/scaffold/world_manager/world_manager.h"
+#include"engine_core/parenting_system/parenting_system.h"
 
 #include"core/macro.h"
 #include"core/meta/reflection/reflection_register.h"
@@ -29,6 +30,8 @@ namespace Mage {
 		//engine_global_context.m_input_system->tick();
 
 		engine_global_context.m_world_manager->tick(delta);
+
+		engine_global_context.m_parenting_system->tick(delta);
 	}
 
 	void MageEngine::renderTick(float delta) {

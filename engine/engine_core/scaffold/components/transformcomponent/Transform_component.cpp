@@ -1,3 +1,5 @@
+#include<iostream>
+
 #include"ui/editor_ui.h"
 
 #include"engine_core/scaffold/components/transformcomponent/Transform_component.h"
@@ -15,16 +17,17 @@
 
 namespace Mage {
 	void TransformComponent::SetPosition(const Vector3& new_p) {
-		world_position = new_p;
-		position_write_buffer = new_p;
+		world_position = parent->localToWorldMatrix() * position;
+		world_position += new_p;
+		position_write_buffer = Vector3::zero;
 		write_type = TransformWriteType::WORLD_WRITE;
 
-		position = (parent == nullptr) ? world_position : parent->worldToLocalMatrix() * new_p;
+		position = (parent == nullptr) ? world_position : parent->worldToLocalMatrix() * world_position;
 	}
 
 	void TransformComponent::SetLocalPosition(const Vector3& new_p) {
-		position = new_p;
-		position_write_buffer = new_p;
+		position += new_p;
+		position_write_buffer = Vector3::zero;
 		write_type = TransformWriteType::LOCAL_WRITE;
 
 		world_position = (parent == nullptr) ? position : parent->localToWorldMatrix() * new_p;
@@ -41,7 +44,7 @@ namespace Mage {
 	}
 
 	void TransformComponent::SetRotation(const Quaternion& new_q) {
-		world_rotation = new_q;
+		world_rotation = parent->world_rotation * rotation * new_q;
 		rotation_write_buffer = new_q;
 		write_type = TransformWriteType::WORLD_WRITE;
 
@@ -57,7 +60,7 @@ namespace Mage {
 	}
 
 	void TransformComponent::WriteRotation(const Quaternion& new_q) {
-		rotation_write_buffer = new_q;
+		rotation_write_buffer = Quaternion::Inverse(world_rotation) * new_q;
 		write_type = TransformWriteType::WORLD_WRITE;
 	}
 
@@ -101,12 +104,12 @@ namespace Mage {
 		else {
 			switch (write_type)
 			{
-			case Mage::WORLD_WRITE:
+			case TransformWriteType::WORLD_WRITE:
 				SetPosition(position_write_buffer);
 				SetRotation(rotation_write_buffer);
 				SetScale(scale_write_buffer);
 				break;
-			case Mage::LOCAL_WRITE:
+			case TransformWriteType::LOCAL_WRITE:
 				SetLocalPosition(position_write_buffer);
 				SetLocalRotation(rotation_write_buffer);
 				SetLocalScale(scale_write_buffer);
@@ -116,6 +119,8 @@ namespace Mage {
 			}
 		}
 		write_type = TransformWriteType::NONE_WRITE;
+
+		std::cout << position.x << ' ' << position.y << ' ' << position.z << std::endl;
 	}
 
 	std::shared_ptr<Widget> TransformComponent::Draw() {

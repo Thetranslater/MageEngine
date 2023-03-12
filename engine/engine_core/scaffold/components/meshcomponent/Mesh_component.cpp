@@ -3,8 +3,8 @@
 
 #include"engine_core/scaffold/game_object.h"
 #include"engine_core/scaffold/components/meshcomponent/Mesh_component.h"
-#include"engine_core/render_engine/render_system.h"
-#include"engine_core/render_engine/render_scene.h"
+#include"engine_core/render_system/render_system.h"
+#include"engine_core/render_system/render_scene.h"
 #include"engine_core/function/global_context/global_context.h"
 
 #include"engine_core/util/util_editor_ui.h"
@@ -20,23 +20,23 @@
 #include"ui/widgets/WFI/resizable.h"
 
 namespace Mage{
-	void MeshComponent::tick(float delta) {
-		if (should_tick_in_editor) {
-			if (not is_loaded) {
-				auto render_scene = engine_global_context.m_render_system->getRenderScene();
-				auto loader = engine_global_context.m_resource_manager;
-				
-				Model mage_model;
-				std::string err;
-				bool load_res = loader->loadMageModel(mesh.gltf_model_url, &mage_model, &err, nullptr, false);
-				//mesh load(fake),将mesh数据填好打包给render scene
-				VkRenderModelInfo render_model = mage_model.getVkRenderModelInfo();
-				render_model.m_go_id = game_object->getInstanceID();
-				render_scene->m_p_scene_load_deque->push_back(render_model);
-				is_loaded = true;
-			}
-		}
-	}
+	//void MeshComponent::tick(float delta) {
+	//	if (should_tick_in_editor) {
+	//		if (not is_loaded) {
+	//			auto render_scene = engine_global_context.m_render_system->getRenderScene();
+	//			auto loader = engine_global_context.m_resource_manager;
+	//			
+	//			Model mage_model;
+	//			std::string err;
+	//			bool load_res = loader->loadMageModel(mesh.gltf_model_url, &mage_model, &err, nullptr, false);
+	//			//mesh load(fake),将mesh数据填好打包给render scene
+	//			VkRenderModelInfo render_model = mage_model.getVkRenderModelInfo();
+	//			render_model.m_go_id = game_object->getInstanceID();
+	//			render_scene->m_p_scene_load_deque->push_back(render_model);
+	//			is_loaded = true;
+	//		}
+	//	}
+	//}
 
 	std::shared_ptr<Widget> MeshComponent::Draw() {
 		auto node = CREATE_WIDGET(TreeNode, "Mesh");

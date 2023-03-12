@@ -2,12 +2,12 @@
 
 #include<asset/resource_manager/asset_type.h>
 
-#include<engine_core/render_engine/renderer/vulkanInfo.h>
-#include<engine_core/render_engine/renderer/vulkanRHI.h>
-#include<engine_core/render_engine/renderer/vulkanHelper.h>
+#include<engine_core/render_system/renderer/vulkanInfo.h>
+#include<engine_core/render_system/renderer/vulkanRHI.h>
+#include<engine_core/render_system/renderer/vulkanHelper.h>
 #include<engine_core/platform/file_system.h>
-#include<engine_core/render_engine/resource_swap_header.h>
-#include<engine_core/render_engine/render_model.h>
+#include<engine_core/render_system/resource_swap_header.h>
+#include<engine_core/render_system/render_model.h>
 
 
 namespace Mage {

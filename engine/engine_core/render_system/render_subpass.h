@@ -5,7 +5,7 @@
 #include<array>
 #include<memory>
 
-#include<engine_core/render_engine/render_vulkan_resources.h>
+#include<engine_core/render_system/render_vulkan_resources.h>
 
 namespace Mage {
 	class VulkanRHI;

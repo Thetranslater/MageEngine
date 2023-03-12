@@ -28,15 +28,6 @@
     <Filter Include="Mage\engine\core\meta\serializer">
       <UniqueIdentifier>{609ac326-614b-43b3-a02f-2810bf814ce7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mage\engine\engine_core\render_engine">
-      <UniqueIdentifier>{eced36c4-ec64-4926-aba7-dfd8d6b6be0a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mage\engine\engine_core\render_engine\renderer">
-      <UniqueIdentifier>{c0ce8f62-b85b-4594-b627-ce55ecee5162}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Mage\engine\engine_core\render_engine\render_passes">
-      <UniqueIdentifier>{93a0cec8-a085-4d32-a1f8-881074121288}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Mage\engine\engine_core\function">
       <UniqueIdentifier>{70906218-08ed-4c87-84d6-998c9e4a30c4}</UniqueIdentifier>
     </Filter>
@@ -85,9 +76,6 @@
     <Filter Include="Mage\editor\ui">
       <UniqueIdentifier>{aca145cf-d686-4d19-a23f-169635a1fa46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Mage\engine\engine_core\event">
-      <UniqueIdentifier>{483101a4-4f5a-4c53-8735-bb787cc39e2f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Mage\engine\engine_core\function\id_allocator">
       <UniqueIdentifier>{d76fbabe-f932-4fe3-a70d-5a92c52d7a69}</UniqueIdentifier>
     </Filter>
@@ -111,6 +99,21 @@
     </Filter>
     <Filter Include="Mage\engine\engine_core\util">
       <UniqueIdentifier>{15fedd0e-e365-4df9-b636-c869619da357}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\function\event">
+      <UniqueIdentifier>{483101a4-4f5a-4c53-8735-bb787cc39e2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\parenting_system">
+      <UniqueIdentifier>{e3ac490b-87b1-4700-9d1b-21f1ae9686d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\render_system">
+      <UniqueIdentifier>{eced36c4-ec64-4926-aba7-dfd8d6b6be0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\render_system\renderer">
+      <UniqueIdentifier>{c0ce8f62-b85b-4594-b627-ce55ecee5162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Mage\engine\engine_core\render_system\render_passes">
+      <UniqueIdentifier>{93a0cec8-a085-4d32-a1f8-881074121288}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -150,24 +153,6 @@
     <ClCompile Include="..\engine\core\random.cpp">
       <Filter>Mage\engine\core</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.cpp">
-      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.cpp">
-      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_pass.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_subpass.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_system.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\window_system.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\engine_core\engine.cpp">
       <Filter>Mage\engine\engine_core</Filter>
     </ClCompile>
@@ -180,17 +165,8 @@
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.cpp">
-      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_scene.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp">
       <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_resource.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\input\input_system.cpp">
       <Filter>Mage\engine\engine_core\input</Filter>
@@ -213,9 +189,6 @@
     <ClCompile Include="..\engine\engine_core\scaffold\components\meshcomponent\Mesh_component.cpp">
       <Filter>Mage\engine\engine_core\scaffold\components\mesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_camera.cpp">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.cpp">
       <Filter>Mage\engine\engine_core\scaffold\components\camera</Filter>
     </ClCompile>
@@ -230,9 +203,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Mage\editor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\engine\engine_core\render_engine\render_passes\UIPass.cpp">
-      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
     </ClCompile>
     <ClCompile Include="..\editor\ui\editor_ui.cpp">
       <Filter>Mage\editor\ui</Filter>
@@ -291,6 +261,42 @@
     <ClCompile Include="..\engine\engine_core\function\component_pool\component_handle.cpp">
       <Filter>Mage\engine\engine_core\function\component_pool</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\engine_core\parenting_system\parenting_system.cpp">
+      <Filter>Mage\engine\engine_core\parenting_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\renderer\vulkanHelper.cpp">
+      <Filter>Mage\engine\engine_core\render_system\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\renderer\vulkanRHI.cpp">
+      <Filter>Mage\engine\engine_core\render_system\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_camera.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_pass.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_resource.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_scene.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_subpass.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_system.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\window_system.cpp">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_passes\ForwardRenderPass.cpp">
+      <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_passes\UIPass.cpp">
+      <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -335,33 +341,6 @@
     <ClInclude Include="..\engine\core\random.h">
       <Filter>Mage\engine\core</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanHelper.h">
-      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanInfo.h">
-      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\renderer\vulkanRHI.h">
-      <Filter>Mage\engine\engine_core\render_engine\renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_mesh.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_pass.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_subpass.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_system.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_vulkan_resources.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\window_system.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\engine_core\engine.h">
       <Filter>Mage\engine\engine_core</Filter>
     </ClInclude>
@@ -374,32 +353,11 @@
     <ClInclude Include="..\engine\asset\resource_manager\asset_type.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_resource.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\ForwardRenderPass.h">
-      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_guid_generator.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_scene.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_model.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\core\hash.h">
       <Filter>Mage\engine\core</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\asset\resource_manager\resource_manager.h">
       <Filter>Mage\engine\asset\resource_manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_macro.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\resource_swap_header.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\input\input_system.h">
       <Filter>Mage\engine\engine_core\input</Filter>
@@ -440,9 +398,6 @@
     <ClInclude Include="..\engine\asset\object_asset.h">
       <Filter>Mage\engine\asset</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_camera.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\engine_core\scaffold\components\cameracomponent\Camera_component.h">
       <Filter>Mage\engine\engine_core\scaffold\components\camera</Filter>
     </ClInclude>
@@ -458,11 +413,8 @@
     <ClInclude Include="..\editor\ui\editor_ui.h">
       <Filter>Mage\editor\ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_passes\UIPass.h">
-      <Filter>Mage\engine\engine_core\render_engine\render_passes</Filter>
-    </ClInclude>
     <ClInclude Include="..\engine\engine_core\event\event.h">
-      <Filter>Mage\engine\engine_core\event</Filter>
+      <Filter>Mage\engine\engine_core\function\event</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\function\id_allocator\id_allocator.h">
       <Filter>Mage\engine\engine_core\function\id_allocator</Filter>
@@ -483,7 +435,7 @@
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\event\reference.h">
-      <Filter>Mage\engine\engine_core\event</Filter>
+      <Filter>Mage\engine\engine_core\function\event</Filter>
     </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\group.h">
       <Filter>Mage\editor\ui\widgets</Filter>
@@ -536,9 +488,6 @@
     <ClInclude Include="..\engine\engine_core\scaffold\components\lightcomponent\Light_common.h">
       <Filter>Mage\engine\engine_core\scaffold\components\light</Filter>
     </ClInclude>
-    <ClInclude Include="..\engine\engine_core\render_engine\render_pending_data.h">
-      <Filter>Mage\engine\engine_core\render_engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\editor\ui\widgets\button.h">
       <Filter>Mage\editor\ui\widgets</Filter>
     </ClInclude>
@@ -562,6 +511,66 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\function\component_pool\component_handle.h">
       <Filter>Mage\engine\engine_core\function\component_pool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\parenting_system\parenting_system.h">
+      <Filter>Mage\engine\engine_core\parenting_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\renderer\vulkanHelper.h">
+      <Filter>Mage\engine\engine_core\render_system\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\renderer\vulkanInfo.h">
+      <Filter>Mage\engine\engine_core\render_system\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\renderer\vulkanRHI.h">
+      <Filter>Mage\engine\engine_core\render_system\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_camera.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_guid_generator.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_macro.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_mesh.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_model.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_pass.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_pending_data.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_resource.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_scene.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_subpass.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_system.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_vulkan_resources.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\resource_swap_header.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\window_system.h">
+      <Filter>Mage\engine\engine_core\render_system</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_passes\ForwardRenderPass.h">
+      <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_passes\UIPass.h">
+      <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

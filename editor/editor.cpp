@@ -9,7 +9,7 @@
 #include"engine_core/function/global_context/global_context.h"
 #include"engine_core/engine.h"
 #include"engine_core/input/input_system.h"
-#include"engine_core/render_engine/render_system.h"
+#include"engine_core/render_system/render_system.h"
 
 namespace Mage {
 	void MageEditor::initialize(MageEngine* engine) {

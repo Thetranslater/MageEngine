@@ -4,8 +4,8 @@
 #include"asset/object_asset.h"
 
 #include"engine_core/function/global_context/global_context.h"
-#include"engine_core/event/event.h"
-#include"engine_core/event/reference.h"
+#include"engine_core/function/event/event.h"
+#include"engine_core/function/event/reference.h"
 #include"engine_core/scaffold/scene.h"
 #include"engine_core/scaffold/game_object.h"
 #include"engine_core/scaffold/components/component.h"
@@ -37,12 +37,16 @@ namespace Mage {
 
 	void Scene::load(SceneAsset& asset) {
 		std::deque<int> que;
+		std::vector<GameObjectID> ids(asset.objects.size());
 		auto createObjectsByRelation = [&](int root) {
 			que.push_back(root);
 			while (not que.empty()) {
 				int creating{ que.front() };
 				que.pop_front();
-				createGameObeject(asset.objects[creating]);
+				ids[creating] = createGameObeject(asset.objects[creating]);
+				if (asset.nodes[creating].parent != -1) {
+					objects[ids[creating]]->GetComponent(TransformComponent)->SetParent(objects[ids[asset.nodes[creating].parent]]->GetComponent(TransformComponent));
+				}
 				for (int child : asset.nodes[creating].children) {
 					que.push_back(child);
 				}
@@ -53,28 +57,25 @@ namespace Mage {
 		for (int root : asset.roots) {
 			que.clear();
 			createObjectsByRelation(root);
+			roots.emplace_back(ids[root]);
 		}
 	}
 
 	void Scene::tick(float delta) {
-		//transform tick
-		for (auto& [goid, go] : objects) {
-			if (go != nullptr) {
-				go->GetComponents().front()->tick(delta);
-			}
-		}
-
-		for (auto& [goid, go] : objects) {
-			if (go != nullptr) {
-				auto& components = go->GetComponents();
-				for (int i{ 1 }; i < components.size(); ++i) {
-					components[i]->tick(delta);
-				}
-			}
-		}
+		//for (auto& [goid, go] : objects) {
+		//	if (go != nullptr) {
+		//		auto& components = go->GetComponents();
+		//		for (int i{ 1 }; i < components.size(); ++i) {
+		//			components[i]->tick(delta);
+		//		}
+		//	}
+		//}
 	}
 
 	IDAllocator& Scene::getGOIDAllocator() {
 		return goid_allocator;
 	}
+
+	std::weak_ptr<GameObject> Scene::getGameObject(GameObjectID id) { return objects[id]; }
+	const std::vector<GameObjectID>& Scene::getConstRoots() const { return roots; }
 }

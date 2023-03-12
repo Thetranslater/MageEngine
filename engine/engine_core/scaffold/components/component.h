@@ -21,6 +21,7 @@ namespace Mage {
 
 		GameObject* GetGameObject() { return game_object; }
 		void SetGameObject(GameObject* parent_obj) { game_object = parent_obj; }
+		bool IsTickInEditor() const { return should_tick_in_editor; }
 
 		virtual void tick(float delta) {}
 

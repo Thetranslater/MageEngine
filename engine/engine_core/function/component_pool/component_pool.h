@@ -17,6 +17,13 @@ namespace Mage {
 	template<typename Ty , typename = std::enable_if_t<std::is_convertible_v<Ty*, Component*>>>
 	class ComponentPool : public ComponentPoolBase {
 	public:
+		ComponentHandle<Ty> begin() {
+			return ComponentHandle<Ty>{0, this};
+		}
+		ComponentHandle<Ty> end() {
+			return ComponentHandle<Ty>{_size, this};
+		}
+
 		ComponentHandler allocate(int num = 1) override {
 			ComponentHandler head{ _size, this };
 			while (num > 0) {
@@ -29,7 +36,7 @@ namespace Mage {
 					}
 					continue;
 				}
-				void* place = &(operator[](_size));
+				void* place = addressOf(_size);
 				place = new (place)Ty;
 				++_size;
 				--num;
@@ -40,6 +47,7 @@ namespace Mage {
 		bool release(ComponentHandle<Ty>& handle) {
 			if (handle.index >= 0 and handle.index < _size and handle.pool == this) {
 				Component* tail = &(operator[](_size - 1));
+				tail->GetGameObject()->setDirty();
 				auto& attached_components = tail->GetGameObject()->GetComponents();
 				for (auto& comp : attached_components) {
 					if (comp->getTypeName() == Ty::getClassName()) {
@@ -68,6 +76,7 @@ namespace Mage {
 #endif
 			return std::addressof(buffer_ptr[handle->index / MAX_COMPONENT_CONTAIN]->components[handle->index % MAX_COMPONENT_CONTAIN]);
 		}
+		inline Ty* addressOf(int index) { return std::addressof(buffer_ptr[index / MAX_COMPONENT_CONTAIN]->components[index % MAX_COMPONENT_CONTAIN]); }
 	private:
 		std::vector<ComponentBuffer<Ty>*> buffer_ptr;
 	};

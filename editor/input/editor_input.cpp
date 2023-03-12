@@ -4,12 +4,12 @@
 #include"core/math/math.h"
 
 #include"engine_core/function/global_context/global_context.h"
-#include"engine_core/render_engine/window_system.h"
-#include"engine_core/render_engine/render_pending_data.h"
-#include"engine_core/render_engine/render_system.h"
+#include"engine_core/render_system/window_system.h"
+#include"engine_core/render_system/render_pending_data.h"
+#include"engine_core/render_system/render_system.h"
 #include"engine_core/input/key_family.h"
 #include"engine_core/input/input_system.h"
-#include"engine_core/render_engine/render_camera.h"
+#include"engine_core/render_system/render_camera.h"
 
 namespace Mage {
 	void EditorInput::initialize(std::shared_ptr<WindowSystem> window_system) {
