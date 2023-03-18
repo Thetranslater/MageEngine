@@ -15,12 +15,21 @@ namespace Mage {
 		LightComponent();
 		
 		void tick(float) override;
+		const std::string& Type() const;
+		const Vector3& Color() const;
+		const float Intensity() const;
+
+		void SetType(const std::string&);
+		void SetColor(const Vector3&);
+		void SetIntensity(float);
+
+		std::shared_ptr<Widget> Draw() override;
 	protected:
 		META(Enable);
-		std::string Type{LightType::directional};
+		std::string type{LightType::directional};
 		META(Enable);
-		Vector3 Color{Vector3::zero};
+		Vector3 color{Vector3::zero};
 		META(Enable);
-		float Intensity{ 0.f };
+		float intensity{ 0.f };
 	};
 }

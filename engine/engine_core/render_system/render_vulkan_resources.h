@@ -13,6 +13,13 @@ namespace Mage {
 
 	struct Attachments
 	{
+		void resize(int nsize) {
+			m_image_views.resize(nsize);
+			m_attachment_descriptions.resize(nsize);
+			m_images.resize(nsize);
+			m_image_memories.resize(nsize);
+		}
+
 		std::vector<VkImageView> m_image_views;							//for framebuffer
 		std::vector<VkAttachmentDescription> m_attachment_descriptions;	//for renderpass
 

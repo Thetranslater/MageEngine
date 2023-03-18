@@ -45,7 +45,8 @@ namespace Mage {
 		DYNAMIC_DATA ID m_submesh_index{ invalid_id };
 
 		//params - glTF matrix
-		DYNAMIC_DATA glm::mat4x4 m_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
+		STATIC_DATA glm::mat4x4 m_matrix{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
+		DYNAMIC_DATA glm::mat4x4 m_transform{ 1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f,0.f,0.f,0.f,0.f,1.f };
 	};
 
 	struct VkRenderMaterialDescription {

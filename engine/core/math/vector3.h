@@ -20,9 +20,9 @@ namespace Mage {
 		float z{ 0.f };
 	public:
 		//constructor
-		Vector3() = default;
-		Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
-		Vector3(const Vector3& _vec) :x(_vec.x), y(_vec.y), z(_vec.z) {}
+		constexpr Vector3() = default;
+		constexpr Vector3(float _x, float _y, float _z) :x(_x), y(_y), z(_z) {}
+		constexpr Vector3(const Vector3& _vec) :x(_vec.x), y(_vec.y), z(_vec.z) {}
 		Vector3(const std::vector<float>& data) :x(data[0]), y(data[1]), z(data[2]) {}
 
 		//destructor

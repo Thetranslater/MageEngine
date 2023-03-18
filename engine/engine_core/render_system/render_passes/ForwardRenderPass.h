@@ -19,6 +19,7 @@ namespace Mage {
 
 		void recreateAfterRHI();
 	private:
+		void setupAttachments();
 		void setupRenderPass();
 		void setupDescriptorLayouts();
 		void setupDescriptorSets();

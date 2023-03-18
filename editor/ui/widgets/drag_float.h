@@ -10,7 +10,7 @@ namespace Mage {
 	public:
 		DragFloat() = default;
 		DragFloat(const std::string& l) : lable{ l } {}
-		DragFloat(float mi, float ma, float spd = 0.1f) :min{ mi }, max{ ma }, speed{ spd } {}
+		DragFloat(float mi, float ma, float spd = 0.01f) :min{ mi }, max{ ma }, speed{ spd } {}
 
 		void draw() override;
 	protected:
@@ -18,7 +18,7 @@ namespace Mage {
 
 		float min{-FLT_MAX};
 		float max{FLT_MAX};
-		float speed{0.1f};
+		float speed{0.01f};
 	public:
 		bool is_always_clamp{ false };
 		bool is_no_input{ false };

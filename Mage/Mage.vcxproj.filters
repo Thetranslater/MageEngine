@@ -297,6 +297,15 @@
     <ClCompile Include="..\engine\engine_core\render_system\render_passes\UIPass.cpp">
       <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
     </ClCompile>
+    <ClCompile Include="..\engine\core\math\aabb.cpp">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\util\util_render_system.cpp">
+      <Filter>Mage\engine\engine_core\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\engine\engine_core\render_system\render_passes\DirectionalShadowPass.cpp">
+      <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\engine\core\math\math.h">
@@ -570,6 +579,15 @@
       <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\render_system\render_passes\UIPass.h">
+      <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\core\math\aabb.h">
+      <Filter>Mage\engine\core\math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\util\util_render_system.h">
+      <Filter>Mage\engine\engine_core\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\engine\engine_core\render_system\render_passes\DirectionalShadowPass.h">
       <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
     </ClInclude>
   </ItemGroup>

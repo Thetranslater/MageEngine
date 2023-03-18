@@ -20,6 +20,7 @@ namespace Mage {
 		Vector4(float _x, float _y, float _z, float _w) :x(_x), y(_y), z(_z), w(_w) {}
 		Vector4(const Vector4& _vec) :x(_vec.x), y(_vec.y), z(_vec.z), w(_vec.w) {}
 		Vector4(const std::vector<float>& data) :x(data[0]), y(data[1]), z(data[2]), w(data[3]) {}
+		Vector4(const Vector3& _vec, float _w) :x(_vec.x), y(_vec.y), z(_vec.z), w(_w) {}
 
 		//destructor
 		~Vector4() = default;

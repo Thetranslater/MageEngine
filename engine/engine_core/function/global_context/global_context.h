@@ -5,6 +5,7 @@
 
 #include<engine_core/scaffold/components/transformcomponent/Transform_component.h>
 #include<engine_core/scaffold/components/meshcomponent/Mesh_component.h>
+#include<engine_core/scaffold/components/lightcomponent/Light_component.h>
 
 #include<engine_core/function/component_pool/component_pool.h>
 
@@ -30,6 +31,7 @@ namespace Mage {
 
 		std::shared_ptr<ComponentPool<TransformComponent>> m_transform_component_pool;
 		std::shared_ptr<ComponentPool<MeshComponent>> m_mesh_component_pool;
+		std::shared_ptr<ComponentPool<LightComponent>> m_light_component_pool;
 	private:
 		void registerComponentPool();
 	};

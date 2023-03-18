@@ -169,6 +169,7 @@
     <ClCompile Include="..\editor\ui\windows\viewer.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\asset_type.cpp" />
     <ClCompile Include="..\engine\asset\resource_manager\resource_manager.cpp" />
+    <ClCompile Include="..\engine\core\math\aabb.cpp" />
     <ClCompile Include="..\engine\core\math\math.cpp" />
     <ClCompile Include="..\engine\core\math\matrix4x4.cpp" />
     <ClCompile Include="..\engine\core\math\quaternion.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="..\engine\engine_core\render_system\renderer\vulkanRHI.cpp" />
     <ClCompile Include="..\engine\engine_core\render_system\render_camera.cpp" />
     <ClCompile Include="..\engine\engine_core\render_system\render_pass.cpp" />
+    <ClCompile Include="..\engine\engine_core\render_system\render_passes\DirectionalShadowPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_system\render_passes\ForwardRenderPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_system\render_passes\UIPass.cpp" />
     <ClCompile Include="..\engine\engine_core\render_system\render_resource.cpp" />
@@ -210,6 +212,7 @@
     <ClCompile Include="..\engine\engine_core\scaffold\world_manager\world_manager.cpp" />
     <ClCompile Include="..\engine\engine_core\util\util_editor_ui.cpp" />
     <ClCompile Include="..\engine\engine_core\util\util_global_context.cpp" />
+    <ClCompile Include="..\engine\engine_core\util\util_render_system.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -246,6 +249,7 @@
     <ClInclude Include="..\engine\asset\world_asset.h" />
     <ClInclude Include="..\engine\core\hash.h" />
     <ClInclude Include="..\engine\core\macro.h" />
+    <ClInclude Include="..\engine\core\math\aabb.h" />
     <ClInclude Include="..\engine\core\math\math.h" />
     <ClInclude Include="..\engine\core\math\matrix4x4.h" />
     <ClInclude Include="..\engine\core\math\quaternion.h" />
@@ -281,6 +285,7 @@
     <ClInclude Include="..\engine\engine_core\render_system\render_mesh.h" />
     <ClInclude Include="..\engine\engine_core\render_system\render_model.h" />
     <ClInclude Include="..\engine\engine_core\render_system\render_pass.h" />
+    <ClInclude Include="..\engine\engine_core\render_system\render_passes\DirectionalShadowPass.h" />
     <ClInclude Include="..\engine\engine_core\render_system\render_passes\ForwardRenderPass.h" />
     <ClInclude Include="..\engine\engine_core\render_system\render_passes\UIPass.h" />
     <ClInclude Include="..\engine\engine_core\render_system\render_pending_data.h" />
@@ -304,6 +309,7 @@
     <ClInclude Include="..\engine\engine_core\scaffold\world_manager\world_manager.h" />
     <ClInclude Include="..\engine\engine_core\util\util_editor_ui.h" />
     <ClInclude Include="..\engine\engine_core\util\util_global_context.h" />
+    <ClInclude Include="..\engine\engine_core\util\util_render_system.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\3rdparty\imgui-docking\IMGUI\IMGUI.vcxproj">

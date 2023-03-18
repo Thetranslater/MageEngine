@@ -116,6 +116,23 @@ highp vec3 BRDF(
     return k * diffuse + (1 - k) * spec;
 }
 
+highp vec3 Uncharted2_tonemapping(highp vec3 v){
+    float A = 0.15;
+    float B = 0.50;
+    float C = 0.10;
+    float D = 0.20;
+    float E = 0.02;
+    float F = 0.30;
+
+    return ((v*(A*v+C*B)+D*E)/(v*(A*v+B)+D*F))-E/F;
+}
+
+highp vec3 Uncharted2_filmic(highp vec3 color){
+    float exposure_bias = 2.0;
+    color = Uncharted2_tonemapping(exposure_bias*color);
+    return color*(vec3(1.0)/Uncharted2_tonemapping(vec3(11.2)));
+}
+
 void main(){
     highp vec4 BaseColor = getBaseColor();
     if(alpha_mode == 1 && BaseColor.a < alpha_cut_off){
@@ -133,7 +150,7 @@ void main(){
         highp vec3 L = normalize(vec3(1.f,1.f,2.f)); //-per_frame_data.directional_lights[i].direction;
         highp float NdotL = dot(N, L);
         if(NdotL > 0.f)
-            lo += BRDF(N, L, V, f0, BaseColor.xyz, pMetallic, pRoughness) * vec3(0.7,0.7,0.7) /*per_frame_data.directional_lights[i].color*/ * NdotL;
+            lo += BRDF(N, L, V, f0, BaseColor.xyz, pMetallic, pRoughness) * vec3(0.7,0.7,0.7) /*per_frame_data.directional_lights[i].color*/ * NdotL * 3.0 /*intensity*/;
     //}
 
     highp float ambient = 0.3;
@@ -141,5 +158,5 @@ void main(){
 
     highp vec3 result_color = lo + la;
 
-    out_final_color = vec4(result_color, BaseColor.a);
+    out_final_color = vec4(Uncharted2_filmic(result_color), BaseColor.a);
 }

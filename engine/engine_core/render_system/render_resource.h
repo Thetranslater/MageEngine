@@ -66,7 +66,7 @@ namespace Mage {
 		glm::vec3 m_camera_position{};
 		float _unused_blank_1;
 		//lights data
-		PerDirectionalLightData m_directional_lights[8];
+		PerDirectionalLightData m_directional_lights[2];
 		PerPointLightData m_point_lights[8];
 		int m_directional_light_num;
 		int m_point_light_num;
@@ -76,7 +76,8 @@ namespace Mage {
 
 	struct PerMeshVertexShaderData {
 		//TODO:vectex blending
-		glm::mat4 m_matrix;
+		glm::mat4 m_model;
+		glm::mat4 m_transform;
 	};
 
 	struct PerMeshFragmentShaderData {

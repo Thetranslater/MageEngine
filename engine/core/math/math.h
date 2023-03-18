@@ -6,6 +6,8 @@
 #include<cassert>
 
 namespace Mage {
+	class Vector3;
+
 	class Mathf {
 	public:
 		static inline float Abs(float value) { return std::fabs(value); }
@@ -77,24 +79,26 @@ namespace Mage {
 		static inline float Log10(float value) { return std::log10(value); }
 
 		template<typename Arg>
-		static constexpr Arg      Max(Arg farg, Arg sarg) {
+		static Arg      Max(Arg farg, Arg sarg) {
 			return std::max(farg, sarg);
 		}
+		static Vector3  Max(const Vector3& l, const Vector3& r);
 		template<typename Arg>
-		static constexpr Arg      Max(Arg farg, Arg sarg, Arg targ) {
+		static Arg      Max(Arg farg, Arg sarg, Arg targ) {
 			return std::max({ farg,sarg,targ });
 		}
 		template<typename FirstArg,typename SecArg,typename... Args>
-		static constexpr FirstArg Max(FirstArg farg, SecArg sarg, Args... args) {
+		static FirstArg Max(FirstArg farg, SecArg sarg, Args... args) {
 			return Max(std::max(farg, sarg), args...);
 		}
 
 		template<typename Arg>
-		static constexpr Arg      Min(Arg farg, Arg sarg) { return std::min(farg, sarg); }
+		static Arg      Min(Arg farg, Arg sarg) { return std::min(farg, sarg); }
+		static Vector3  Min(const Vector3& l, const Vector3& r);
 		template<typename Arg>
-		static constexpr Arg      Min(Arg farg, Arg sarg, Arg targ) { return std::min({ farg,sarg,targ }); }
+		static Arg      Min(Arg farg, Arg sarg, Arg targ) { return std::min({ farg,sarg,targ }); }
 		template<typename FirstArg,typename SecArg,typename... Args>
-		static constexpr FirstArg Min(FirstArg farg, SecArg sarg, Args... args) { return Min(std::min(farg, sarg), args...); }
+		static FirstArg Min(FirstArg farg, SecArg sarg, Args... args) { return Min(std::min(farg, sarg), args...); }
 
 		static inline float MoveTowards(float current, float target, float maxDelta) {
 			return (current + maxDelta < target) ? current + maxDelta : target;

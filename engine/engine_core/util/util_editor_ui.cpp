@@ -16,7 +16,8 @@
 
 namespace Mage {
 	namespace Util {
-		std::shared_ptr<Widget> DrawVec3Widget(void* instance) {
+		std::shared_ptr<Widget> DrawVec3Widget(void* instance, std::function<float(void*)> getter, std::function<void(void*, float&)> setter)
+		{
 			auto vector3 = Reflection::TypeMeta::newMetaFromName("Vector3");
 			Reflection::FieldAccessor* vector3_field_list{ nullptr };
 			int vector3_field_count = vector3.getFieldsList(vector3_field_list);
@@ -28,12 +29,6 @@ namespace Mage {
 				attr_group->addWidget(CREATE_WIDGET(SameLine));
 				auto drag = CREATE_WIDGET(DragFloat);
 				if (instance != nullptr) {
-					auto getter = [&](void* instance) ->float {
-						return *static_cast<float*>(instance);
-					};
-					auto setter = [&](void* instance, float& val) {
-						*static_cast<float*>(instance) = val;
-					};
 					auto drag_bindable = CREATE_WFI(Bindable<float>);
 					drag_bindable->bind(std::bind(getter, vector3_field_list[i].get(instance)), std::bind(setter, vector3_field_list[i].get(instance), std::placeholders::_1));
 					drag->addWFI(drag_bindable);

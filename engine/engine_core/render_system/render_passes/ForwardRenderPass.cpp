@@ -1,4 +1,5 @@
 #include"engine_core/render_system/render_passes/ForwardRenderPass.h"
+//#include"engine_core/render_system/render_passes/directional_shadow_pass.h"
 #include"engine_core/render_system/render_passes/UIPass.h"
 
 #include"engine_core/render_system/renderer/vulkanInfo.h"
@@ -19,11 +20,20 @@
 #include"core/math/math.h"
 
 namespace Mage {
+	enum {
+		directional_shadow_color = 0,
+		directional_shadow_depth,
+		forward_color,
+		forward_depth,
+		attachments_count
+	};
+
 	void ForwardRenderPass::initialize(const RenderPassCreateInfo* createInfo) {
 		RenderPass::initialize(createInfo);
 
 		setupDescriptorLayouts();
 		setupDescriptorSets();
+		setupAttachments();
 		setupRenderPass();
 		setupSubPasses();
 		setupFramebuffers();
@@ -31,7 +41,7 @@ namespace Mage {
 
 	void ForwardRenderPass::setupDescriptorLayouts() {
 		m_descriptor_sets.layout_infos.resize(2);
-		//set 1-3:global resources, lights, camera, sky
+		//set 0:global resources, lights, camera, sky
 		{
 			//TODO
 			VkDescriptorSetLayoutBinding global_perframe_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
@@ -56,7 +66,7 @@ namespace Mage {
 			}
 		}
 
-		//set 4: custom textures
+		//set 1: custom textures
 		{
 			VkDescriptorSetLayoutCreateInfo set_3 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
 			set_3.bindingCount = 3;
@@ -84,9 +94,13 @@ namespace Mage {
 		}
 	}
 
+	void ForwardRenderPass::setupAttachments() {
+		m_attachments.resize(2);
+	}
+
 	void ForwardRenderPass::setupDescriptorSets() {
 		m_descriptor_sets.sets.resize(m_vulkan_rhi->getSwapchainSize());
-		//set_1-3 create
+		//set_1 create
 		{
 			std::vector<VkDescriptorSetLayout> layouts(m_vulkan_rhi->getSwapchainSize(), m_descriptor_sets.layout_infos[0]);
 			VkDescriptorSetAllocateInfo global_descriptors_allocate_info_Vertex	= VulkanInfo::aboutVkDescriptorSetAllocateInfo();
@@ -118,43 +132,19 @@ namespace Mage {
 
 				writes[0].pBufferInfo = &buffer_info[0];
 				writes[1].pBufferInfo = &buffer_info[1];
-
+				
 				vkUpdateDescriptorSets(m_vulkan_rhi->getDevice(), 2, writes, 0, nullptr);
 			}
 		}
 	}
-
+	//DONE
 	void ForwardRenderPass::setupRenderPass() {
 		VkRenderPassCreateInfo create_info = VulkanInfo::aboutVkRenderPassCreateInfo();
-
-		m_attachments.m_attachment_descriptions.resize(2);
-		m_attachments.m_image_views.resize(2);
-		{
-			//swapchain
-			m_attachments.m_attachment_descriptions[0]					= VulkanInfo::aboutVkAttachmentDescription();
-			m_attachments.m_attachment_descriptions[0].format			= m_vulkan_rhi->getSwapchainSurfaceFormat().format;
-			m_attachments.m_attachment_descriptions[0].loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
-			m_attachments.m_attachment_descriptions[0].storeOp			= VK_ATTACHMENT_STORE_OP_STORE;
-			m_attachments.m_attachment_descriptions[0].stencilLoadOp	= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			m_attachments.m_attachment_descriptions[0].stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			m_attachments.m_attachment_descriptions[0].initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-			m_attachments.m_attachment_descriptions[0].finalLayout		= VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-			//depth attachment
-			m_attachments.m_attachment_descriptions[1]					= VulkanInfo::aboutVkAttachmentDescription();
-			m_attachments.m_attachment_descriptions[1].format			= m_vulkan_rhi->getDepthImageFormat();
-			m_attachments.m_attachment_descriptions[1].loadOp			= VK_ATTACHMENT_LOAD_OP_CLEAR;
-			m_attachments.m_attachment_descriptions[1].storeOp			= VK_ATTACHMENT_STORE_OP_STORE;
-			m_attachments.m_attachment_descriptions[1].stencilLoadOp	= VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			m_attachments.m_attachment_descriptions[1].stencilStoreOp	= VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			m_attachments.m_attachment_descriptions[1].initialLayout	= VK_IMAGE_LAYOUT_UNDEFINED;
-			m_attachments.m_attachment_descriptions[1].finalLayout		= VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		}
 
 		VkSubpassDescription directional_lighting_subpass_desc = VulkanInfo::aboutVkSubpassDescription();
 		{
 			directional_lighting_subpass_desc.pipelineBindPoint			= VK_PIPELINE_BIND_POINT_GRAPHICS;
-			directional_lighting_subpass_desc.inputAttachmentCount		= 0;
+			directional_lighting_subpass_desc.inputAttachmentCount		= 0; //TODO
 			directional_lighting_subpass_desc.pInputAttachments			= nullptr;
 			directional_lighting_subpass_desc.colorAttachmentCount		= 1;
 			VkAttachmentReference color_attachment_ref = VulkanInfo::aboutVkAttachmentReference();
@@ -177,7 +167,7 @@ namespace Mage {
 			directional_lighting_subpass_depend.srcStageMask	= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 			directional_lighting_subpass_depend.srcAccessMask	= 0;
 			directional_lighting_subpass_depend.dstStageMask	= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-			directional_lighting_subpass_depend.dstAccessMask	= VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			directional_lighting_subpass_depend.dstAccessMask	= 0;
 		}
 		
 		create_info.attachmentCount = static_cast<uint32_t>(m_attachments.m_attachment_descriptions.size());
@@ -226,7 +216,6 @@ namespace Mage {
 		ui_create_info.info_render_pass = this;
 		ui_create_info.info_vulkan_rhi = m_vulkan_rhi;
 		ui_create_info.info_editor_ui = editor_global_context.m_editor_ui.get();
-
 		m_p_subpasses[subpass_type_ui]->initialize(&ui_create_info);
 		//TODO:...
 	}
@@ -279,7 +268,6 @@ namespace Mage {
 	void ForwardRenderSubpass::setupPipeline(const std::vector<int>& indices) {
 		VkGraphicsPipelineCreateInfo create_info = VulkanInfo::aboutVkGraphicsPipelineCreateInfo();
 		
-		//TODO:shader stages
 		std::array<VkPipelineShaderStageCreateInfo, 2> stages;
 		
 		VkShaderModule vertex_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/forward_vert.spv");
@@ -439,6 +427,7 @@ namespace Mage {
 		//batch recognizing
 		for (auto& [go_id, model] : render_scene->m_render_models) {
 			for (auto& mesh : model.m_mesh_descriptions) {
+				mesh.m_transform = model.m_model_matrix;
 				auto& buffer_batch = model_batch[mesh.m_meshes_index];
 				auto& material_batch = buffer_batch[mesh.m_material_index];
 				auto& mesh_batch = material_batch[mesh.m_submesh_index];
@@ -549,8 +538,10 @@ namespace Mage {
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) < MAGE_PERDRAWCALL_MAX_LIMIT ?
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
 						for (int j{ 0 }; j < current_instance_counts; ++j) {
-							drawcall_begin->m_data[j].m_vertex_data.m_matrix =
+							drawcall_begin->m_data[j].m_vertex_data.m_model =
 								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_matrix;
+							drawcall_begin->m_data[j].m_vertex_data.m_transform =
+								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_transform;
 							drawcall_begin->m_data[j].m_fragment_data.m_base_color_factor =
 								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_base_color_factor;
 							drawcall_begin->m_data[j].m_fragment_data.m_metallic_factor =

@@ -13,7 +13,7 @@ namespace Mage {
 		std::vector<int> children;
 	};
 	
-	//requirements: the size of nodes must match the size of objects, they are in one-to-one relationship;
+	//requirements: the size of nodes must match the size of objects, they have one-to-one relationship;
 	REFLECTION_TYPE(SceneAsset)
 	CLASS(SceneAsset, Fields) {
 		REFLECTION_BODY(SceneAsset)

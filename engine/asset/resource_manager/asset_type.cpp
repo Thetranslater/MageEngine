@@ -63,8 +63,10 @@ namespace Mage {
 		m_type = static_cast<Type>(accessor.type);
 		m_count = accessor.count;
 
-		m_max = std::move(accessor.maxValues);
-		m_min = std::move(accessor.minValues);
+		m_max.resize(accessor.maxValues.size());
+		m_min.resize(accessor.minValues.size());
+		std::copy(accessor.maxValues.begin(), accessor.maxValues.end(), m_max.begin());
+		std::copy(accessor.minValues.begin(), accessor.minValues.end(), m_min.begin());
 	}
 	constexpr int Accessor::getAccessBytes() const {
 		int bytes{ 1 };
@@ -406,6 +408,7 @@ namespace Mage {
 		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
 
 		VkRenderModelInfo render_model_info;
+		render_model_info.m_bounding_box = calculateBoundingBox();
 		//render_model_info.m_go_id = m_go_id;
 
 		auto& mesh_info = render_model_info.m_mesh_info;
@@ -614,5 +617,19 @@ namespace Mage {
 				img_tex_map[gltf_model.textures[i].source] = i;
 			}
 		}
+	}
+
+	AxisAlignedBoundingBox Model::calculateBoundingBox() {
+		AxisAlignedBoundingBox bounding;
+		for (const auto& mesh : m_meshes) {
+			for (const auto& primitive : mesh.m_primitives) {
+				auto position_accessors = primitive.m_attributes.equal_range("POSITION");
+				for (auto iter{ position_accessors.first }; iter != position_accessors.second; ++iter) {
+					bounding.merge(m_accessors[iter->second].m_min);
+					bounding.merge(m_accessors[iter->second].m_max);
+				}
+			}
+		}
+		return bounding;
 	}
 }

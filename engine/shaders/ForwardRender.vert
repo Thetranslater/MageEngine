@@ -2,6 +2,7 @@
 
 struct PerMeshVertexShaderData{
     highp mat4 matrix;
+    highp mat4 transform;
 };
 
 struct PerMeshFragmentShaderData{
@@ -62,7 +63,7 @@ layout(location = 3) out highp vec2 out_texcoord;
 layout(location = 4) out PerMeshFragmentShaderData out_frag_factors;
 
 void main(){
-    highp mat4 matrix4x4 = data[gl_InstanceIndex].vertex_data.matrix;
+    highp mat4 matrix4x4 = data[gl_InstanceIndex].vertex_data.transform * data[gl_InstanceIndex].vertex_data.matrix;
     highp vec4 world = matrix4x4 * vec4(in_position,1.f);
     highp mat3 to_world = mat3(matrix4x4[0].xyz, matrix4x4[1].xyz, matrix4x4[2].xyz);
     out_world_position = world.xyz;

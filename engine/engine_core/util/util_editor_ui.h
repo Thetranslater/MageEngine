@@ -16,7 +16,10 @@ namespace Mage {
 
 		using FileTypeFilters = std::vector<std::pair<std::string, std::string>>;
 
-		std::shared_ptr<Widget> DrawVec3Widget(void* instance = nullptr);
+		std::shared_ptr<Widget> DrawVec3Widget(
+			void* instance = nullptr, 
+			std::function<float(void*)> getter = [](void* instance){return *static_cast<float*>(instance); }, 
+			std::function<void(void*, float&)> setter = [](void* instance, float& val) {*static_cast<float*>(instance) = val; });
 
 		std::shared_ptr<Widget> DrawQuatWidget(void* instance = nullptr);
 

@@ -97,9 +97,10 @@ namespace Mage {
 
 	void TransformComponent::tick(float delta) {
 		if (should_tick_in_editor) {
-			position_write_buffer = position;
-			rotation_write_buffer = rotation;
-			scale_write_buffer = scale;
+			bool isChild = parent != nullptr;
+			world_position = isChild ? parent->localToWorldMatrix() * position : position;
+			world_rotation = isChild ? parent->world_rotation * rotation : rotation;
+			world_scale = isChild ? parent->world_scale * scale : scale;
 		}
 		else {
 			switch (write_type)
@@ -117,10 +118,8 @@ namespace Mage {
 			default:
 				break;
 			}
+			write_type = TransformWriteType::NONE_WRITE;
 		}
-		write_type = TransformWriteType::NONE_WRITE;
-
-		std::cout << position.x << ' ' << position.y << ' ' << position.z << std::endl;
 	}
 
 	std::shared_ptr<Widget> TransformComponent::Draw() {

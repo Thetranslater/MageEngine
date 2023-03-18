@@ -19,6 +19,9 @@ namespace Mage {
 		struct RenderSystemMeshCTuple {
 			TransformComponent* transform;
 		};
+		struct RenderSystemLightCTuple {
+			TransformComponent* transform;
+		};
 	public:
 		RenderSystem() = default;
 		~RenderSystem() {};
@@ -36,10 +39,10 @@ namespace Mage {
 		inline std::shared_ptr<RenderPendingData>	getPendingData() { return m_pending_data; }
 
 	private:
-		VkRenderModelInfo getRenderModelInfoFromComponent(ComponentHandle<MeshComponent>& handle);
-		void processMeshComponent();
-		void processRenderResource();//负责资源检查和加载
-		void processRenderPendingData(); //负责处理交换数据 
+		void tickMeshComponent();
+		void tickLightComponent();//TODO
+		void tickRenderResource();//负责资源检查和加载
+		void tickRenderPendingData(); //负责处理交换数据 
 
 		void imgui_backend_vulkan_init();
 		void imgui_backend_uploadfonts();
@@ -53,5 +56,6 @@ namespace Mage {
 		std::shared_ptr<RenderCamera> m_render_camera{ nullptr };
 
 		std::unordered_map<MeshComponent*, RenderSystemMeshCTuple> meshSibling_tuples;
+		std::unordered_map<LightComponent*, RenderSystemLightCTuple> lightSibling_tuples;
 	};
 }

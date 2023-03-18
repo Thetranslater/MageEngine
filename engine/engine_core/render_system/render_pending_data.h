@@ -3,11 +3,13 @@
 #include<vector>
 
 #include<core/math/vector3.h>
+#include<core/math/matrix4x4.h>
 #include<core/math/quaternion.h>
 
 
 namespace Mage {
 	struct DirectionalLight {
+		Matrix4x4 m_proj_view_matrix;
 		Vector3 m_direction;
 		Vector3 m_color;
 		float m_intensity;

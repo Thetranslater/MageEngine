@@ -26,7 +26,7 @@ namespace Mage {
 
 			components[i] = Util::MakeComponent(type);
 			for (int j{ 0 }; j < fields_count; ++j) {
-				accessors->set(components[i], accessors->get(asset.components[i].getPtr()));
+				accessors[j].set(components[i], accessors[j].get(asset.components[i].getPtr()));
 			}
 		}
 

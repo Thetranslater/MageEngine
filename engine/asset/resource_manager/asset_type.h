@@ -9,6 +9,7 @@
 #include<core/math/matrix4x4.h>
 #include<core/math/vector3.h>
 #include<core/math/vector4.h>
+#include<core/math/aabb.h>
 
 #include<engine_core/render_system/render_resource.h>
 
@@ -188,8 +189,8 @@ namespace Mage {
 		Type m_type{ Type::NONE };
 		size_t m_count{ 0 };
 
-		std::vector<double> m_max;
-		std::vector<double> m_min;
+		std::vector<float> m_max;
+		std::vector<float> m_min;
 
 	};
 
@@ -274,6 +275,7 @@ namespace Mage {
 		//for mesh
 		void processNode(const std::vector<Node>& nodes, int curr_index, const Matrix4x4& parent_matrix, const std::function<void(const int&, const Matrix4x4&)>& process_func);
 		void redundancyRemove(tinygltf::Model& gltf_model);
+		AxisAlignedBoundingBox calculateBoundingBox();
 	};
 
 	//Animation asset types
