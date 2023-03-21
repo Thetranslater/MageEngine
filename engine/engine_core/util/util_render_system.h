@@ -7,5 +7,7 @@ namespace Mage {
 
 	namespace Util {
 		VkRenderModelInfo GetRenderModelInfoFromComponent(ComponentHandle<MeshComponent>& handle);
+
+		void BuildRenderPrimitiveBatchJobs(RenderSystem* system);
 	}
 }

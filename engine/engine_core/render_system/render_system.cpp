@@ -67,10 +67,10 @@ namespace Mage {
 
 		m_vulkan_rhi->waitForFences();
 
-		//m_render_pass->rebindGlobalBuffer();
-
 		bool is_window_size_change = m_vulkan_rhi->prepareVulkanRHIBeforeRender(std::bind(&ForwardRenderPass::recreateAfterRHI, static_cast<ForwardRenderPass*>(m_render_pass.get())));
 		if (is_window_size_change) return;
+
+		Util::BuildRenderPrimitiveBatchJobs(this);
 
 		m_render_pass->draw();
 

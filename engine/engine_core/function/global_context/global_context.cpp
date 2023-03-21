@@ -23,6 +23,7 @@ namespace Mage {
 
 		m_transform_component_pool = std::make_shared<ComponentPool<TransformComponent>>();
 		m_mesh_component_pool = std::make_shared<ComponentPool<MeshComponent>>();
+		m_light_component_pool = std::make_shared<ComponentPool<LightComponent>>();
 
 		m_window_system = std::make_shared<WindowSystem>();
 		m_window_system->initialize();

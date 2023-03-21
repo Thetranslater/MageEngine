@@ -96,6 +96,28 @@ namespace Mage {
 
 	void ForwardRenderPass::setupAttachments() {
 		m_attachments.resize(2);
+
+		{
+			m_attachments.m_attachment_descriptions[0] = VulkanInfo::aboutVkAttachmentDescription();
+			m_attachments.m_attachment_descriptions[0].format = m_vulkan_rhi->getSwapchainSurfaceFormat().format;
+			m_attachments.m_attachment_descriptions[0].samples = VK_SAMPLE_COUNT_1_BIT;
+			m_attachments.m_attachment_descriptions[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			m_attachments.m_attachment_descriptions[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+			m_attachments.m_attachment_descriptions[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			m_attachments.m_attachment_descriptions[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			m_attachments.m_attachment_descriptions[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			m_attachments.m_attachment_descriptions[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+
+			m_attachments.m_attachment_descriptions[1] = VulkanInfo::aboutVkAttachmentDescription();
+			m_attachments.m_attachment_descriptions[1].format = m_vulkan_rhi->getDepthImageFormat();
+			m_attachments.m_attachment_descriptions[1].samples = VK_SAMPLE_COUNT_1_BIT;
+			m_attachments.m_attachment_descriptions[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+			m_attachments.m_attachment_descriptions[1].storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			m_attachments.m_attachment_descriptions[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			m_attachments.m_attachment_descriptions[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			m_attachments.m_attachment_descriptions[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			m_attachments.m_attachment_descriptions[1].finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		}
 	}
 
 	void ForwardRenderPass::setupDescriptorSets() {
@@ -417,23 +439,21 @@ namespace Mage {
 	void ForwardRenderSubpass::draw() {
 		auto render_pending		= p_m_render_pass->m_render_system->getPendingData();
 		auto render_resource	= p_m_render_pass->m_render_system->getRenderResource();
-		auto render_camera		= p_m_render_pass->m_render_system->getRenderCamera();
-		auto render_scene		= p_m_render_pass->m_render_system->getRenderScene();
-		VkBuffer current_global_buffer_wait_for_update = render_resource->m_global_updated_buffer.m_buffers[m_vulkan_rhi->getCurrentFrameIndex()];
+		auto& model_batch		= p_m_render_pass->m_render_system->getBatchOnFlight();
 		void* map_pointer = render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
 
 		//buffer,materials, submeshes
-		std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderMeshDescription*>>>> model_batch;
-		//batch recognizing
-		for (auto& [go_id, model] : render_scene->m_render_models) {
-			for (auto& mesh : model.m_mesh_descriptions) {
-				mesh.m_transform = model.m_model_matrix;
-				auto& buffer_batch = model_batch[mesh.m_meshes_index];
-				auto& material_batch = buffer_batch[mesh.m_material_index];
-				auto& mesh_batch = material_batch[mesh.m_submesh_index];
-				mesh_batch.emplace_back(&mesh);
-			}
-		}
+		//std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderMeshDescription*>>>> model_batch;
+		////batch recognizing
+		//for (auto& [go_id, model] : render_scene->m_render_models) {
+		//	for (auto& mesh : model.m_mesh_descriptions) {
+		//		mesh.m_transform = model.m_model_matrix;
+		//		auto& buffer_batch = model_batch[mesh.m_meshes_index];
+		//		auto& material_batch = buffer_batch[mesh.m_material_index];
+		//		auto& mesh_batch = material_batch[mesh.m_submesh_index];
+		//		mesh_batch.emplace_back(&mesh);
+		//	}
+		//}
 		//DONE
 
 		vkCmdBindPipeline(m_vulkan_rhi->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
@@ -454,47 +474,46 @@ namespace Mage {
 
 		//global data
 		int begin_offset{ 0 };
-		GlobalBufferPerFrameData perframe_data{};
-		perframe_data.m_camera_view_matrix = glm::mat4(render_camera->getViewMatrix());
-		perframe_data.m_camera_perspective_matrix = glm::mat4(render_camera->getPerspectiveMatrix());
-		perframe_data.m_camera_position = glm::vec3(render_camera->position());
-		//TODO:灯光最大值为8
-		perframe_data.m_directional_light_num = std::min(render_scene->m_directional_lights.get().size(), 8ull);
-		for (int i{ 0 }; i < perframe_data.m_directional_light_num; ++i) {
-			perframe_data.m_directional_lights[i].m_color = render_scene->m_directional_lights.get()[i].m_color;
-			perframe_data.m_directional_lights[i].m_direction = render_scene->m_directional_lights.get()[i].m_direction;
-			perframe_data.m_directional_lights[i].m_intensity = render_scene->m_directional_lights.get()[i].m_intensity;
-		}
-		perframe_data.m_point_light_num = std::min(render_scene->m_point_lights.get().size(), 8ull);
-		for (int i{ 0 }; i < perframe_data.m_point_light_num; ++i) {
-			perframe_data.m_point_lights[i].m_color = render_scene->m_point_lights.get()[i].m_color;
-			perframe_data.m_point_lights[i].m_position = render_scene->m_point_lights.get()[i].m_position;
-			perframe_data.m_point_lights[i].m_intensity = render_scene->m_point_lights.get()[i].m_intensity;
-		}
+		//GlobalBufferPerFrameData perframe_data{};
+		//perframe_data.m_camera_view_matrix = glm::mat4(render_camera->getViewMatrix());
+		//perframe_data.m_camera_perspective_matrix = glm::mat4(render_camera->getPerspectiveMatrix());
+		//perframe_data.m_camera_position = glm::vec3(render_camera->position());
+		////TODO:灯光最大值为8
+		//perframe_data.m_directional_light_num = std::min(render_scene->m_directional_lights.get().size(), MAGE_DIRECTIONAL_LIGHT_MAX_LIMIT);
+		//for (int i{ 0 }; i < perframe_data.m_directional_light_num; ++i) {
+		//	perframe_data.m_directional_lights[i].m_color = render_scene->m_directional_lights.get()[i].m_color;
+		//	perframe_data.m_directional_lights[i].m_direction = render_scene->m_directional_lights.get()[i].m_direction;
+		//	perframe_data.m_directional_lights[i].m_intensity = render_scene->m_directional_lights.get()[i].m_intensity;
+		//}
+		//perframe_data.m_point_light_num = std::min(render_scene->m_point_lights.get().size(), MAGE_POINT_LIGHT_MAX_LIMIT);
+		//for (int i{ 0 }; i < perframe_data.m_point_light_num; ++i) {
+		//	perframe_data.m_point_lights[i].m_color = render_scene->m_point_lights.get()[i].m_color;
+		//	perframe_data.m_point_lights[i].m_position = render_scene->m_point_lights.get()[i].m_position;
+		//	perframe_data.m_point_lights[i].m_intensity = render_scene->m_point_lights.get()[i].m_intensity;
+		//}
 
-		*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
+		//*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 		uint32_t offset = begin_offset;
 		//DONE
 
 		begin_offset += sizeof(GlobalBufferPerFrameData);
 		begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 
-		for (auto& [buffer_guid, material_batch] : model_batch) {
-			for (auto& [material_guid, mesh_batch] : material_batch) {
-				//bind materials
-				vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(), 
-					VK_PIPELINE_BIND_POINT_GRAPHICS, 
-					m_pipeline_layout, 1, 1, 
-					&render_resource->m_guid_material_map[material_guid].m_descriptor_set, 
-					0, nullptr);
-				vkCmdPushConstants(m_vulkan_rhi->getCurrentCommandBuffer(), 
-					m_pipeline_layout, 
-					VK_SHADER_STAGE_FRAGMENT_BIT, 
-					0, sizeof(PerMaterialPushConstant), 
-					&render_resource->m_guid_material_map[material_guid].m_push_constant);
-				//DONE
-
-				for (auto& [mesh_guid, same_meshes] : mesh_batch) {
+		for (auto& [material_guid, buffer_batch] : model_batch) {
+			//bind materials
+			vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(),
+				VK_PIPELINE_BIND_POINT_GRAPHICS,
+				m_pipeline_layout, 1, 1,
+				&render_resource->m_guid_material_map[material_guid].m_descriptor_set,
+				0, nullptr);
+			vkCmdPushConstants(m_vulkan_rhi->getCurrentCommandBuffer(),
+				m_pipeline_layout,
+				VK_SHADER_STAGE_FRAGMENT_BIT,
+				0, sizeof(PerMaterialPushConstant),
+				&render_resource->m_guid_material_map[material_guid].m_push_constant);
+			//DONE
+			for (auto& [buffer_guid, primitive_batch] : buffer_batch) {
+				for (auto& [mesh_guid, same_meshes] : primitive_batch) {
 					uint32_t total_drawcall_instances = same_meshes.size();
 					VkRenderMeshDescription* mark_mesh = same_meshes.front();
 					
@@ -531,24 +550,24 @@ namespace Mage {
 						uint32_t perdrawcall_begin = begin_offset;
 
 						//populate the instance data
-						GlobalBufferPerDrawcallData* drawcall_begin =
-							reinterpret_cast<GlobalBufferPerDrawcallData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_begin);
+						//GlobalBufferPerDrawcallData* drawcall_begin =
+						//	reinterpret_cast<GlobalBufferPerDrawcallData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_begin);
 
 						int current_instance_counts =
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) < MAGE_PERDRAWCALL_MAX_LIMIT ?
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
-						for (int j{ 0 }; j < current_instance_counts; ++j) {
-							drawcall_begin->m_data[j].m_vertex_data.m_model =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_matrix;
-							drawcall_begin->m_data[j].m_vertex_data.m_transform =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_transform;
-							drawcall_begin->m_data[j].m_fragment_data.m_base_color_factor =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_base_color_factor;
-							drawcall_begin->m_data[j].m_fragment_data.m_metallic_factor =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_metallic_factor;
-							drawcall_begin->m_data[j].m_fragment_data.m_roughness_factor =
-								same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_roughness_factor;
-						}
+						//for (int j{ 0 }; j < current_instance_counts; ++j) {
+						//	drawcall_begin->m_data[j].m_vertex_data.m_model =
+						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_matrix;
+						//	drawcall_begin->m_data[j].m_vertex_data.m_transform =
+						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_transform;
+						//	drawcall_begin->m_data[j].m_fragment_data.m_base_color_factor =
+						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_base_color_factor;
+						//	drawcall_begin->m_data[j].m_fragment_data.m_metallic_factor =
+						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_metallic_factor;
+						//	drawcall_begin->m_data[j].m_fragment_data.m_roughness_factor =
+						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_roughness_factor;
+						//}
 						begin_offset = perdrawcall_begin + sizeof(GlobalBufferPerDrawcallData);
 						begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 						//DONE

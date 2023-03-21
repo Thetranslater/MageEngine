@@ -1,3 +1,6 @@
+#include"ui/widgets/widget.h"
+#include"ui/widgets/treenode.h"
+
 #include"engine_core/scaffold/components/lightcomponent/Light_component.h"
 
 namespace Mage {
@@ -51,5 +54,9 @@ namespace Mage {
 
 	void LightComponent::SetIntensity(float nint) {
 		intensity = nint;
+	}
+
+	std::shared_ptr<Widget> LightComponent::Draw() {
+		return CREATE_WIDGET(TreeNode);
 	}
 }

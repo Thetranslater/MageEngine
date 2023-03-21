@@ -13,6 +13,7 @@ namespace Mage {
 	class RenderCamera;
 	struct RenderPendingData;
 	struct VkRenderModelInfo;
+	struct VkRenderMeshDescription;
 
 	//refering: Mesh, Transform, Light, etc
 	class RenderSystem {
@@ -37,6 +38,7 @@ namespace Mage {
 		inline std::shared_ptr<RenderCamera>		getRenderCamera() { return m_render_camera; }
 		inline std::shared_ptr<RenderResource>		getRenderResource() { return m_render_resource; }
 		inline std::shared_ptr<RenderPendingData>	getPendingData() { return m_pending_data; }
+		inline auto&							getBatchOnFlight() { return m_batch_on_flight; }
 
 	private:
 		void tickMeshComponent();
@@ -48,6 +50,7 @@ namespace Mage {
 		void imgui_backend_uploadfonts();
 
 		std::shared_ptr<RenderPendingData> m_pending_data{ nullptr };
+		std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderMeshDescription*>>>> m_batch_on_flight;
 
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };
 		std::shared_ptr<RenderResource> m_render_resource{ nullptr }; //global?

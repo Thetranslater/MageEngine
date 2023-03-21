@@ -12,7 +12,7 @@ namespace Mage {
 	CLASS(LightComponent : public Component, WhiteListFields) {
 		REFLECTION_BODY(LightComponent);
 	public:
-		LightComponent();
+		LightComponent() = default;
 		
 		void tick(float) override;
 		const std::string& Type() const;

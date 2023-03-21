@@ -66,8 +66,8 @@ namespace Mage {
 		glm::vec3 m_camera_position{};
 		float _unused_blank_1;
 		//lights data
-		PerDirectionalLightData m_directional_lights[2];
-		PerPointLightData m_point_lights[8];
+		PerDirectionalLightData m_directional_lights[MAGE_DIRECTIONAL_LIGHT_MAX_LIMIT];
+		PerPointLightData m_point_lights[MAGE_POINT_LIGHT_MAX_LIMIT];
 		int m_directional_light_num;
 		int m_point_light_num;
 		int _unused_blank_2;
