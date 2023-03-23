@@ -9,6 +9,7 @@
 #include<vulkan/vulkan.h>
 
 #include<core/hash.h>
+#include<core/math/vector3.h>
 
 #include"engine_core/function/id_allocator/id_allocator.h"
 #include"engine_core/render_system/render_macro.h"
@@ -49,6 +50,7 @@ namespace Mage {
 		float m_intensity;
 		glm::vec3 m_color;
 		float _unused_blank_1;
+		glm::mat4 m_ortho_view_matrix;
 	};
 
 	struct PerPointLightData {

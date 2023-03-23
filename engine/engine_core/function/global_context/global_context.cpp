@@ -38,7 +38,10 @@ namespace Mage {
 	}
 
 	void MageEngineGlobalContext::registerComponentPool() {
-		Util::component_pools.insert(std::make_pair("TransformComponent", m_transform_component_pool.get()));
-		Util::component_pools.insert(std::make_pair("MeshComponent", m_mesh_component_pool.get()));
+#define RegistePool(type, pointer) Util::component_pools.insert(std::make_pair(#type, pointer))
+
+		RegistePool(TransformComponent, m_transform_component_pool.get());
+		RegistePool(MeshComponent, m_mesh_component_pool.get());
+		RegistePool(LightComponent, m_light_component_pool.get());
 	}
 }

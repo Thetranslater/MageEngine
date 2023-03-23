@@ -21,7 +21,7 @@ namespace Mage {
 				VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 				m_global_updated_buffer.m_buffers[i], m_global_updated_buffer.m_buffer_memories[i]);
 			//TODO:unmap as program terminated.
-			vkMapMemory(rhi->getDevice(), m_global_updated_buffer.m_buffer_memories[i], 0, size, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointers[i]);
+			vkMapMemory(rhi->getDevice(), m_global_updated_buffer.m_buffer_memories[i], 0, global_buffer_size, 0, &m_global_updated_buffer.m_followed_camera_updated_data_pointers[i]);
 		}
 	}
 
@@ -132,7 +132,7 @@ namespace Mage {
 
 		return true;
 	}
-
+	//TODO
 	bool RenderResource::getOrCreateRenderResource(VulkanRHI* rhi, ID& guid, IO_Material& material) {
 		if (hasMaterial(guid)) {
 			material = m_guid_material_map[guid];
@@ -144,7 +144,7 @@ namespace Mage {
 		render_material.m_push_constant.m_alphaMode = static_cast<int>(std::get<1>(material).m_alpha_mode);
 		render_material.m_push_constant.m_alphaCutOff = std::get<1>(material).m_alpha_cut_off;
 
-		//TODO:增加occulusion texture
+		//TODO:增加occulusion texture, 处理没有texture的情况
 		VkSampler base_color_sampler = std::get<1>(material).m_base_color_texture_sampler.asVulkanSampler(rhi);
 		VkSampler normal_sampler = std::get<1>(material).m_normal_texture_sampler.asVulkanSampler(rhi);
 		VkSampler metallic_roughness_sampler = std::get<1>(material).m_metallic_roughness_texture_sampler.asVulkanSampler(rhi);
@@ -154,13 +154,13 @@ namespace Mage {
 		bindings[0].binding = 0;
 		bindings[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 		bindings[0].stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-		bindings[0].pImmutableSamplers = &base_color_sampler;
-		bindings[1] = bindings[0];
+		bindings[0].pImmutableSamplers = nullptr;
+		bindings[1] = bindings[0];	
 		bindings[1].binding = 1;
-		bindings[1].pImmutableSamplers = &normal_sampler;
+		bindings[1].pImmutableSamplers = nullptr;
 		bindings[2] = bindings[0];
 		bindings[2].binding = 2;
-		bindings[2].pImmutableSamplers = &metallic_roughness_sampler;
+		bindings[2].pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutCreateInfo layout_info = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
 		layout_info.bindingCount = 3;
@@ -184,6 +184,7 @@ namespace Mage {
 		binding_base_color.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 		binding_base_color.imageView = 
 			std::get<1>(material).m_base_color_texture_index == -1 ? VK_NULL_HANDLE : m_guid_texture_map[std::get<1>(material).m_base_color_texture_index].m_texture_view;
+		binding_base_color.sampler = base_color_sampler;
 		VkWriteDescriptorSet material_write_binding_0 = VulkanInfo::aboutVkWriteDescriptorSet();
 		material_write_binding_0.dstSet = render_material.m_descriptor_set;
 		material_write_binding_0.dstBinding = 0;
@@ -194,6 +195,7 @@ namespace Mage {
 		binding_normal = binding_base_color;
 		binding_normal.imageView = 
 			std::get<1>(material).m_normal_texture_index == -1? VK_NULL_HANDLE : m_guid_texture_map[std::get<1>(material).m_normal_texture_index].m_texture_view;
+		binding_normal.sampler = normal_sampler;
 		VkWriteDescriptorSet material_write_binding_1 = VulkanInfo::aboutVkWriteDescriptorSet();
 		material_write_binding_1 = material_write_binding_0;
 		material_write_binding_1.dstBinding = 1;
@@ -203,6 +205,7 @@ namespace Mage {
 		binding_metallic_roughness = binding_base_color;
 		binding_metallic_roughness.imageView = 
 			std::get<1>(material).m_metallic_roughness_texture_index == -1? VK_NULL_HANDLE : m_guid_texture_map[std::get<1>(material).m_metallic_roughness_texture_index].m_texture_view;
+		binding_metallic_roughness.sampler = metallic_roughness_sampler;
 		VkWriteDescriptorSet material_write_binding_2 = VulkanInfo::aboutVkWriteDescriptorSet();
 		material_write_binding_2 = material_write_binding_0;
 		material_write_binding_2.dstBinding = 2;

@@ -54,7 +54,11 @@ namespace Mage {
 
 		std::shared_ptr<VulkanRHI> m_vulkan_rhi{ nullptr };
 		std::shared_ptr<RenderResource> m_render_resource{ nullptr }; //global?
+
+		//need abstration 
 		std::shared_ptr<RenderPass> m_render_pass{ nullptr };
+		std::shared_ptr<RenderPass> m_shadow_pass{ nullptr };
+
 		std::shared_ptr<RenderScene> m_render_scene{ nullptr };
 		std::shared_ptr<RenderCamera> m_render_camera{ nullptr };
 

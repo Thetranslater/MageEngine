@@ -1,5 +1,4 @@
 #include"engine_core/render_system/render_passes/ForwardRenderPass.h"
-//#include"engine_core/render_system/render_passes/directional_shadow_pass.h"
 #include"engine_core/render_system/render_passes/UIPass.h"
 
 #include"engine_core/render_system/renderer/vulkanInfo.h"
@@ -164,34 +163,30 @@ namespace Mage {
 		VkRenderPassCreateInfo create_info = VulkanInfo::aboutVkRenderPassCreateInfo();
 
 		VkSubpassDescription directional_lighting_subpass_desc = VulkanInfo::aboutVkSubpassDescription();
-		{
-			directional_lighting_subpass_desc.pipelineBindPoint			= VK_PIPELINE_BIND_POINT_GRAPHICS;
-			directional_lighting_subpass_desc.inputAttachmentCount		= 0; //TODO
-			directional_lighting_subpass_desc.pInputAttachments			= nullptr;
-			directional_lighting_subpass_desc.colorAttachmentCount		= 1;
-			VkAttachmentReference color_attachment_ref = VulkanInfo::aboutVkAttachmentReference();
-			color_attachment_ref.attachment								= 0;
-			color_attachment_ref.layout									= VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-			directional_lighting_subpass_desc.pColorAttachments			= &color_attachment_ref;
-			directional_lighting_subpass_desc.pResolveAttachments		= nullptr;
-			VkAttachmentReference depth_attachment_ref = VulkanInfo::aboutVkAttachmentReference();
-			depth_attachment_ref.attachment								= 1;
-			depth_attachment_ref.layout									= VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-			directional_lighting_subpass_desc.pDepthStencilAttachment	= &depth_attachment_ref;
-			directional_lighting_subpass_desc.preserveAttachmentCount	= 0;
-			directional_lighting_subpass_desc.pPreserveAttachments		= nullptr;
-		}
+		directional_lighting_subpass_desc.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+		directional_lighting_subpass_desc.inputAttachmentCount = 0; //TODO
+		directional_lighting_subpass_desc.pInputAttachments = nullptr;
+		directional_lighting_subpass_desc.colorAttachmentCount = 1;
+		VkAttachmentReference color_attachment_ref = VulkanInfo::aboutVkAttachmentReference();
+		color_attachment_ref.attachment = 0;
+		color_attachment_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+		directional_lighting_subpass_desc.pColorAttachments = &color_attachment_ref;
+		directional_lighting_subpass_desc.pResolveAttachments = nullptr;
+		VkAttachmentReference depth_attachment_ref = VulkanInfo::aboutVkAttachmentReference();
+		depth_attachment_ref.attachment = 1;
+		depth_attachment_ref.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		directional_lighting_subpass_desc.pDepthStencilAttachment = &depth_attachment_ref;
+		directional_lighting_subpass_desc.preserveAttachmentCount = 0;
+		directional_lighting_subpass_desc.pPreserveAttachments = nullptr;
 
 		VkSubpassDependency directional_lighting_subpass_depend = VulkanInfo::aboutVkSubpassDependency();
-		{
-			directional_lighting_subpass_depend.srcSubpass		= VK_SUBPASS_EXTERNAL;
-			directional_lighting_subpass_depend.dstSubpass		= 0;
-			directional_lighting_subpass_depend.srcStageMask	= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-			directional_lighting_subpass_depend.srcAccessMask	= 0;
-			directional_lighting_subpass_depend.dstStageMask	= VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-			directional_lighting_subpass_depend.dstAccessMask	= 0;
-		}
-		
+		directional_lighting_subpass_depend.srcSubpass = VK_SUBPASS_EXTERNAL;
+		directional_lighting_subpass_depend.dstSubpass = 0;
+		directional_lighting_subpass_depend.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		directional_lighting_subpass_depend.srcAccessMask = 0;
+		directional_lighting_subpass_depend.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		directional_lighting_subpass_depend.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;;
+
 		create_info.attachmentCount = static_cast<uint32_t>(m_attachments.m_attachment_descriptions.size());
 		create_info.pAttachments	= m_attachments.m_attachment_descriptions.data();
 		create_info.subpassCount	= 1;
@@ -442,20 +437,6 @@ namespace Mage {
 		auto& model_batch		= p_m_render_pass->m_render_system->getBatchOnFlight();
 		void* map_pointer = render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()];
 
-		//buffer,materials, submeshes
-		//std::map<ID, std::map<ID, std::map<ID, std::vector<VkRenderMeshDescription*>>>> model_batch;
-		////batch recognizing
-		//for (auto& [go_id, model] : render_scene->m_render_models) {
-		//	for (auto& mesh : model.m_mesh_descriptions) {
-		//		mesh.m_transform = model.m_model_matrix;
-		//		auto& buffer_batch = model_batch[mesh.m_meshes_index];
-		//		auto& material_batch = buffer_batch[mesh.m_material_index];
-		//		auto& mesh_batch = material_batch[mesh.m_submesh_index];
-		//		mesh_batch.emplace_back(&mesh);
-		//	}
-		//}
-		//DONE
-
 		vkCmdBindPipeline(m_vulkan_rhi->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 		VkViewport binding_viewport = VulkanInfo::aboutVkViewport();
 		binding_viewport.x			= render_pending->m_editor.viewport_x;
@@ -474,25 +455,6 @@ namespace Mage {
 
 		//global data
 		int begin_offset{ 0 };
-		//GlobalBufferPerFrameData perframe_data{};
-		//perframe_data.m_camera_view_matrix = glm::mat4(render_camera->getViewMatrix());
-		//perframe_data.m_camera_perspective_matrix = glm::mat4(render_camera->getPerspectiveMatrix());
-		//perframe_data.m_camera_position = glm::vec3(render_camera->position());
-		////TODO:灯光最大值为8
-		//perframe_data.m_directional_light_num = std::min(render_scene->m_directional_lights.get().size(), MAGE_DIRECTIONAL_LIGHT_MAX_LIMIT);
-		//for (int i{ 0 }; i < perframe_data.m_directional_light_num; ++i) {
-		//	perframe_data.m_directional_lights[i].m_color = render_scene->m_directional_lights.get()[i].m_color;
-		//	perframe_data.m_directional_lights[i].m_direction = render_scene->m_directional_lights.get()[i].m_direction;
-		//	perframe_data.m_directional_lights[i].m_intensity = render_scene->m_directional_lights.get()[i].m_intensity;
-		//}
-		//perframe_data.m_point_light_num = std::min(render_scene->m_point_lights.get().size(), MAGE_POINT_LIGHT_MAX_LIMIT);
-		//for (int i{ 0 }; i < perframe_data.m_point_light_num; ++i) {
-		//	perframe_data.m_point_lights[i].m_color = render_scene->m_point_lights.get()[i].m_color;
-		//	perframe_data.m_point_lights[i].m_position = render_scene->m_point_lights.get()[i].m_position;
-		//	perframe_data.m_point_lights[i].m_intensity = render_scene->m_point_lights.get()[i].m_intensity;
-		//}
-
-		//*(reinterpret_cast<GlobalBufferPerFrameData*>(reinterpret_cast<uint8_t*>(map_pointer) + begin_offset)) = perframe_data;
 		uint32_t offset = begin_offset;
 		//DONE
 
@@ -549,25 +511,10 @@ namespace Mage {
 					for (int i{ 0 }; i < total_drawcall_counts; ++i) {
 						uint32_t perdrawcall_begin = begin_offset;
 
-						//populate the instance data
-						//GlobalBufferPerDrawcallData* drawcall_begin =
-						//	reinterpret_cast<GlobalBufferPerDrawcallData*>(reinterpret_cast<uint8_t*>(map_pointer) + perdrawcall_begin);
-
 						int current_instance_counts =
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) < MAGE_PERDRAWCALL_MAX_LIMIT ?
 							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
-						//for (int j{ 0 }; j < current_instance_counts; ++j) {
-						//	drawcall_begin->m_data[j].m_vertex_data.m_model =
-						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_matrix;
-						//	drawcall_begin->m_data[j].m_vertex_data.m_transform =
-						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_transform;
-						//	drawcall_begin->m_data[j].m_fragment_data.m_base_color_factor =
-						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_base_color_factor;
-						//	drawcall_begin->m_data[j].m_fragment_data.m_metallic_factor =
-						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_metallic_factor;
-						//	drawcall_begin->m_data[j].m_fragment_data.m_roughness_factor =
-						//		same_meshes[MAGE_PERDRAWCALL_MAX_LIMIT * i + j]->m_roughness_factor;
-						//}
+
 						begin_offset = perdrawcall_begin + sizeof(GlobalBufferPerDrawcallData);
 						begin_offset = Mathf::RoundUp(begin_offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 						//DONE

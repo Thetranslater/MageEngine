@@ -25,11 +25,11 @@ namespace Mage {
 
 		std::shared_ptr<Widget> Draw() override;
 	protected:
-		META(Enable);
+		META(Enable)
 		std::string type{LightType::directional};
-		META(Enable);
+		META(Enable)
 		Vector3 color{Vector3::zero};
-		META(Enable);
+		META(Enable)
 		float intensity{ 0.f };
 	};
 }

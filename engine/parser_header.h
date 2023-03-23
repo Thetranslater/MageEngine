@@ -16,4 +16,5 @@
 #include  "E:/Mage/engine/engine_core/scaffold/components/meshcomponent/Mesh_component.h"
 #include  "E:/Mage/engine/engine_core/scaffold/components/meshcomponent/mesh_assset.h"
 #include  "E:/Mage/engine/engine_core/scaffold/components/cameracomponent/Camera_component.h"
+#include  "E:/Mage/engine/engine_core/scaffold/components/lightcomponent/Light_component.h"
 #endif

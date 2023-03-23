@@ -2,6 +2,7 @@
 #include "meta/reflection/reflection.h"
 #include "_generated/serializer/all_serializer.h"
 #include "_generated\reflection\vector3.reflection.gen.h"
+#include "_generated\reflection\Light_component.reflection.gen.h"
 #include "_generated\reflection\Transform_component.reflection.gen.h"
 #include "_generated\reflection\object_asset.reflection.gen.h"
 #include "_generated\reflection\scene_asset.reflection.gen.h"
@@ -17,6 +18,7 @@ namespace Mage{
 namespace Reflection{
     void TypeMetaRegister::Register(){
     TypeWrappersRegister::Vector3();
+    TypeWrappersRegister::LightComponent();
     TypeWrappersRegister::TransformComponent();
     TypeWrappersRegister::ObjectAsset();
     TypeWrappersRegister::SceneAsset();

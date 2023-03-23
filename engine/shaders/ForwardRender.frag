@@ -18,6 +18,7 @@ struct PerDirectionalLightData{
     highp float intensity;
     highp vec3 color;
     highp float _unused_blank_1;
+    highp mat4 ortho_view_matrix;
 };
 
 struct PerPointLightData{
@@ -33,7 +34,7 @@ layout(set = 0, binding = 0) readonly buffer per_frame_data
     highp mat4 camera_perspective_matrix;
     highp vec3 camera_position;
     float _unused_blank_1;
-    PerDirectionalLightData directional_lights[8];
+    PerDirectionalLightData directional_lights[2];
     PerPointLightData point_lights[8];
     int directional_light_num;
     int point_light_num;

@@ -1,8 +1,13 @@
+#include"core/math/aabb.h"
+#include"core/math/math.h"
+
 #include"engine_core/render_system/renderer/vulkanInfo.h"
 #include"engine_core/render_system/renderer/vulkanRHI.h"
 #include"engine_core/render_system/renderer/vulkanHelper.h"
 #include"engine_core/render_system/render_mesh.h"
 #include"engine_core/render_system/render_resource.h"
+#include"engine_core/render_system/render_camera.h"
+#include"engine_core/render_system/render_scene.h"
 #include"engine_core/render_system/render_system.h"
 #include"engine_core/render_system/render_passes/DirectionalShadowPass.h"
 
@@ -117,13 +122,13 @@ namespace Mage {
 			DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE,
 			DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE,
 			VK_FORMAT_R32_SFLOAT, 1, VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+			VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_attachments.m_images[directional_shadow_color], m_attachments.m_image_memories[directional_shadow_color]);
 		VulkanHelper::imageViewCreationHelper(
-			m_vulkan_rhi.get(), 
-			m_attachments.m_images[directional_shadow_color], 
-			VK_FORMAT_R32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, 1, 
+			m_vulkan_rhi.get(),
+			m_attachments.m_images[directional_shadow_color],
+			VK_FORMAT_R32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, 1,
 			m_attachments.m_image_views[directional_shadow_color]);
 
 		VulkanHelper::imageCreationHelper(
@@ -131,7 +136,7 @@ namespace Mage {
 			DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE,
 			DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE,
 			m_vulkan_rhi->getDepthImageFormat(), 1, VK_IMAGE_TILING_OPTIMAL,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT ,
 			VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 			m_attachments.m_images[directional_shadow_depth], m_attachments.m_image_memories[directional_shadow_depth]);
 		VulkanHelper::imageViewCreationHelper(
@@ -159,7 +164,7 @@ namespace Mage {
 		shadow_pass_description.pColorAttachments = &color_ref;
 		shadow_pass_description.pDepthStencilAttachment = &depth_ref;
 		shadow_pass_description.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		
+
 		VkSubpassDependency shadow_pass_dependency = VulkanInfo::aboutVkSubpassDependency();
 		shadow_pass_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		shadow_pass_dependency.dstSubpass = 0;
@@ -214,6 +219,8 @@ namespace Mage {
 		vkCmdBeginRenderPass(m_vulkan_rhi->getCurrentCommandBuffer(), &begin_info, VK_SUBPASS_CONTENTS_INLINE);
 
 		m_p_subpasses[0]->draw();
+
+		vkCmdEndRenderPass(m_vulkan_rhi->getCurrentCommandBuffer());
 	}
 
 	void DirectionalShadowSubpass::initialize(SubpassCreateInfo* info) {
@@ -228,6 +235,17 @@ namespace Mage {
 
 		//TODO:shader stage
 		VkPipelineShaderStageCreateInfo shader_info[2];
+		VkShaderModule vertex_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/directional_shadow_pass_vert.spv");
+		VkShaderModule fragment_module = VulkanHelper::shaderModuleCreationHelper(m_vulkan_rhi->getDevice(), "E:/Mage/engine/shaders/directional_shadow_pass_frag.spv");
+
+		shader_info[0] = VulkanInfo::aboutVkPipelineShaderStageCreateInfo();
+		shader_info[0].stage = VK_SHADER_STAGE_VERTEX_BIT;
+		shader_info[0].module = vertex_module;
+		shader_info[0].pName = "main";
+		shader_info[1] = VulkanInfo::aboutVkPipelineShaderStageCreateInfo();
+		shader_info[1].stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+		shader_info[1].module = fragment_module;
+		shader_info[1].pName = "main";
 
 		pipeline_info.stageCount = 2;
 		pipeline_info.pStages = shader_info;
@@ -264,11 +282,13 @@ namespace Mage {
 		scissor.extent = { DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE, DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE };
 		viewport_info.pViewports = &viewport;
 		viewport_info.pScissors = &scissor;
+		pipeline_info.pViewportState = &viewport_info;
 
 		//rasterization
 		VkPipelineRasterizationStateCreateInfo rasterization_info = VulkanInfo::aboutVkPipelineRasterizationStateCreateInfo();
 		rasterization_info.cullMode = VK_CULL_MODE_BACK_BIT;
 		rasterization_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		pipeline_info.pRasterizationState = &rasterization_info;
 
 		//multisample
 		VkPipelineMultisampleStateCreateInfo multisample_info = VulkanInfo::aboutVkPipelineMultisampleStateCreateInfo();
@@ -292,19 +312,13 @@ namespace Mage {
 		blend_info.pAttachments = &blend_state;
 		pipeline_info.pColorBlendState = &blend_info;
 
-		//dynamic state
-		VkPipelineDynamicStateCreateInfo dynamic_info = VulkanInfo::aboutVkPipelineDynamicStateCreateInfo();
-		dynamic_info.dynamicStateCount = 2;
-		VkDynamicState dynamics[2] = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR, /*VK_DYNAMIC_STATE_VERTEX_INPUT_EXT*/ };
-		dynamic_info.pDynamicStates = dynamics;
-
 		//layout
 		VkPipelineLayoutCreateInfo pipeline_layout_info = VulkanInfo::aboutVkPipelineLayoutCreateInfo();
 		pipeline_layout_info.setLayoutCount = static_cast<uint32_t>(indices.size());
 		std::vector<VkDescriptorSetLayout> layouts(indices.size());
 		for (int i{ 0 }; i < indices.size(); ++i) layouts[i] = p_m_render_pass->m_descriptor_sets.layout_infos[indices[i]];
 		pipeline_layout_info.pSetLayouts = layouts.data();
-		
+
 		if (VK_SUCCESS != vkCreatePipelineLayout(m_vulkan_rhi->getDevice(), &pipeline_layout_info, VK_NULL_HANDLE, &m_pipeline_layout)) {
 			MAGE_THROW(cant create pipeline layout of the shadow pass)
 		}
@@ -313,12 +327,132 @@ namespace Mage {
 		pipeline_info.renderPass = p_m_render_pass->m_render_pass;
 		pipeline_info.subpass = 0;
 
-		if (VK_SUCCESS != vkCreateGraphicsPipelines(m_vulkan_rhi->getDevice(), VK_NULL_HANDLE, 1, &pipeline_info, VK_NULL_HANDLE, &m_pipeline)) {
+		if (VK_SUCCESS != vkCreateGraphicsPipelines(m_vulkan_rhi->getDevice(), VK_NULL_HANDLE, 1, &pipeline_info, nullptr, &m_pipeline)) {
 			MAGE_THROW(failed to create shadow pass)
 		}
 	}
 
 	void DirectionalShadowSubpass::draw() {
+		Vector3 corners[8] = {
+			{-1.f,1.f,0.f},{-1.f,1.f,1.f},{-1.f,-1.f,0.f},{-1.f,-1.f,1.f},
+			{1.f,1.f,0.f},{1.f,-1.f,0.f},{1.f,-1.f,1.f},{1.f,1.f,1.f}
+		};
+		auto camera = p_m_render_pass->m_render_system->getRenderCamera();
+		const Matrix4x4 pers_view_matrix = camera->getPerspectiveMatrix() * camera->getViewMatrix();
+		const Matrix4x4 invPVM = pers_view_matrix.inverse();
+		AxisAlignedBoundingBox camera_box;
 
+		for (int i{ 0 }; i < 8; ++i) {
+			corners[i] = invPVM * corners[i];
+			camera_box.merge(corners[i]);
+		}
+		Vector3 center{ (camera_box.min + camera_box.max) * 0.5f };
+		Vector3 extent{ (camera_box.max - camera_box.min) * 0.5f };
+		GlobalBufferPerFrameData* global_pointer = reinterpret_cast<decltype(global_pointer)>(
+			p_m_render_pass->m_render_system->getRenderResource()->
+			m_global_updated_buffer.m_followed_camera_updated_data_pointers[
+				p_m_render_pass->m_vulkan_rhi->getCurrentFrameIndex()]);
+
+		//directional light proj-view-matrix
+		for (int i{ 0 }; i < global_pointer->m_directional_light_num; ++i) {
+			AxisAlignedBoundingBox camera_directional_light_box;
+
+			Vector3 diP = center - Vector3{ extent.magnitude() * global_pointer->m_directional_lights[i].m_direction };
+			Matrix4x4 view = Matrix4x4::LookAt(
+				diP, diP + global_pointer->m_directional_lights[i].m_direction, Vector3::up);
+
+			for (int i{ 0 }; i < 8; ++i) {
+				camera_directional_light_box.merge(view * corners[i]);
+			}
+
+			AxisAlignedBoundingBox scene_directional_light_box;
+			for (const auto& [id, model] : p_m_render_pass->m_render_system->getRenderScene()->m_render_models) {
+				AxisAlignedBoundingBox transfom_model_bbox = Mathf::AABBTransform(model.m_bounding_box, view * model.m_model_matrix);
+				scene_directional_light_box.merge(transfom_model_bbox);
+			}
+
+			Matrix4x4 proj = Matrix4x4::Ortho(
+				Mathf::Max(camera_directional_light_box.min.x, scene_directional_light_box.min.x),
+				Mathf::Min(camera_directional_light_box.max.x, scene_directional_light_box.max.x),
+				Mathf::Max(camera_directional_light_box.min.y, scene_directional_light_box.min.y),
+				Mathf::Min(camera_directional_light_box.max.y, scene_directional_light_box.max.y),
+				scene_directional_light_box.min.z,
+				Mathf::Min(scene_directional_light_box.max.z, camera_directional_light_box.max.z));
+
+			global_pointer->m_directional_lights[i].m_ortho_view_matrix = proj * view;
+		}
+
+		auto& model_batch = p_m_render_pass->m_render_system->getBatchOnFlight();
+		auto  render_resource = p_m_render_pass->m_render_system->getRenderResource();
+		uint8_t* map_pointer = reinterpret_cast<uint8_t*>(render_resource->m_global_updated_buffer.m_followed_camera_updated_data_pointers[m_vulkan_rhi->getCurrentFrameIndex()]);
+
+		vkCmdBindPipeline(m_vulkan_rhi->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
+
+		//global data
+		int global_offset{ 0 };
+		uint32_t offset = global_offset;
+
+		offset += sizeof(GlobalBufferPerFrameData);
+		offset = Mathf::RoundUp(offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
+
+		for (auto& [material_id, buffer_batch] : model_batch) {
+			for (auto& [buffer_id, primitive_batch] : buffer_batch) {
+				for (auto& [submesh_id, instances] : primitive_batch) {
+					uint32_t total_drawcall_instances = instances.size();
+					VkRenderMeshDescription* mark_mesh = instances.front();
+
+					//bind vertex and index buffer
+					auto get_offset_from = [](VkRenderMeshDescription* tmodel, int index)->uint32_t {
+						return tmodel->m_attribute_infos[index].m_offset;
+					};
+					VkBuffer buffers[MAGE_VERTEX_ATTRIBUTES_COUNT] = { VK_NULL_HANDLE };
+					std::array<VkDeviceSize, MAGE_VERTEX_ATTRIBUTES_COUNT> offsets = { 0 };
+
+					int index{ 0 };
+					while (index < MAGE_VERTEX_ATTRIBUTES_COUNT) {
+						if (get_offset_from(mark_mesh, index) != 0xffffffff) {
+							auto offset = get_offset_from(mark_mesh, index);
+							offsets[index] = offset;
+							buffers[index] = render_resource->m_guid_buffer_map[
+								mark_mesh->m_attribute_infos[index].m_buffer_index].m_bi_data;
+						}
+						++index;
+					}
+					vkCmdBindVertexBuffers(m_vulkan_rhi->getCurrentCommandBuffer(), 0, MAGE_VERTEX_ATTRIBUTES_COUNT, buffers, offsets.data());
+
+					auto& index_offset_info = mark_mesh->m_attribute_infos[6];
+					//TODO:VK_INDEX_TYPE_UINT8_EXT
+					VkIndexType index_type = (index_offset_info.m_stride * 8) == 32 ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
+					VkBuffer index_buffer = render_resource->m_guid_buffer_map[
+						mark_mesh->m_attribute_infos[6].m_buffer_index].m_bi_data;
+					vkCmdBindIndexBuffer(m_vulkan_rhi->getCurrentCommandBuffer(), index_buffer, index_offset_info.m_offset, index_type);
+					//DONE
+
+					//drawcalls
+					int total_drawcall_counts = (total_drawcall_instances + MAGE_PERDRAWCALL_MAX_LIMIT - 1) / MAGE_PERDRAWCALL_MAX_LIMIT;
+					for (int i{ 0 }; i < total_drawcall_counts; ++i) {
+						uint32_t perdrawcall_begin = offset;
+
+						int current_instance_counts =
+							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) < MAGE_PERDRAWCALL_MAX_LIMIT ?
+							(total_drawcall_instances - MAGE_PERDRAWCALL_MAX_LIMIT * i) : MAGE_PERDRAWCALL_MAX_LIMIT;
+
+						offset = perdrawcall_begin + sizeof(GlobalBufferPerDrawcallData);
+						offset = Mathf::RoundUp(offset, m_vulkan_rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
+						//DONE
+
+						uint32_t dynamic_offsets[] = { global_offset,perdrawcall_begin };
+						vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(),
+							VK_PIPELINE_BIND_POINT_GRAPHICS,
+							m_pipeline_layout, 0, 1,
+							&p_m_render_pass->m_descriptor_sets.sets[m_vulkan_rhi->getCurrentFrameIndex()],
+							2, dynamic_offsets);
+
+						//draw
+						vkCmdDrawIndexed(m_vulkan_rhi->getCurrentCommandBuffer(), index_offset_info.m_count, current_instance_counts, 0, 0, 0);
+					}
+				}
+			}
+		}
 	}
 }

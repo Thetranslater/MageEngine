@@ -46,7 +46,7 @@ namespace Mage {
 			CHECK(fd_ptr->SetFileTypes(types.size(), _types));
 			CHECK(fd_ptr->SetFileTypeIndex(1));
 			if (SUCCEEDED(fd_ptr->Show(NULL))) {
-				IShellItem* result_ptr;
+				IShellItem* result_ptr{nullptr};
 				CHECK(fd_ptr->GetResult(&result_ptr));
 				LPWSTR filename{ NULL };
 				CHECK(result_ptr->GetDisplayName(SIGDN_DESKTOPABSOLUTEPARSING, &filename));

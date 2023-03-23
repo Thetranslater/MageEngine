@@ -5,7 +5,7 @@ namespace Mage {
 	const Matrix4x4 Matrix4x4::zero(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	const Matrix4x4 Matrix4x4::identity(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
-	Matrix4x4 Matrix4x4::inverse() {
+	Matrix4x4 Matrix4x4::inverse() const {
 		float m00{ matrix[0][0] }, m01{ matrix[0][1] }, m02{ matrix[0][2] }, m03{ matrix[0][3] };
 		float m10{ matrix[1][0] }, m11{ matrix[1][1] }, m12{ matrix[1][2] }, m13{ matrix[1][3] };
 		float m20{ matrix[2][0] }, m21{ matrix[2][1] }, m22{ matrix[2][2] }, m23{ matrix[2][3] };
@@ -127,10 +127,10 @@ namespace Mage {
 		Matrix4x4 matrix_ortho = Matrix4x4::zero;
 		matrix_ortho[0][0] =  2.f * reciprocal_width;
 		matrix_ortho[1][1] =  2.f * reciprocal_height;
-		matrix_ortho[2][2] = -2.f * reciprocal_depth;
+		matrix_ortho[2][2] =  reciprocal_depth;
 		matrix_ortho[0][3] = -(right + left) * reciprocal_width;
 		matrix_ortho[1][3] = -(top + bottom) * reciprocal_height;
-		matrix_ortho[2][3] = -(zFar + zNear) * reciprocal_height;
+		matrix_ortho[2][3] = -zNear * reciprocal_depth;
 		matrix_ortho[3][3] = 1;
 		return matrix_ortho;
 	}

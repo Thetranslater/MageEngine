@@ -41,7 +41,7 @@
 	 SceneAsset defaultScene;
 	 defaultScene.name = "Default";
 
-	 std::vector<ObjectAsset> objects(2);
+	 std::vector<ObjectAsset> objects(3);
 	 {
 		 //markov
 		 objects[0].name = "Markov";
@@ -66,10 +66,19 @@
 		 objects[1].components.resize(2);
 		 objects[1].components[0] = std::move(stoneTransform);
 		 objects[1].components[1] = std::move(stoneMesh);
+
+		 //directional light
+		 objects[2].name = "DirectionalLight";
+		 auto directionalLightTransform = MAGE_REFLECTION_NEW(TransformComponent);
+		 auto directionalLightLight = MAGE_REFLECTION_NEW(LightComponent);
+
+		 objects[2].components.resize(2);
+		 objects[2].components[0] = std::move(directionalLightTransform);
+		 objects[2].components[1] = std::move(directionalLightLight);
 	 }
 	 defaultScene.objects = std::move(objects);
-	 defaultScene.nodes.resize(2);
-	 defaultScene.roots.resize(2);
+	 defaultScene.nodes.resize(3);
+	 defaultScene.roots.resize(3);
 	 std::iota(defaultScene.roots.begin(), defaultScene.roots.end(), 0);
 
 	 ResourceManager manager;

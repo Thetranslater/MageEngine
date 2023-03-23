@@ -1,5 +1,6 @@
 #pragma once
 #include "_generated\serializer\vector3.serializer.gen.h"
+#include "_generated\serializer\Light_component.serializer.gen.h"
 #include "_generated\serializer\Transform_component.serializer.gen.h"
 #include "_generated\serializer\object_asset.serializer.gen.h"
 #include "_generated\serializer\scene_asset.serializer.gen.h"
@@ -32,6 +33,33 @@ namespace Mage{
         }
         if(!json_context["z"].is_null()){
             PSerializer::read(json_context["z"], instance.z);
+        }
+        return instance;
+    }
+    template<>
+    PJson PSerializer::write(const LightComponent& instance){
+        PJson::object  ret_context;
+        auto&&  json_context_0 = PSerializer::write(*(Mage::Component*)&instance);
+        assert(json_context_0.is_object());
+        auto&& json_context_map_0 = json_context_0.object_items();
+        ret_context.insert(json_context_map_0.begin() , json_context_map_0.end());
+        ret_context.insert_or_assign("type", PSerializer::write(instance.type));
+        ret_context.insert_or_assign("color", PSerializer::write(instance.color));
+        ret_context.insert_or_assign("intensity", PSerializer::write(instance.intensity));
+        return  PJson(ret_context);
+    }
+    template<>
+    LightComponent& PSerializer::read(const PJson& json_context, LightComponent& instance){
+        assert(json_context.is_object());
+        PSerializer::read(json_context,*(Mage::Component*)&instance);
+        if(!json_context["type"].is_null()){
+            PSerializer::read(json_context["type"], instance.type);
+        }
+        if(!json_context["color"].is_null()){
+            PSerializer::read(json_context["color"], instance.color);
+        }
+        if(!json_context["intensity"].is_null()){
+            PSerializer::read(json_context["intensity"], instance.intensity);
         }
         return instance;
     }

@@ -15,5 +15,6 @@ public:
 	AxisAlignedBoundingBox() = default;
 	AxisAlignedBoundingBox(const Vector3 & min_corner, const Vector3 & max_corner);
 	void merge(const Vector3 & point);
+	void merge(const AxisAlignedBoundingBox & bbox);
 	};
 }

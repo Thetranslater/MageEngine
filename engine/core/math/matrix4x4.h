@@ -38,6 +38,12 @@ namespace Mage {
 				data[1], data[5], data[9] , data[13],
 				data[2], data[6], data[10], data[14],
 				data[3], data[7], data[11], data[15]) {}
+		Matrix4x4(const glm::mat4& mat) {
+			matrix[0][0] = mat[0][0], matrix[0][1] = mat[1][0], matrix[0][2] = mat[2][0], matrix[0][3] = mat[3][0];
+			matrix[1][0] = mat[0][1], matrix[1][1] = mat[1][1], matrix[1][2] = mat[2][1], matrix[1][3] = mat[3][1];
+			matrix[2][0] = mat[0][2], matrix[2][1] = mat[1][2], matrix[2][2] = mat[2][2], matrix[2][3] = mat[3][2];
+			matrix[3][0] = mat[0][3], matrix[3][1] = mat[1][3], matrix[3][2] = mat[2][3], matrix[3][3] = mat[3][3];
+		}
 
 		//destructor
 		~Matrix4x4() = default;
@@ -52,7 +58,7 @@ namespace Mage {
 		}
 
 		//A^{-1} = \frac{A^{*}}{|A|} ::LaTeX representing
-		Matrix4x4 inverse();
+		Matrix4x4 inverse() const;
 
 		bool isIdentity() const{
 			return (matrix[0][0] == 1.f && matrix[1][1] == 1.f && matrix[2][2] == 1.f && matrix[3][3] == 1.f) &&
@@ -269,6 +275,33 @@ namespace Mage {
 			matrix_TRS.matrix[3][3] = 1.f;
 
 			return matrix_TRS;
+		}
+
+		static Matrix4x4 LookAt(const Vector3& from, const Vector3& to, const Vector3& up) {
+			Vector3 z = (to - from).normalized();
+			Vector3 nUp = up.normalized();
+			Vector3 x = Vector3::Cross(nUp, z).normalized();
+			Vector3 y = Vector3::Cross(z, x);
+
+			Matrix4x4 lookat{ Matrix4x4::identity };
+			lookat[0][0] = x.x;
+			lookat[0][1] = x.y;
+			lookat[0][2] = x.z;
+			lookat[1][0] = y.x;
+			lookat[1][1] = y.y;
+			lookat[1][2] = y.z;
+			lookat[2][0] = z.x;
+			lookat[2][1] = z.y;
+			lookat[2][2] = z.z;
+			lookat[3][0] = 0.f;
+			lookat[3][1] = 0.f;
+			lookat[3][2] = 0.f;
+			lookat[0][3] = -Vector3::Dot(from, x);
+			lookat[1][3] = -Vector3::Dot(from, y);
+			lookat[2][3] = -Vector3::Dot(from, z);
+			lookat[3][3] = 1.f;
+
+			return lookat;
 		}
 #pragma endregion
 

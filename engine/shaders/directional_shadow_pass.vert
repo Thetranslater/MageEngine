@@ -52,25 +52,15 @@ layout(set = 0, binding = 1) readonly buffer GlobalBufferPerDrawcallData
     PerMeshShaderData data[32];
 };
 
+
 layout(location = 0) in highp vec3 in_position;
 layout(location = 1) in highp vec3 in_normal;
 layout(location = 2) in highp vec4 in_tangent;
 layout(location = 3) in highp vec2 in_texcoord;
 
-layout(location = 0) out highp vec3 out_world_position;
-layout(location = 1) out highp vec3 out_world_normal;
-layout(location = 2) out highp vec4 out_world_tangent;
-layout(location = 3) out highp vec2 out_texcoord;
-layout(location = 4) out PerMeshFragmentShaderData out_frag_factors;
-
 void main(){
-    highp mat4 matrix4x4 = data[gl_InstanceIndex].vertex_data.transform * data[gl_InstanceIndex].vertex_data.matrix;
-    highp vec4 world = matrix4x4 * vec4(in_position,1.f);
-    highp mat3 to_world = mat3(matrix4x4[0].xyz, matrix4x4[1].xyz, matrix4x4[2].xyz);
-    out_world_position = world.xyz;
-    out_world_normal = to_world * in_normal;
-    out_world_tangent = vec4(to_world * in_tangent.xyz, in_tangent.w);
-    out_texcoord = in_texcoord;
-    out_frag_factors = data[gl_InstanceIndex].fragment_data;
-    gl_Position = camera_perspective_matrix * camera_view_matrix * world;
+    highp mat4 model_to_world = data[gl_InstanceIndex].vertex_data.transform * data[gl_InstanceIndex].vertex_data.matrix;
+    highp mat4 directional_light_pers_view_mat = directional_lights[0].ortho_view_matrix;
+    highp vec4 world_position = model_to_world * vec4(in_position, 1.f);
+    gl_Position = directional_light_pers_view_mat * world_position;
 }

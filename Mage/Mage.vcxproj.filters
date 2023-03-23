@@ -201,9 +201,6 @@
     <ClCompile Include="..\editor\context\editor_global_context.cpp">
       <Filter>Mage\editor\context</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Mage\editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\editor\ui\editor_ui.cpp">
       <Filter>Mage\editor\ui</Filter>
     </ClCompile>
@@ -305,6 +302,12 @@
     </ClCompile>
     <ClCompile Include="..\engine\engine_core\render_system\render_passes\DirectionalShadowPass.cpp">
       <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor\TEST.cpp">
+      <Filter>Mage\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Mage\editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -589,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="..\engine\engine_core\render_system\render_passes\DirectionalShadowPass.h">
       <Filter>Mage\engine\engine_core\render_system\render_passes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor\TEST.h">
+      <Filter>Mage\editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

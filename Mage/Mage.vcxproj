@@ -138,7 +138,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>E:\Mage\3rdparty\imgui-master;E:\Mage\engine\core;E:\Tools\Vulkan\Include;E:\Mage\engine;E:\Mage\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\Mage\3rdparty\mimalloc-master\include;E:\Mage\3rdparty\imgui-docking;E:\Mage\engine\core;E:\Tools\Vulkan\Include;E:\Mage\editor;E:\Mage\engine;E:\Mage\3rdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -154,6 +154,7 @@
     <ClCompile Include="..\editor\context\editor_global_context.cpp" />
     <ClCompile Include="..\editor\editor.cpp" />
     <ClCompile Include="..\editor\input\editor_input.cpp" />
+    <ClCompile Include="..\editor\TEST.cpp" />
     <ClCompile Include="..\editor\ui\editor_ui.cpp" />
     <ClCompile Include="..\editor\ui\widgets\button.cpp" />
     <ClCompile Include="..\editor\ui\widgets\checkbox.cpp" />
@@ -219,6 +220,7 @@
     <ClInclude Include="..\editor\context\editor_global_context.h" />
     <ClInclude Include="..\editor\editor.h" />
     <ClInclude Include="..\editor\input\editor_input.h" />
+    <ClInclude Include="..\editor\TEST.h" />
     <ClInclude Include="..\editor\ui\editor_ui.h" />
     <ClInclude Include="..\editor\ui\widgets\button.h" />
     <ClInclude Include="..\editor\ui\widgets\checkbox.h" />

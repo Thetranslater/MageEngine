@@ -4,12 +4,15 @@
 
 #include"core/macro.h"
 #include"core/hash.h"
+#include"core/math/aabb.h"
+#include"core/math/math.h"
 
 #include"engine_core/render_system/render_pending_data.h"
 #include"engine_core/render_system/render_system.h"
 #include"engine_core/render_system/renderer/vulkanRHI.h"
 #include"engine_core/render_system/renderer/vulkanHelper.h"
 #include"engine_core/render_system/render_passes/ForwardRenderPass.h"
+#include"engine_core/render_system/render_passes/DirectionalShadowPass.h"
 #include"engine_core/render_system/render_scene.h"
 #include"engine_core/render_system/render_resource.h"
 #include"engine_core/render_system/render_camera.h"
@@ -48,6 +51,11 @@ namespace Mage {
 		RenderPassCreateInfo create_info{};
 		create_info.info_render_system = this;
 		m_render_pass->initialize(&create_info);
+
+		m_shadow_pass = std::make_shared<DirectionalShadowPass>();
+		DirectionalShadowPassCreateInfo shadow_pass_info{};
+		shadow_pass_info.info_render_system = this;
+		m_shadow_pass->initialize(&shadow_pass_info);
 	}
 
 	void RenderSystem::initializeUIBackend() {
@@ -72,6 +80,8 @@ namespace Mage {
 
 		Util::BuildRenderPrimitiveBatchJobs(this);
 
+		m_shadow_pass->draw();
+
 		m_render_pass->draw();
 
 		m_vulkan_rhi->prepareVulkanRHIAfterRender();
@@ -92,6 +102,7 @@ namespace Mage {
 			else {
 				auto& render_model = m_render_scene->getRenderModel(iter->GetGameObject()->getInstanceID());
 				render_model.m_model_matrix = meshSibling_tuples[(MeshComponent*)iter].transform->localToWorldMatrix();
+				//render_model.m_bounding_box = Mathf::AABBTransform(render_model.m_bounding_box, render_model.m_model_matrix);
 			}
 		}
 	}
@@ -206,7 +217,7 @@ namespace Mage {
 			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
 			VkRenderModel model(process_job.m_mesh_info.m_transfer_mesh_descriptions.size());
 			model.m_model_matrix = process_job.m_transform;
-			model.m_bounding_box = process_job.m_bounding_box;
+			model.m_bounding_box = Mathf::AABBTransform(process_job.m_bounding_box, process_job.m_transform);
 			for (uint32_t i{ 0 }; i < process_job.m_mesh_info.m_transfer_mesh_descriptions.size();++i) {
 				auto& primitive_info = process_job.m_mesh_info.m_transfer_mesh_descriptions[i];
 				auto mesh_guid_combined = [&mesh_guids](VkRenderMeshDescription& primitive_des)->ID {

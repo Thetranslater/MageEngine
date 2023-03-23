@@ -7,6 +7,8 @@
 
 namespace Mage {
 	class Vector3;
+	class Matrix4x4;
+	class AxisAlignedBoundingBox;
 
 	class Mathf {
 	public:
@@ -134,6 +136,8 @@ namespace Mage {
 		static inline float Sin(float value) { return std::sin(value); }										   //use in radians
 		static inline float Sqrt(float value) { return std::sqrt(value); }
 		static inline float Tan(float value) { return std::tan(value); }										   //use in radians
+		
+		static AxisAlignedBoundingBox AABBTransform(const AxisAlignedBoundingBox& bbox, const Matrix4x4& transform);
 
 		//properties
 		static const float PI;

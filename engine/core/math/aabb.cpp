@@ -8,4 +8,9 @@ namespace Mage {
 		min = Mathf::Min(min, point);
 		max = Mathf::Max(max, point);
 	}
+
+	void AxisAlignedBoundingBox::merge(const AxisAlignedBoundingBox& bbox) {
+		min = Mathf::Min(min, bbox.min);
+		max = Mathf::Max(max, bbox.max);
+	}
 }

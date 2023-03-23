@@ -13,8 +13,8 @@ namespace Mage {
 	bool VulkanRHI::m_enable_validation_layers{ true };
 	bool VulkanRHI::m_enable_debug_utils_label{ true };
 #else
-	bool VulkanRHI::m_enable_validation_layers{ false };
-	bool VulkanRHI::m_enable_debug_utils_label{ false };
+	bool VulkanRHI::m_enable_validation_layers{ true };
+	bool VulkanRHI::m_enable_debug_utils_label{ true };
 #endif // !NDEBUG
 
 
@@ -113,7 +113,7 @@ namespace Mage {
 	}
 
 	void VulkanRHI::prepareVulkanRHIAfterRender() {
-		vkEndCommandBuffer(m_command_buffer);
+		ASSERT_RESULT(vkEndCommandBuffer(m_command_buffer));
 
 		VkSubmitInfo submit_info = VulkanInfo::aboutVkSubmitInfo();
 

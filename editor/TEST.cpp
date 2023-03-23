@@ -1,9 +1,9 @@
 #include<core/math/matrix4x4.h>
 
-#include<engine_core/render_engine/window_system.h>
-#include<engine_core/render_engine/renderer/vulkanRHI.h>
-#include<engine_core/render_engine/renderer/vulkanInfo.h>
-#include<engine_core/render_engine/renderer/vulkanHelper.h>
+#include<engine_core/render_system/window_system.h>
+#include<engine_core/render_system/renderer/vulkanRHI.h>
+#include<engine_core/render_system/renderer/vulkanInfo.h>
+#include<engine_core/render_system/renderer/vulkanHelper.h>
 
 #include<core/macro.h>
 
@@ -19,6 +19,7 @@ std::shared_ptr<Mage::VulkanRHI> rhi = std::make_shared<Mage::VulkanRHI>();
 
 std::vector<VkBuffer> buffers;
 std::vector<VkDeviceMemory> memories;
+std::vector<void*> pointers;
 
 struct Image {
 	VkImage data;
@@ -140,13 +141,13 @@ void Pipeline::setupDescriptorSetLayouts() {
 		VkDescriptorSetLayoutBinding ubo_binding = mgvk::aboutVkDescriptorSetLayoutBinding();
 		ubo_binding.binding = 1;
 		ubo_binding.descriptorCount = 1;
-		ubo_binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		ubo_binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 		ubo_binding.pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutBinding perframe_binding = mgvk::aboutVkDescriptorSetLayoutBinding();
 		perframe_binding.binding = 0;
 		perframe_binding.descriptorCount = 1;
-		perframe_binding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		perframe_binding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 		perframe_binding.pImmutableSamplers = nullptr;
 
 		std::array<VkDescriptorSetLayoutBinding, 2> bindings = { perframe_binding, ubo_binding };
@@ -202,7 +203,7 @@ void Pipeline::setupDescriptorSets() {
 		VkWriteDescriptorSet write[2];
 		write[0] = mgvk::aboutVkWriteDescriptorSet();
 		write[0].descriptorCount = 1;
-		write[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
+		write[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 		write[0].dstArrayElement = 0;
 		write[0].dstBinding = 0;
 		write[0].dstSet = descriptorsets[i];
@@ -469,8 +470,7 @@ void Pipeline::setupPieplines() {
 }
 
 void Pipeline::draw(RenderModel& model) {
-	void* begin;
-	vkMapMemory(rhi->getDevice(), memories[rhi->getCurrentFrameIndex()], 0, 1024*1024*20, 0, &begin);
+	void* begin = pointers[rhi->getCurrentFrameIndex()];
 
 	uint32_t perframe_offset{ 0 };
 	(reinterpret_cast<PerFrame*>(reinterpret_cast<uint8_t*>(begin) + perframe_offset))->view = glm::lookAt(glm::vec3(1.f, 0.0f, -2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -481,7 +481,7 @@ void Pipeline::draw(RenderModel& model) {
 
 	rhi->prepareContext();
 
-	rhi->prepareVulkanRHIBeforeRender();
+	rhi->prepareVulkanRHIBeforeRender([]() {});
 
 	VkRenderPassBeginInfo renderpassInfo = mgvk::aboutVkRenderPassBeginInfo();
 	std::array<VkClearValue, 2> clearValues{};//clearValues内部顺序应该和你attachments的顺序一致
@@ -501,7 +501,7 @@ void Pipeline::draw(RenderModel& model) {
 
 	uint32_t perdrawcall_off{ perframe_offset };
 	perdrawcall_off += sizeof(PerFrame);
-	perdrawcall_off = Mage::Mathf::RoundUp(perdrawcall_off, rhi->getDeviceProperties().limits.minUniformBufferOffsetAlignment);
+	perdrawcall_off = Mage::Mathf::RoundUp(perdrawcall_off, rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 
 	for (auto& mesh : model.meshes) {
 		//update uniform buffer
@@ -509,7 +509,7 @@ void Pipeline::draw(RenderModel& model) {
 
 		vkCmdBindDescriptorSets(rhi->getCurrentCommandBuffer(), VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline_layout, 1, 1, &model.materials[mesh.material_index].set, 0, nullptr);
 
-		VkBuffer buffers[4] = { model.super_block,model.super_block, model.super_block, model.super_block};
+		VkBuffer buffers[6] = { model.super_block,model.super_block, model.super_block, model.super_block };
 		VkDeviceSize offsets[4] = { std::get<0>(mesh.attributes_des[0]), 
 			std::get<0>(mesh.attributes_des[1]),
 			std::get<0>(mesh.attributes_des[2]),
@@ -523,14 +523,12 @@ void Pipeline::draw(RenderModel& model) {
 		vkCmdDrawIndexed(rhi->getCurrentCommandBuffer(), mesh.index_count, 1, 0, 0, 0);
 		
 		perdrawcall_off += sizeof(UBO);
-		perdrawcall_off = Mage::Mathf::RoundUp(perdrawcall_off, rhi->getDeviceProperties().limits.minUniformBufferOffsetAlignment);
+		perdrawcall_off = Mage::Mathf::RoundUp(perdrawcall_off, rhi->getDeviceProperties().limits.minStorageBufferOffsetAlignment);
 	}
 
 	vkCmdEndRenderPass(rhi->getCurrentCommandBuffer());
 
 	rhi->prepareVulkanRHIAfterRender();
-
-	vkUnmapMemory(rhi->getDevice(), memories[rhi->getCurrentFrameIndex()]);
 }
 #pragma endregion
 
@@ -604,7 +602,7 @@ RenderModel loadModel(const std::string& file) {
 		if (index_imageview_map.find(model.m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index) == index_imageview_map.end()) {
 			Image albedo;
 			int index = model.m_materials[i].m_pbr_metallic_roughness.m_base_color_texture.m_index;
-			uint32_t size = model.m_textures[index].m_width * model.m_textures[index].m_height * 4;
+			uint32_t size = model.m_images[model.m_textures[index].m_source].m_width * model.m_images[model.m_textures[index].m_source].m_height * 4;
 
 			VkBuffer stagingBuffer;
 			VkDeviceMemory stagingMemory;
@@ -614,10 +612,10 @@ RenderModel loadModel(const std::string& file) {
 				stagingBuffer, stagingMemory);
 			void* p;
 			vkMapMemory(rhi->getDevice(), stagingMemory, 0, size, 0, &p);
-			memcpy(p, model.m_textures[index].m_data.data(), size);
+			memcpy(p, model.m_images[model.m_textures[index].m_source].m_image.data(), size);
 			vkUnmapMemory(rhi->getDevice(), stagingMemory);
 
-			Mage::VulkanHelper::imageCreationHelper(rhi.get(), model.m_textures[index].m_width, model.m_textures[index].m_height,
+			Mage::VulkanHelper::imageCreationHelper(rhi.get(), model.m_images[model.m_textures[index].m_source].m_width, model.m_images[model.m_textures[index].m_source].m_height,
 				VK_FORMAT_R8G8B8A8_SRGB, 1, VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
@@ -625,7 +623,7 @@ RenderModel loadModel(const std::string& file) {
 
 			Mage::VulkanHelper::transitionImageLayout(rhi.get(), albedo.data, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1);
 
-			Mage::VulkanHelper::fromBufferToImageCopyHelper(rhi.get(), stagingBuffer, albedo.data, model.m_textures[index].m_width, model.m_textures[index].m_height);
+			Mage::VulkanHelper::fromBufferToImageCopyHelper(rhi.get(), stagingBuffer, albedo.data, model.m_images[model.m_textures[index].m_source].m_width, model.m_images[model.m_textures[index].m_source].m_height);
 
 			Mage::VulkanHelper::transitionImageLayout(rhi.get(), albedo.data, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 			
@@ -667,7 +665,7 @@ RenderModel loadModel(const std::string& file) {
 		if (index_imageview_map.find(model.m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index) == index_imageview_map.end()) {
 			Image m_r;
 			int index = model.m_materials[i].m_pbr_metallic_roughness.m_metallic_roughness_texture.m_index;
-			uint32_t size = model.m_textures[index].m_width * model.m_textures[index].m_height * 4;
+			uint32_t size = model.m_images[model.m_textures[index].m_source].m_width * model.m_images[model.m_textures[index].m_source].m_height * 4;
 
 			VkBuffer stagingBuffer;
 			VkDeviceMemory stagingMemory;
@@ -677,24 +675,24 @@ RenderModel loadModel(const std::string& file) {
 				stagingBuffer, stagingMemory);
 			void* p;
 			vkMapMemory(rhi->getDevice(), stagingMemory, 0, size, 0, &p);
-			memcpy(p, model.m_textures[index].m_data.data(), size);
+			memcpy(p, model.m_images[model.m_textures[index].m_source].m_image.data(), size);
 			vkUnmapMemory(rhi->getDevice(), stagingMemory);
 
-			Mage::VulkanHelper::imageCreationHelper(rhi.get(), model.m_textures[index].m_width, model.m_textures[index].m_height,
-				static_cast<VkFormat>(model.m_textures[index].m_format), 1, VK_IMAGE_TILING_OPTIMAL,
+			Mage::VulkanHelper::imageCreationHelper(rhi.get(), model.m_images[model.m_textures[index].m_source].m_width, model.m_images[model.m_textures[index].m_source].m_height,
+				static_cast<VkFormat>(model.m_images[model.m_textures[index].m_source].m_format), 1, VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				m_r.data, m_r.memory);
 
 			Mage::VulkanHelper::transitionImageLayout(rhi.get(), m_r.data, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1);
 
-			Mage::VulkanHelper::fromBufferToImageCopyHelper(rhi.get(), stagingBuffer, m_r.data, model.m_textures[index].m_width, model.m_textures[index].m_height);
+			Mage::VulkanHelper::fromBufferToImageCopyHelper(rhi.get(), stagingBuffer, m_r.data, model.m_images[model.m_textures[index].m_source].m_width, model.m_images[model.m_textures[index].m_source].m_height);
 
 			Mage::VulkanHelper::transitionImageLayout(rhi.get(), m_r.data, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 			
 			VkImageViewCreateInfo al_v = mgvk::aboutVkImageViewCeateInfo();
 			al_v.image = m_r.data;
-			al_v.format = static_cast<VkFormat>(model.m_textures[index].m_format);
+			al_v.format = static_cast<VkFormat>(model.m_images[model.m_textures[index].m_source].m_format);
 			al_v.components.a = VK_COMPONENT_SWIZZLE_A;
 			al_v.components.r = VK_COMPONENT_SWIZZLE_R;
 			al_v.components.g = VK_COMPONENT_SWIZZLE_G;
@@ -730,7 +728,7 @@ RenderModel loadModel(const std::string& file) {
 		if (index_imageview_map.find(model.m_materials[i].m_normal_texture.m_index) == index_imageview_map.end()) {
 			Image normal;
 			int index = model.m_materials[i].m_normal_texture.m_index;
-			uint32_t size = model.m_textures[index].m_width * model.m_textures[index].m_height * 4;
+			uint32_t size = model.m_images[model.m_textures[index].m_source].m_width * model.m_images[model.m_textures[index].m_source].m_height * 4;
 
 			VkBuffer stagingBuffer;
 			VkDeviceMemory stagingMemory;
@@ -740,24 +738,24 @@ RenderModel loadModel(const std::string& file) {
 				stagingBuffer, stagingMemory);
 			void* p;
 			vkMapMemory(rhi->getDevice(), stagingMemory, 0, size, 0, &p);
-			memcpy(p, model.m_textures[index].m_data.data(), size);
+			memcpy(p, model.m_images[model.m_textures[index].m_source].m_image.data(), size);
 			vkUnmapMemory(rhi->getDevice(), stagingMemory);
 
-			Mage::VulkanHelper::imageCreationHelper(rhi.get(), model.m_textures[index].m_width, model.m_textures[index].m_height,
-				static_cast<VkFormat>(model.m_textures[index].m_format), 1, VK_IMAGE_TILING_OPTIMAL,
+			Mage::VulkanHelper::imageCreationHelper(rhi.get(), model.m_images[model.m_textures[index].m_source].m_width, model.m_images[model.m_textures[index].m_source].m_height,
+				static_cast<VkFormat>(model.m_images[model.m_textures[index].m_source].m_format), 1, VK_IMAGE_TILING_OPTIMAL,
 				VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT,
 				VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 				normal.data, normal.memory);
 
 			Mage::VulkanHelper::transitionImageLayout(rhi.get(), normal.data, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1);
 
-			Mage::VulkanHelper::fromBufferToImageCopyHelper(rhi.get(), stagingBuffer, normal.data, model.m_textures[index].m_width, model.m_textures[index].m_height);
+			Mage::VulkanHelper::fromBufferToImageCopyHelper(rhi.get(), stagingBuffer, normal.data, model.m_images[model.m_textures[index].m_source].m_width, model.m_images[model.m_textures[index].m_source].m_height);
 
 			Mage::VulkanHelper::transitionImageLayout(rhi.get(), normal.data, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 1);
 
 			VkImageViewCreateInfo al_v = mgvk::aboutVkImageViewCeateInfo();
 			al_v.image = normal.data;
-			al_v.format = static_cast<VkFormat>(model.m_textures[index].m_format);
+			al_v.format = static_cast<VkFormat>(model.m_images[model.m_textures[index].m_source].m_format);
 			al_v.components.a = VK_COMPONENT_SWIZZLE_A;
 			al_v.components.r = VK_COMPONENT_SWIZZLE_R;
 			al_v.components.g = VK_COMPONENT_SWIZZLE_G;
@@ -862,12 +860,14 @@ void run() {
 
 	buffers.resize(rhi->getSwapchainSize());
 	memories.resize(rhi->getSwapchainSize());
+	pointers.resize(rhi->getSwapchainSize());
 	for (int i{ 0 }; i < rhi->getSwapchainSize(); ++i) {
 		Mage::VulkanHelper::bufferCreationHelper(
 			rhi.get(), 1024 * 1024 * 20,
-			VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+			VK_BUFFER_USAGE_STORAGE_BUFFER_BIT,
 			VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
 			buffers[i], memories[i]);
+		vkMapMemory(rhi->getDevice(), memories[i], 0, 1024 * 1024 * 20, 0, &pointers[i]);
 	}
 	RenderModel vk_model{};
 	vk_model = loadModel("E:\\Download\\makarov_pistol\\scene.gltf");
