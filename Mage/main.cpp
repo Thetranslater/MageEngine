@@ -2,7 +2,7 @@
 #include<numeric>
 
 #define TEST 0
-//#define CONSTRUCTION
+#define CONSTRUCTION
 
 #if TEST == 0
 
@@ -46,6 +46,7 @@
 		 //markov
 		 objects[0].name = "Markov";
 		 auto markovTransform = MAGE_REFLECTION_NEW(TransformComponent);
+		 markovTransform->SetScale(Vector3{ 5.f,5.f,5.f });
 		 auto markovMesh = MAGE_REFLECTION_NEW(MeshComponent);
 
 		 auto& meshAsset = markovMesh->Asset();
@@ -61,7 +62,7 @@
 		 auto stoneMesh = MAGE_REFLECTION_NEW(MeshComponent);
 
 		 auto& stoneMeshAsset = stoneMesh->Asset();
-		 stoneMeshAsset.gltf_model_url = "E:/Download/stone_floor/scene.gltf";
+		 stoneMeshAsset.gltf_model_url = "E:/Download/sponza_scene/scene.gltf";
 
 		 objects[1].components.resize(2);
 		 objects[1].components[0] = std::move(stoneTransform);
@@ -70,6 +71,7 @@
 		 //directional light
 		 objects[2].name = "DirectionalLight";
 		 auto directionalLightTransform = MAGE_REFLECTION_NEW(TransformComponent);
+		 directionalLightTransform->SetRotation(Quaternion::FromToRotation(Vector3::down, Vector3{ 0.f, -1.f ,1.f }));
 		 auto directionalLightLight = MAGE_REFLECTION_NEW(LightComponent);
 
 		 objects[2].components.resize(2);

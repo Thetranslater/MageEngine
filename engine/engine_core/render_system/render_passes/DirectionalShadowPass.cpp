@@ -212,7 +212,7 @@ namespace Mage {
 		begin_info.renderArea.extent = { DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE, DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE };
 		begin_info.clearValueCount = 2;
 		VkClearValue clears[2];
-		clears[0].color = { 0.f,0.f,0.f,1.f };
+		clears[0].color = { 1.f,1.f,1.f,1.f };
 		clears[1].depthStencil = { 1.f,0 };
 		begin_info.pClearValues = clears;
 
@@ -362,7 +362,8 @@ namespace Mage {
 				diP, diP + global_pointer->m_directional_lights[i].m_direction, Vector3::up);
 
 			for (int i{ 0 }; i < 8; ++i) {
-				camera_directional_light_box.merge(view * corners[i]);
+				Vector4 clip = view * Vector4{ corners[i], 1.f };
+				camera_directional_light_box.merge(Vector3{ clip.x, clip.y , clip.z });
 			}
 
 			AxisAlignedBoundingBox scene_directional_light_box;

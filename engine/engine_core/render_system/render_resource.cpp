@@ -128,6 +128,8 @@ namespace Mage {
 		vkDestroyBuffer(rhi->getDevice(), staging_buffer, nullptr);
 		vkFreeMemory(rhi->getDevice(), staging_memory, nullptr);
 
+		itexture.m_image.clear();
+
 		m_guid_texture_map.emplace(std::make_pair(guid, render_texture));
 
 		return true;

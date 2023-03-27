@@ -35,12 +35,12 @@ namespace Mage {
 		//attention: Because SetXXX function directly sets the properties of the transform, it may cause inconsistency.
 		// Please use WriteXXX when you have the consistency requirement.
 		//TODO:setÂß¼­ÖØÐ´
-private:void SetPosition(const Vector3& new_p);
-private:void SetRotation(const Quaternion& new_q);
-private:void SetScale(const Vector3& new_s);
-private:void SetLocalPosition(const Vector3& new_p);
-private:void SetLocalRotation(const Quaternion& new_q);
-private:void SetLocalScale(const Vector3& new_s);
+		void SetPosition(const Vector3& new_p);
+		void SetRotation(const Quaternion& new_q);
+		void SetScale(const Vector3& new_s);
+		void SetLocalPosition(const Vector3& new_p);
+		void SetLocalRotation(const Quaternion& new_q);
+		void SetLocalScale(const Vector3& new_s);
 
 		//TODO:writeÂß¼­ÖØÐ´
 public: void WritePosition(const Vector3& new_p);

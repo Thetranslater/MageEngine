@@ -347,6 +347,17 @@ namespace Mage {
 		vkBindBufferMemory(rhi->getDevice(), buffer, memory, 0);
 	}
 
+	void VulkanHelper::samplerCreationHelper(VulkanRHI* rhi, VkFilter mag, VkFilter min, VkSamplerAddressMode addressU, VkSamplerAddressMode addressV, VkSamplerMipmapMode mipmap,  VkSampler& sampler) {
+		VkSamplerCreateInfo sampler_info = VulkanInfo::aboutVkSamplerCreateInfo();
+		sampler_info.magFilter = mag;
+		sampler_info.minFilter = min;
+		sampler_info.addressModeU = addressU;
+		sampler_info.addressModeV = addressV;
+		sampler_info.mipmapMode = mipmap;
+
+		ASSERT_RESULT(vkCreateSampler(rhi->getDevice(), &sampler_info, nullptr, &sampler));
+	}
+
 	void VulkanHelper::fromBufferToBufferCopyHelper(VulkanRHI* rhi, VkBuffer src, VkBuffer dst, VkDeviceSize size) {
 		VkCommandBuffer temp_command_buffer = rhi->recordCommandsTemporarily();
 

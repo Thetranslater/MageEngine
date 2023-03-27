@@ -3,7 +3,9 @@
 #include"engine_core/render_system/render_subpass.h"
 
 namespace Mage {
-	struct ForwardRenderPassCreateInfo : public RenderPassCreateInfo{};
+	struct ForwardRenderPassCreateInfo : public RenderPassCreateInfo{
+		VkImageView info_directional_shadow_map{ VK_NULL_HANDLE };
+	};
 
 	class ForwardRenderPass :public RenderPass {
 
@@ -27,6 +29,8 @@ namespace Mage {
 		void setupFramebuffers();
 
 		uint32_t m_subupass_count{ 1 };
+
+		VkImageView m_directional_shadow_map;
 	};
 
 	struct ForwardRenderSubpassCreateInfo :public SubpassCreateInfo {

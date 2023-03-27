@@ -37,8 +37,8 @@ namespace Mage {
 		m_render_camera->setPosition(0.f, 0.f, 0.f);
 		m_render_camera->setRotation(Quaternion::identity);
 		m_render_camera->setFov(90.f);
-		m_render_camera->setzNear(0.01f);
-		m_render_camera->setzFar(100.f);
+		m_render_camera->setzNear(0.05f);
+		m_render_camera->setzFar(25.f);
 		m_render_camera->setAspect(float(m_vulkan_rhi->getSwapchainExtent().width) / m_vulkan_rhi->getSwapchainExtent().height);
 
 
@@ -47,15 +47,16 @@ namespace Mage {
 	}
 
 	void RenderSystem::postSetup() {
-		m_render_pass = std::make_shared<ForwardRenderPass>();
-		RenderPassCreateInfo create_info{};
-		create_info.info_render_system = this;
-		m_render_pass->initialize(&create_info);
-
 		m_shadow_pass = std::make_shared<DirectionalShadowPass>();
 		DirectionalShadowPassCreateInfo shadow_pass_info{};
 		shadow_pass_info.info_render_system = this;
 		m_shadow_pass->initialize(&shadow_pass_info);
+
+		m_render_pass = std::make_shared<ForwardRenderPass>();
+		ForwardRenderPassCreateInfo create_info{};
+		create_info.info_render_system = this;
+		create_info.info_directional_shadow_map = m_shadow_pass->m_attachments.m_image_views[0];
+		m_render_pass->initialize(&create_info);
 	}
 
 	void RenderSystem::initializeUIBackend() {
@@ -217,7 +218,7 @@ namespace Mage {
 			auto part_mesh_generator = m_render_scene->getPartMeshGUIDGenerator();
 			VkRenderModel model(process_job.m_mesh_info.m_transfer_mesh_descriptions.size());
 			model.m_model_matrix = process_job.m_transform;
-			model.m_bounding_box = Mathf::AABBTransform(process_job.m_bounding_box, process_job.m_transform);
+			model.m_bounding_box = process_job.m_bounding_box;
 			for (uint32_t i{ 0 }; i < process_job.m_mesh_info.m_transfer_mesh_descriptions.size();++i) {
 				auto& primitive_info = process_job.m_mesh_info.m_transfer_mesh_descriptions[i];
 				auto mesh_guid_combined = [&mesh_guids](VkRenderMeshDescription& primitive_des)->ID {

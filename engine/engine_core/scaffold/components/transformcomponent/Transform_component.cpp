@@ -44,7 +44,7 @@ namespace Mage {
 	}
 
 	void TransformComponent::SetRotation(const Quaternion& new_q) {
-		world_rotation = parent->world_rotation * rotation * new_q;
+		world_rotation = parent != nullptr ? parent->world_rotation * rotation * new_q : rotation * new_q;
 		rotation_write_buffer = new_q;
 		write_type = TransformWriteType::WORLD_WRITE;
 

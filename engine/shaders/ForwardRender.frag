@@ -46,6 +46,8 @@ layout(set = 1, binding = 0) uniform sampler2D albedo_texture;
 layout(set = 1, binding = 1) uniform sampler2D normal_texture;
 layout(set = 1, binding = 2) uniform sampler2D metallic_roughness_texture;
 
+layout(set = 2, binding = 0) uniform sampler2D directional_shadow_map;
+
 layout(location = 0) in highp vec3 in_world_position;
 layout(location = 1) in highp vec3 in_world_normal;
 layout(location = 2) in highp vec4 in_world_tangent;
@@ -147,14 +149,23 @@ void main(){
     highp vec3 f0 = mix(vec3(0.04), BaseColor.xyz, pMetallic);
 
     highp vec3 lo = vec3(0.f);
-    //for(highp int i = 0; i < per_frame_data.directional_light_num; ++i){
-        highp vec3 L = normalize(vec3(1.f,1.f,2.f)); //-per_frame_data.directional_lights[i].direction;
+    //for(highp int i = 0; i < directional_light_num; ++i){
+        highp vec3 L = normalize(-(directional_lights[0].direction));
         highp float NdotL = dot(N, L);
-        if(NdotL > 0.f)
-            lo += BRDF(N, L, V, f0, BaseColor.xyz, pMetallic, pRoughness) * vec3(0.7,0.7,0.7) /*per_frame_data.directional_lights[i].color*/ * NdotL * 3.0 /*intensity*/;
+        if(NdotL > 0.f){
+            highp vec4 clip_coord = directional_lights[0].ortho_view_matrix * vec4(in_world_position, 1.f);
+            highp vec4 ndc_coord = clip_coord / clip_coord.w;
+            highp vec2 uv = (ndc_coord.xy / 2.f) + vec2(0.5f, 0.5f);
+            highp float closest_depth = texture(directional_shadow_map, uv).r + 0.000075f;
+            if(closest_depth >= ndc_coord.z)
+                lo += BRDF(N, L, V, f0, BaseColor.xyz, pMetallic, pRoughness) * 
+                    directional_lights[0].color * 
+                    NdotL * 
+                    directional_lights[0].intensity;
+        }
     //}
 
-    highp float ambient = 0.3;
+    highp float ambient = 0.1f;
     highp vec3 la = BaseColor.xyz * ambient;
 
     highp vec3 result_color = lo + la;

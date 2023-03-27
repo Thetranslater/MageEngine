@@ -451,12 +451,12 @@ namespace Mage {
 		for (int i = 0; i < 11; ++i) {
 			poolSizes[i] = VulkanInfo::aboutVkDescriptorPoolSize();
 			poolSizes[i].type = static_cast<VkDescriptorType>(i);
-			poolSizes[i].descriptorCount = 100;
+			poolSizes[i].descriptorCount = 150;
 		}
 
 		VkDescriptorPoolCreateInfo createInfo = VulkanInfo::aboutVkDescriptorPoolCreateInfo();
 		createInfo.flags = 0;
-		createInfo.maxSets = m_physical_device_properties.limits.maxBoundDescriptorSets;
+		createInfo.maxSets = 256;
 		createInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		createInfo.pPoolSizes = poolSizes.data();
 

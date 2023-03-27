@@ -51,6 +51,7 @@ namespace Mage {
 		static void bufferCreationHelper(VulkanRHI* rhi, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& memory);
 		static VkShaderModule shaderModuleCreationHelper(VkDevice device, const std::string& filename);
 		static void imageViewCreationHelper(VulkanRHI* rhi, VkImage parent, VkFormat format, VkImageAspectFlags aspect, uint32_t mipmaplevel, VkImageView& view);
+		static void samplerCreationHelper(VulkanRHI* rhi, VkFilter mag, VkFilter min, VkSamplerAddressMode addressU, VkSamplerAddressMode addressV, VkSamplerMipmapMode mipmap, VkSampler& sampler);
 
 		//move(or copy) helper
 		template<typename Input>

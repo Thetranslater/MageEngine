@@ -52,7 +52,7 @@ namespace Mage {
 			Vector3 f = camera->forward();
 			Vector3 u = camera->up();
 			//camera movement
-			constexpr float camera_speed_detail_mode = 0.002f;
+			constexpr float camera_speed_detail_mode = 0.005f;
 			Vector3 direction{ Vector3::zero };
 			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::A) or engine_global_context.m_input_system->GetKeyDown(KeyCode::LeftArrow)) {
 				direction += camera->left();
@@ -71,7 +71,7 @@ namespace Mage {
 			direction.Normalize();
 			direction *= camera_speed_detail_mode * delta;
 			if (engine_global_context.m_input_system->GetKeyDown(KeyCode::LeftShift) or engine_global_context.m_input_system->GetKeyDown(KeyCode::RightShift)) {
-				direction *= 2;
+				direction *= 5;
 			}
 			camera_new_position += direction;
 		}

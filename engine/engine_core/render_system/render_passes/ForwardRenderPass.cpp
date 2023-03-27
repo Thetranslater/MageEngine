@@ -1,5 +1,6 @@
 #include"engine_core/render_system/render_passes/ForwardRenderPass.h"
 #include"engine_core/render_system/render_passes/UIPass.h"
+#include"engine_core/render_system/render_passes/DirectionalShadowPass.h"
 
 #include"engine_core/render_system/renderer/vulkanInfo.h"
 #include"engine_core/render_system/renderer/vulkanRHI.h"
@@ -19,16 +20,18 @@
 #include"core/math/math.h"
 
 namespace Mage {
-	enum {
-		directional_shadow_color = 0,
-		directional_shadow_depth,
-		forward_color,
-		forward_depth,
-		attachments_count
+	enum DescritporLayoutAlias : int{
+		descriptor_layout_global_resource_1,
+		descriptor_layout_material,
+		descriptor_layout_global_resource_2,
+		descriptor_layout_size
 	};
 
 	void ForwardRenderPass::initialize(const RenderPassCreateInfo* createInfo) {
 		RenderPass::initialize(createInfo);
+
+		auto info = static_cast<const ForwardRenderPassCreateInfo*>(createInfo);
+		m_directional_shadow_map = info->info_directional_shadow_map;
 
 		setupDescriptorLayouts();
 		setupDescriptorSets();
@@ -39,8 +42,8 @@ namespace Mage {
 	}
 
 	void ForwardRenderPass::setupDescriptorLayouts() {
-		m_descriptor_sets.layout_infos.resize(2);
-		//set 0:global resources, lights, camera, sky
+		m_descriptor_sets.layout_infos.resize(descriptor_layout_size);
+		//set 0:global resources: instances' data, lights, camera, sky
 		{
 			//TODO
 			VkDescriptorSetLayoutBinding global_perframe_layout_binding_Vertex = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
@@ -55,17 +58,17 @@ namespace Mage {
 
 			std::array<VkDescriptorSetLayoutBinding, 2> global_setlayout = {
 				global_perframe_layout_binding_Vertex,
-				global_perdrawcall_layout_binding_Vertex};
+				global_perdrawcall_layout_binding_Vertex };
 
 			VkDescriptorSetLayoutCreateInfo set_1 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
-			set_1.bindingCount = 2;
+			set_1.bindingCount = global_setlayout.size();
 			set_1.pBindings = global_setlayout.data();
-			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->getDevice(), &set_1, nullptr, &m_descriptor_sets.layout_infos[0])) {
+			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->getDevice(), &set_1, nullptr, &m_descriptor_sets.layout_infos[descriptor_layout_global_resource_1])) {
 				MAGE_THROW(failed to create forward renderpass descriptor set layout)
 			}
 		}
 
-		//set 1: custom textures
+		//set 1: material
 		{
 			VkDescriptorSetLayoutCreateInfo set_3 = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
 			set_3.bindingCount = 3;
@@ -87,9 +90,27 @@ namespace Mage {
 				set_3_bindings[2].binding	= 2;
 			}
 			set_3.pBindings = set_3_bindings.data();
-			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->getDevice(), &set_3, nullptr, &m_descriptor_sets.layout_infos[1])) {
+			if (VK_SUCCESS != vkCreateDescriptorSetLayout(m_vulkan_rhi->getDevice(), &set_3, nullptr, &m_descriptor_sets.layout_infos[descriptor_layout_material])) {
 				MAGE_THROW(failed to create forward renderpass descriptor set layout)
 			}
+		}
+		
+		//set 2:global resources:shadow map
+		{
+			VkDescriptorSetLayoutBinding bindings[1];
+
+			VkDescriptorSetLayoutBinding& global_perframe_directional_shadow = bindings[0];
+			global_perframe_directional_shadow = VulkanInfo::aboutVkDescriptorSetLayoutBinding();
+			global_perframe_directional_shadow.binding = 0;
+			global_perframe_directional_shadow.descriptorCount = 1;
+			global_perframe_directional_shadow.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			global_perframe_directional_shadow.pImmutableSamplers = nullptr;
+
+			VkDescriptorSetLayoutCreateInfo global_2_info = VulkanInfo::aboutVkDescriptorSetLayoutCreateInfo();
+			global_2_info.bindingCount = 1;
+			global_2_info.pBindings = bindings;
+			
+			ASSERT_RESULT(vkCreateDescriptorSetLayout(m_vulkan_rhi->getDevice(), &global_2_info, nullptr, &m_descriptor_sets.layout_infos[descriptor_layout_global_resource_2]));
 		}
 	}
 
@@ -120,8 +141,8 @@ namespace Mage {
 	}
 
 	void ForwardRenderPass::setupDescriptorSets() {
-		m_descriptor_sets.sets.resize(m_vulkan_rhi->getSwapchainSize());
-		//set_1 create
+		m_descriptor_sets.sets.resize(m_vulkan_rhi->getSwapchainSize() + 1);
+		//set 0 create
 		{
 			std::vector<VkDescriptorSetLayout> layouts(m_vulkan_rhi->getSwapchainSize(), m_descriptor_sets.layout_infos[0]);
 			VkDescriptorSetAllocateInfo global_descriptors_allocate_info_Vertex	= VulkanInfo::aboutVkDescriptorSetAllocateInfo();
@@ -156,6 +177,35 @@ namespace Mage {
 				
 				vkUpdateDescriptorSets(m_vulkan_rhi->getDevice(), 2, writes, 0, nullptr);
 			}
+		}
+
+		//set 2 create
+		{
+			VkDescriptorSetAllocateInfo alloc_shadow_set = VulkanInfo::aboutVkDescriptorSetAllocateInfo();
+			alloc_shadow_set.descriptorPool = m_vulkan_rhi->getDescriptorPool();
+			alloc_shadow_set.descriptorSetCount = 1;
+			alloc_shadow_set.pSetLayouts = &m_descriptor_sets.layout_infos[descriptor_layout_global_resource_2];
+			ASSERT_RESULT(vkAllocateDescriptorSets(m_vulkan_rhi->getDevice(), &alloc_shadow_set, &m_descriptor_sets.sets[3]));
+
+			VkDescriptorImageInfo directional_shadow_map_info = VulkanInfo::aboutVkDescriptorImageInfo();
+			directional_shadow_map_info.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			directional_shadow_map_info.imageView = m_directional_shadow_map;
+			VkSampler sampler;
+			VulkanHelper::samplerCreationHelper(m_vulkan_rhi.get(), 
+				VK_FILTER_NEAREST, VK_FILTER_NEAREST, 
+				VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE, 
+				VK_SAMPLER_MIPMAP_MODE_NEAREST, sampler);
+			directional_shadow_map_info.sampler = sampler;
+
+			VkWriteDescriptorSet write = VulkanInfo::aboutVkWriteDescriptorSet();
+			write.descriptorCount = 1;
+			write.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			write.dstArrayElement = 0;
+			write.dstBinding = 0;
+			write.dstSet = m_descriptor_sets.sets[3];
+			write.pImageInfo = &directional_shadow_map_info;
+
+			vkUpdateDescriptorSets(m_vulkan_rhi->getDevice(), 1, &write, 0, nullptr);
 		}
 	}
 	//DONE
@@ -225,7 +275,7 @@ namespace Mage {
 		ForwardRenderSubpassCreateInfo forward_create_info{};
 		forward_create_info.info_render_pass = this;
 		forward_create_info.info_vulkan_rhi = m_vulkan_rhi;
-		forward_create_info.info_layout_indices = { 0, 1 };
+		forward_create_info.info_layout_indices = { descriptor_layout_global_resource_1 ,descriptor_layout_material, descriptor_layout_global_resource_2 };
 		m_p_subpasses[subpass_type_forward]->initialize(&forward_create_info);
 
 		m_p_subpasses[subpass_type_ui] = std::make_shared<UISubpass>();
@@ -376,12 +426,6 @@ namespace Mage {
 		VkPipelineColorBlendAttachmentState blend_in_color_attachments = VulkanInfo::aboutVkPipelineColorBlendAttachmentState();
 		blend_in_color_attachments.blendEnable		= VK_FALSE;
 		blend_in_color_attachments.colorWriteMask	= VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT;
-		blend_in_color_attachments.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA; // Optional
-		blend_in_color_attachments.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA; // Optional	
-		blend_in_color_attachments.colorBlendOp = VK_BLEND_OP_ADD; // Optional
-		blend_in_color_attachments.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE; // Optional
-		blend_in_color_attachments.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO; // Optional
-		blend_in_color_attachments.alphaBlendOp = VK_BLEND_OP_ADD; // Optional
 
 		VkPipelineColorBlendStateCreateInfo color_blend_info = VulkanInfo::aboutVkPipelineColorBlendStateCreateInfo();
 		color_blend_info.logicOpEnable = VK_FALSE;
@@ -452,6 +496,13 @@ namespace Mage {
 		binding_scissor.extent.width	= render_pending->m_editor.viewport_width;
 		binding_scissor.extent.height	= render_pending->m_editor.viewport_height;
 		vkCmdSetScissor(m_vulkan_rhi->getCurrentCommandBuffer(), 0, 1, &binding_scissor);
+
+		//bind directional shadow map
+		vkCmdBindDescriptorSets(m_vulkan_rhi->getCurrentCommandBuffer(),
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			m_pipeline_layout, 2, 1,
+			&p_m_render_pass->m_descriptor_sets.sets[3],
+			0, nullptr);
 
 		//global data
 		int begin_offset{ 0 };
