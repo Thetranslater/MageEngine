@@ -15,6 +15,7 @@
 - imgui
 - vulkan & glfw
 - json11
+- mimalloc
 
 ### Current Status
 目前引擎支持以上特性。
