@@ -408,8 +408,7 @@ namespace Mage {
 		std::string parent_directory = FileSystem::getParentPath(m_model_filepath);
 
 		VkRenderModelInfo render_model_info;
-		render_model_info.m_bounding_box = calculateBoundingBox();
-		//render_model_info.m_go_id = m_go_id;
+		//render_model_info.m_bounding_box = calculateBoundingBox();
 
 		auto& mesh_info = render_model_info.m_mesh_info;
 		auto& images_info = render_model_info.m_images_info;
@@ -526,6 +525,10 @@ namespace Mage {
 				//position
 				if (primitive.m_attributes.find("POSITION") != primitive.m_attributes.end()) {
 					get_attribute_info("POSITION", 0);
+					Vector3 min = m_accessors[primitive.m_attributes["POSITION"]].m_min;
+					Vector3 max = m_accessors[primitive.m_attributes["POSITION"]].m_max;
+					render_model_info.m_bounding_box.merge(matrix* min);
+					render_model_info.m_bounding_box.merge(matrix* max);
 				}
 				//normal
 				if (primitive.m_attributes.find("NORMAL") != primitive.m_attributes.end()) {

@@ -288,6 +288,10 @@ namespace Mage {
 		VkPipelineRasterizationStateCreateInfo rasterization_info = VulkanInfo::aboutVkPipelineRasterizationStateCreateInfo();
 		rasterization_info.cullMode = VK_CULL_MODE_BACK_BIT;
 		rasterization_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		rasterization_info.depthBiasEnable = VK_TRUE;
+		rasterization_info.depthBiasConstantFactor = 0.25f;
+		rasterization_info.depthBiasSlopeFactor = 0.75f;
+		rasterization_info.depthBiasClamp = 0.01f;
 		pipeline_info.pRasterizationState = &rasterization_info;
 
 		//multisample
@@ -361,10 +365,11 @@ namespace Mage {
 			Matrix4x4 view = Matrix4x4::LookAt(
 				diP, diP + global_pointer->m_directional_lights[i].m_direction, Vector3::up);
 
-			for (int i{ 0 }; i < 8; ++i) {
-				Vector4 clip = view * Vector4{ corners[i], 1.f };
-				camera_directional_light_box.merge(Vector3{ clip.x, clip.y , clip.z });
-			}
+			Vector3 camera_center_in_light = view * center;
+			float r = extent.magnitude();
+
+			camera_directional_light_box.min = camera_center_in_light - Vector3{ r, r, r };
+			camera_directional_light_box.max = camera_center_in_light + Vector3{ r, r, r };
 
 			AxisAlignedBoundingBox scene_directional_light_box;
 			for (const auto& [id, model] : p_m_render_pass->m_render_system->getRenderScene()->m_render_models) {

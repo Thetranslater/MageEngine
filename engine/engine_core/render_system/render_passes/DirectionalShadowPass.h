@@ -3,7 +3,7 @@
 #include<engine_core/render_system/render_pass.h>
 #include<engine_core/render_system/render_subpass.h>
 
-#define DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE 4096u
+#define DIRECTIONAL_SHADOW_MAP_DIMENSION_SIZE 2048u
 
 namespace Mage {
 	struct DirectionalShadowPassCreateInfo : public RenderPassCreateInfo {};

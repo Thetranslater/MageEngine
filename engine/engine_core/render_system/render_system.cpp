@@ -110,6 +110,8 @@ namespace Mage {
 
 	void RenderSystem::tickLightComponent() {
 		auto light_component_pool = engine_global_context.m_light_component_pool;
+		m_pending_data->m_lights.m_directional.clear();
+		m_pending_data->m_lights.m_point.clear();
 		for (auto iter{ light_component_pool->begin() }; iter != light_component_pool->end(); ++iter) {
 			if (iter->GetGameObject()->isDirty()) [[unlikely]] {
 				lightSibling_tuples[iter].transform = iter->GetGameObject()->GetComponent(TransformComponent);
