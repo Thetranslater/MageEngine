@@ -32,8 +32,3 @@ PBR使用延迟渲染。
 
 ### Special Thanks
 Piccolo，Overload，Vulkan-glTF-PBR
-
----
-
-### Notice
-因为还不会cmake，我很难给出构建方法，所以这个东西极大可能处于只有我能运行的状态……我是直接用vs2022构建的，我能保证的就是让项目整体结构清晰，规范文件引用等，很抱歉，cmake真的太难学了。
